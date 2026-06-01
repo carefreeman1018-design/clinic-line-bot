@@ -10,7 +10,11 @@ export function verifyLineSignature(rawBody, signature, channelSecret) {
     .update(rawBody)
     .digest("base64");
 
-  return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
+  const expected = Buffer.from(digest);
+  const actual = Buffer.from(signature);
+  if (expected.length !== actual.length) return false;
+
+  return crypto.timingSafeEqual(expected, actual);
 }
 
 export async function replyText(replyToken, text, channelAccessToken) {

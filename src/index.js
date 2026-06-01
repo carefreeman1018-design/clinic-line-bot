@@ -8,6 +8,7 @@ const app = express();
 const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET;
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+const debugToken = process.env.DEBUG_TEST_TOKEN;
 
 app.use(
   express.json({
@@ -30,6 +31,32 @@ app.get("/health", (_req, res) => {
     ok: true,
     lineConfigured: Boolean(channelSecret && channelAccessToken),
     openaiConfigured: Boolean(process.env.OPENAI_API_KEY)
+  });
+});
+
+app.post("/debug/draft-reply", async (req, res) => {
+  if (!debugToken || req.header("authorization") !== `Bearer ${debugToken}`) {
+    return res.status(404).json({ error: "Not found" });
+  }
+
+  const message = String(req.body.message ?? "").trim();
+  if (!message) return res.status(400).json({ error: "message is required" });
+
+  const chunks = await loadKnowledge();
+  const relevantChunks = retrieveRelevantChunks(chunks, message);
+  const reply = await draftReply({
+    message,
+    chunks: relevantChunks,
+    shouldEscalate: shouldEscalate(message)
+  });
+
+  res.json({
+    reply,
+    matches: relevantChunks.map((chunk) => ({
+      source: chunk.source,
+      title: chunk.title,
+      score: chunk.score
+    }))
   });
 });
 
