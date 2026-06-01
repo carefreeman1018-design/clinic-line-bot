@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { syncLineVoomAnnouncements } from "../scripts/sync-line-voom.js";
+import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
 import { draftReply } from "./ai.js";
 import {
   isConversationMemoryConfigured,
@@ -180,6 +181,9 @@ async function buildReply(message, relevantChunks, conversationHistory = []) {
 
   const basicInfoReply = answerBasicInfoQuestion(message);
   if (basicInfoReply) return basicInfoReply;
+
+  const announcementReply = answerLineVoomAnnouncementQuestion(message);
+  if (announcementReply) return announcementReply;
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
   if (doctorInfoReply) return doctorInfoReply;

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --env-file=.env src/index.js",
-    "check": "node --check src/index.js && node --check src/basic-info.js && node --check src/knowledge.js && node --check src/ai.js && node --check src/conversation.js && node --check src/doctors.js && node --check src/line.js && node --check src/schedule.js && node --check src/settings.js && node --check src/supabase.js && node --check scripts/sync-line-voom.js && node --check scripts/preflight.js && node --check scripts/audit-knowledge.js && node --check scripts/audit-knowledge-duplicates.js",
+    "check": "node --check src/index.js && node --check src/announcements.js && node --check src/basic-info.js && node --check src/knowledge.js && node --check src/ai.js && node --check src/conversation.js && node --check src/doctors.js && node --check src/line.js && node --check src/schedule.js && node --check src/settings.js && node --check src/supabase.js && node --check scripts/sync-line-voom.js && node --check scripts/preflight.js && node --check scripts/audit-knowledge.js && node --check scripts/audit-knowledge-duplicates.js",
     "preflight": "node --env-file=.env scripts/preflight.js",
     "audit:knowledge": "node scripts/audit-knowledge.js",
     "audit:duplicates": "node scripts/audit-knowledge-duplicates.js",

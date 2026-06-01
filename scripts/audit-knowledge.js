@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { draftReply } from "../src/ai.js";
+import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerDoctorInfoQuestion } from "../src/doctors.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate as shouldEscalateMessage } from "../src/knowledge.js";
@@ -118,6 +119,14 @@ const DOCTOR_INFO_CASES = [
 const LINE_OVERRIDE_QUESTIONS = [
   ["2026/5/19 星期二晚上李齊泰醫師有看診嗎", ["line-voom-announcements.md", "5/19", "李齊泰醫師"]],
   ["5/22 到 5/25 有公休嗎", ["line-voom-announcements.md", "5/22", "5/25", "公休"]]
+];
+
+const LINE_ANNOUNCEMENT_REPLY_CASES = [
+  ["2026/5/19 週二晚上李齊泰醫師有看診嗎？請依 LINE VOOM 公告回答。", ["5/19", "李齊泰醫師", "停診一次", "100%匿名篩檢"]],
+  ["5/22 到 5/25 診所有沒有公休公告？", ["5/22 到 5/25", "公休"]],
+  ["2026/4/14 李齊泰醫師晚上是否停診一次？", ["4/14", "李齊泰醫師", "停診一次"]],
+  ["2025/5/30 端午連假是否正常看診？", ["5/30", "正常看診"]],
+  ["2025/5/28 晚上陳嘉哲醫師是否停診一次？", ["5/28", "陳嘉哲醫師", "停診一次"]]
 ];
 
 const BASIC_INFO_CASES = [
@@ -398,6 +407,11 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     });
   }
 
+  for (const [question, expectedTerms] of LINE_ANNOUNCEMENT_REPLY_CASES) {
+    const reply = answerLineVoomAnnouncementQuestion(question);
+    caseResults.push(checkReplyCase({ round, type: "line-announcement-reply", question, reply, expectedTerms, issues }));
+  }
+
   for (const testCase of BASIC_INFO_CASES) {
     caseResults.push(checkRetrievalCase({ round, type: "basic-info", chunks, issues, ...testCase }));
   }
@@ -474,6 +488,7 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     const chunksForQuestion = retrieveRelevantChunks(chunks, question, 4);
     const reply =
       answerBasicInfoQuestion(question) ||
+      answerLineVoomAnnouncementQuestion(question) ||
       answerFixedScheduleQuestion(question, new Date("2026-06-01T00:00:00+08:00")) ||
       (await draftReply({
         message: question,
