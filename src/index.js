@@ -70,7 +70,7 @@ app.post("/webhook", async (req, res) => {
   res.status(200).end();
 
   const events = req.body.events ?? [];
-  await Promise.all(events.map(handleLineEvent));
+  await Promise.allSettled(events.map(handleLineEvent));
 });
 
 async function handleLineEvent(event) {
@@ -86,14 +86,21 @@ async function handleLineEvent(event) {
       shouldEscalate: shouldEscalate(message)
     });
 
-    await replyText(event.replyToken, reply, channelAccessToken);
+    await safeReplyText(event.replyToken, reply);
   } catch (error) {
     console.error(error);
-    await replyText(
+    await safeReplyText(
       event.replyToken,
-      "不好意思，系統剛剛沒有順利查到資料。請您稍後再試，或留下問題讓診所人員協助回覆。",
-      channelAccessToken
+      "不好意思，系統剛剛沒有順利查到資料。請您稍後再試，或留下問題讓診所人員協助回覆。"
     );
+  }
+}
+
+async function safeReplyText(replyToken, message) {
+  try {
+    await replyText(replyToken, message, channelAccessToken);
+  } catch (error) {
+    console.error(error);
   }
 }
 
