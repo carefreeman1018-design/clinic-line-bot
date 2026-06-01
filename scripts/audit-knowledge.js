@@ -70,6 +70,8 @@ const BASIC_INFO_CASES = [
   }
 ];
 
+const GREETING_NO_RETRIEVAL_CASES = ["Hi", "你好", "您好"];
+
 const SERVICE_QUESTION_TEMPLATES = [
   "診所有提供{term}嗎？",
   "我想問津久有沒有做{term}",
@@ -254,6 +256,18 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
 
   for (const testCase of BASIC_INFO_CASES) {
     caseResults.push(checkRetrievalCase({ round, type: "basic-info", chunks, issues, ...testCase }));
+  }
+
+  for (const question of GREETING_NO_RETRIEVAL_CASES) {
+    const matches = retrieveRelevantChunks(chunks, question, 4);
+    if (matches.length > 0) {
+      issues.push(formatIssue(round, `招呼語不應命中知識庫：${question}`));
+    }
+    caseResults.push({
+      type: "greeting-no-retrieval",
+      question,
+      ok: matches.length === 0
+    });
   }
 
   for (const testCase of buildServiceCases()) {

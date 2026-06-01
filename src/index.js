@@ -94,6 +94,13 @@ async function handleLineEvent(event) {
       return;
     }
 
+    const simpleReply = buildSimpleReply(message);
+    if (simpleReply) {
+      await safeReplyText(event.replyToken, simpleReply);
+      await rememberConversationExchange(userId, message, simpleReply);
+      return;
+    }
+
     const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
     const relevantChunks = retrieveRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
@@ -109,6 +116,9 @@ async function handleLineEvent(event) {
 }
 
 async function buildReply(message, relevantChunks, conversationHistory = []) {
+  const simpleReply = buildSimpleReply(message);
+  if (simpleReply) return simpleReply;
+
   if (shouldEscalate(message)) {
     return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
   }
@@ -122,6 +132,23 @@ async function buildReply(message, relevantChunks, conversationHistory = []) {
     shouldEscalate: shouldEscalate(message),
     conversationHistory
   });
+}
+
+function buildSimpleReply(message) {
+  const normalized = message.trim();
+  if (/^(hi|hello|hey|哈囉|嗨|你好|您好|早安|午安|晚安)[。！!.\s]*$/i.test(normalized)) {
+    return "您好，想問門診、預約、交通，或診所有沒有提供某項服務？";
+  }
+
+  if (/^(謝謝|感謝|thanks|thank you|thx)[。！!.\s]*$/i.test(normalized)) {
+    return "不客氣。";
+  }
+
+  if (/^(ok|okay|好|好的|了解|收到)[。！!.\s]*$/i.test(normalized)) {
+    return "收到。";
+  }
+
+  return null;
 }
 
 function buildAssistanceFollowUpReply(userId, message) {

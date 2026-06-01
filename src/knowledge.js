@@ -16,7 +16,10 @@ const STOP_TERMS = new Set([
   "在你",
   "諮詢",
   "請問",
-  "您好"
+  "您好",
+  "hi",
+  "hello",
+  "hey"
 ]);
 
 const MEDICAL_ESCALATION_PATTERNS = [
