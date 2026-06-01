@@ -6,6 +6,7 @@ import {
   loadConversationHistory,
   rememberConversationExchange
 } from "./conversation.js";
+import { answerDoctorInfoQuestion } from "./doctors.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
 import { answerFixedScheduleQuestion } from "./schedule.js";
@@ -122,6 +123,9 @@ async function buildReply(message, relevantChunks, conversationHistory = []) {
   if (shouldEscalate(message)) {
     return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
   }
+
+  const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
+  if (doctorInfoReply) return doctorInfoReply;
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return fixedScheduleReply;

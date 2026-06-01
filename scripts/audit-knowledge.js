@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { draftReply } from "../src/ai.js";
+import { answerDoctorInfoQuestion } from "../src/doctors.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate as shouldEscalateMessage } from "../src/knowledge.js";
 import { answerFixedScheduleQuestion } from "../src/schedule.js";
 
@@ -64,6 +65,38 @@ const CONTEXTUAL_SCHEDULE_CASES = [
       }
     ],
     expectedTerms: ["陳偉傑醫師", "週一早診", "週二早診", "週四晚診", "週五早診"]
+  }
+];
+
+const DOCTOR_INFO_CASES = [
+  {
+    question: "這位醫生的專業是什麼",
+    conversationHistory: [
+      {
+        role: "user",
+        content: "陳偉傑"
+      },
+      {
+        role: "assistant",
+        content: "陳偉傑醫師固定門診：\n週一早診（09:30-12:30）"
+      }
+    ],
+    expectedTerms: ["陳偉傑醫師", "精雕微創包皮槍手術", "無刀口結紮手術", "男性排尿障礙", "性傳染病檢測/治療"]
+  },
+  {
+    question: "專長呢",
+    conversationHistory: [
+      {
+        role: "assistant",
+        content: "陳偉傑醫師是泌尿科專科醫師。"
+      }
+    ],
+    expectedTerms: ["陳偉傑醫師", "精雕微創包皮槍手術", "攝護腺擴開手術", "男性性功能障礙無創治療"]
+  },
+  {
+    question: "李齊泰醫師專長",
+    conversationHistory: [],
+    expectedTerms: ["李齊泰醫師", "菜花全方位治療", "顯微輸精管重接", "軟式輸尿管鏡高能雷射碎石手術"]
   }
 ];
 
@@ -202,11 +235,12 @@ async function main() {
   const rounds = Number(process.argv[2] || DEFAULT_ROUNDS);
   const clinicInfo = await fs.readFile("data/clinic-info.md", "utf8");
   const doctorSchedule = await fs.readFile("data/doctor-schedule.md", "utf8");
+  const doctorSpecialties = await fs.readFile("data/doctor-specialties.md", "utf8");
   const chunks = await loadKnowledge();
   const results = [];
 
   for (let round = 1; round <= rounds; round += 1) {
-    results.push(await runRound({ round, clinicInfo, doctorSchedule, chunks }));
+    results.push(await runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, chunks }));
   }
 
   const issues = results.flatMap((result) => result.issues);
@@ -227,7 +261,7 @@ async function main() {
   if (issues.length > 0) process.exitCode = 1;
 }
 
-async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
+async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, chunks }) {
   const issues = [];
   const caseResults = [];
 
@@ -249,6 +283,16 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
 
   if (!doctorSchedule.includes("data/website-clinic-hours.md")) {
     issues.push(formatIssue(round, "doctor-schedule 未指向已整理的官網固定門診表"));
+  }
+
+  if (!clinicInfo.includes("data/doctor-specialties.md")) {
+    issues.push(formatIssue(round, "clinic-info 未指向已整理的醫師主治專長"));
+  }
+
+  for (const term of ["陳偉傑醫師", "精雕微創包皮槍手術", "李齊泰醫師", "軟式輸尿管鏡高能雷射碎石手術"]) {
+    if (!doctorSpecialties.includes(term)) {
+      issues.push(formatIssue(round, `doctor-specialties 缺少「${term}」`));
+    }
   }
 
   for (const [question, expectedTerms] of FIXED_SCHEDULE_QUESTIONS) {
@@ -283,6 +327,11 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
         issues
       })
     );
+  }
+
+  for (const { question, conversationHistory, expectedTerms } of DOCTOR_INFO_CASES) {
+    const reply = answerDoctorInfoQuestion(question, conversationHistory);
+    caseResults.push(checkReplyCase({ round, type: "doctor-info", question, reply, expectedTerms, issues }));
   }
 
   for (const [question, expectedTerms] of LINE_OVERRIDE_QUESTIONS) {
@@ -372,6 +421,7 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
       staleClaimTerms: STALE_CLAIM_TERMS.length,
       fixedScheduleQuestions: FIXED_SCHEDULE_QUESTIONS.length,
       contextualScheduleQuestions: CONTEXTUAL_SCHEDULE_CASES.length,
+      doctorInfoQuestions: DOCTOR_INFO_CASES.length,
       lineOverrideQuestions: LINE_OVERRIDE_QUESTIONS.length,
       expandedQuestionCases: caseResults.length,
       generatedReplyChecks: buildGeneratedQuestionList().length
@@ -398,6 +448,7 @@ function buildGeneratedQuestionList() {
     ...SCHEDULE_CASES.map(([question]) => question),
     ...FIXED_SCHEDULE_QUESTIONS.map(([question]) => question),
     ...CONTEXTUAL_SCHEDULE_CASES.map(({ question }) => question),
+    ...DOCTOR_INFO_CASES.map(({ question }) => question),
     ...LINE_OVERRIDE_QUESTIONS.map(([question]) => question),
     ...LINE_RETRIEVAL_CASES.map(({ question }) => question),
     ...ESCALATION_CASES
