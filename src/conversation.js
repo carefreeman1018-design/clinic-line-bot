@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const CONVERSATION_TABLE = process.env.SUPABASE_CONVERSATION_TABLE || "line_conversation_messages";
+const MAX_IN_MEMORY_MESSAGES_PER_USER = 40;
+const inMemoryConversationByUser = new Map();
 
 const supabase =
   SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
@@ -19,7 +21,8 @@ export function isConversationMemoryConfigured() {
 }
 
 export async function loadConversationHistory(lineUserId) {
-  if (!supabase || !lineUserId) return [];
+  if (!lineUserId) return [];
+  if (!supabase) return loadInMemoryConversationHistory(lineUserId);
 
   const { data, error } = await supabase
     .from(CONVERSATION_TABLE)
@@ -30,7 +33,7 @@ export async function loadConversationHistory(lineUserId) {
 
   if (error) {
     console.error("Supabase conversation history load failed:", error);
-    return [];
+    return loadInMemoryConversationHistory(lineUserId);
   }
 
   return data.map((message) => ({
@@ -40,7 +43,7 @@ export async function loadConversationHistory(lineUserId) {
 }
 
 export async function rememberConversationExchange(lineUserId, userMessage, assistantMessage) {
-  if (!supabase || !lineUserId) return;
+  if (!lineUserId) return;
 
   const rows = [
     {
@@ -55,9 +58,32 @@ export async function rememberConversationExchange(lineUserId, userMessage, assi
     }
   ];
 
+  if (!supabase) {
+    rememberInMemoryConversationRows(lineUserId, rows);
+    return;
+  }
+
   const { error } = await supabase.from(CONVERSATION_TABLE).insert(rows);
 
   if (error) {
     console.error("Supabase conversation history save failed:", error);
+    rememberInMemoryConversationRows(lineUserId, rows);
   }
+}
+
+function loadInMemoryConversationHistory(lineUserId) {
+  return inMemoryConversationByUser.get(lineUserId) ?? [];
+}
+
+function rememberInMemoryConversationRows(lineUserId, rows) {
+  const current = inMemoryConversationByUser.get(lineUserId) ?? [];
+  const next = [
+    ...current,
+    ...rows.map((row) => ({
+      role: row.role,
+      content: row.content
+    }))
+  ].slice(-MAX_IN_MEMORY_MESSAGES_PER_USER);
+
+  inMemoryConversationByUser.set(lineUserId, next);
 }
