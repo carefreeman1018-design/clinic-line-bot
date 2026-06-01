@@ -74,7 +74,7 @@ export function retrieveRelevantChunks(chunks, query, limit = 4) {
 }
 
 function splitMarkdown(raw, source) {
-  const sourceUrls = extractUrls(raw);
+  const fileSourceUrls = extractUrls(raw);
   const sections = raw
     .split(/\n(?=#{1,6}\s+)/g)
     .map((section) => section.trim())
@@ -82,10 +82,11 @@ function splitMarkdown(raw, source) {
 
   return sections.map((content, index) => {
     const title = content.match(/^#{1,6}\s+(.+)$/m)?.[1] ?? `段落 ${index + 1}`;
+    const sourceUrls = extractUrls(content);
     return {
       id: `${source}:${index + 1}`,
       source,
-      sourceUrls,
+      sourceUrls: sourceUrls.length > 0 ? sourceUrls : fileSourceUrls,
       title,
       content
     };

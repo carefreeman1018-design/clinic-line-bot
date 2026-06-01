@@ -227,6 +227,21 @@ const PROCEDURE_RETRIEVAL_CASES = [
     question: "包皮手術後怎麼換藥？",
     source: "wound-care.md",
     expectedTerms: ["清、擦、噴、塗", "生理食鹽水", "官方 LINE"]
+  },
+  {
+    question: "官網有菜花肉芽長怎樣的衛教嗎？",
+    source: "official-health-education-index.md",
+    expectedTerms: ["菜花長怎樣", "菜花肉芽", "官網文章"]
+  },
+  {
+    question: "有新聞挖挖哇老人愛愛大補帖那支影片嗎？",
+    source: "official-media-cases-index.md",
+    expectedTerms: ["新聞挖挖哇", "老人愛愛大補帖", "官網文章"]
+  },
+  {
+    question: "割包皮術後復原要多久的官網文章在哪？",
+    source: "official-health-education-index.md",
+    expectedTerms: ["割包皮術後復原", "術後傷口照護", "官網文章"]
   }
 ];
 

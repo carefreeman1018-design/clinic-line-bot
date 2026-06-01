@@ -145,6 +145,30 @@ SUPABASE_SETTINGS_TABLE=bot_settings
 
 資料量變大後，bot 支援用 OpenAI embeddings + Supabase `pgvector` 做向量檢索。規則直答仍會優先處理電話、地址、門診、LINE VOOM、醫師資料與醫療安全問題；只有一般知識庫問題才會進入向量/關鍵字混合檢索。若向量檢索未設定或失敗，會自動退回原本關鍵字檢索。
 
+## 同步官網公開資料
+
+官網服務頁、固定頁面、衛教天地、媒體報導、案例心得、臉書專欄與影音採訪報導可透過公開 WordPress API 同步成機器人知識庫索引：
+
+```bash
+npm run sync:official
+```
+
+這會重建：
+
+```text
+data/official-service-pages.md
+data/official-health-education-index.md
+data/official-media-cases-index.md
+```
+
+索引會保留官網標題、分類、日期、摘要、段落標題、關鍵字與連結，讓 bot 能用關鍵字或向量檢索找到對應官網內容。它不會整篇複製官網文章；回答個人症狀、診斷、用藥、費用、手術適應症或副作用時，仍需引導官方 LINE、電話或門診確認。
+
+若已啟用 Supabase 向量知識庫，每次同步官網資料後再執行：
+
+```bash
+npm run sync:embeddings
+```
+
 先到 Supabase SQL Editor 執行：
 
 ```sql
