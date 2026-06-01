@@ -83,15 +83,20 @@ const DOCTOR_ALIASES = [
 ];
 
 export function answerDoctorInfoQuestion(message, conversationHistory = []) {
-  if (!/專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message)) return null;
+  const doctor = resolveDoctor(message);
+  const isSpecialtyQuestion = /專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message);
+  const isDoctorFollowUp = Boolean(doctor) && /那|呢|其他|其它|別的/.test(message);
+  const shouldAnswerSpecialty = isSpecialtyQuestion || (isDoctorFollowUp && hasRecentSpecialtyContext(conversationHistory));
 
-  const doctor = resolveDoctor(message) ?? findLastMentionedDoctor(conversationHistory);
-  if (!doctor) return "想查哪位醫師的專長？請直接打醫師名字。";
+  if (!shouldAnswerSpecialty) return null;
 
-  const specialties = DOCTOR_SPECIALTIES[doctor];
-  if (!specialties) return `目前沒有整理到${doctor}的主治專長。`;
+  const resolvedDoctor = doctor ?? findLastMentionedDoctor(conversationHistory);
+  if (!resolvedDoctor) return "想查哪位醫師的專長？請直接打醫師名字。";
 
-  return `${doctor}主治專長：${specialties.join("、")}。`;
+  const specialties = DOCTOR_SPECIALTIES[resolvedDoctor];
+  if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
+
+  return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
 }
 
 function resolveDoctor(message) {
@@ -106,4 +111,11 @@ function findLastMentionedDoctor(conversationHistory) {
   }
 
   return null;
+}
+
+function hasRecentSpecialtyContext(conversationHistory) {
+  return [...conversationHistory]
+    .reverse()
+    .slice(0, 4)
+    .some((historyMessage) => /主治專長|專長|專業|擅長|強項/.test(historyMessage.content ?? ""));
 }

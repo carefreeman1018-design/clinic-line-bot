@@ -97,6 +97,20 @@ const DOCTOR_INFO_CASES = [
     question: "李齊泰醫師專長",
     conversationHistory: [],
     expectedTerms: ["李齊泰醫師", "菜花全方位治療", "顯微輸精管重接", "軟式輸尿管鏡高能雷射碎石手術"]
+  },
+  {
+    question: "那羅醫生呢",
+    conversationHistory: [
+      {
+        role: "user",
+        content: "這位醫生的專業是什麼"
+      },
+      {
+        role: "assistant",
+        content: "陳偉傑醫師主治專長：精雕微創包皮槍手術、無刀口結紮手術、男性排尿障礙。"
+      }
+    ],
+    expectedTerms: ["羅詩修醫師", "男性/女性排尿障礙", "攝護腺水蒸氣消融手術", "性傳染病檢測/治療"]
   }
 ];
 
