@@ -4,7 +4,7 @@ import path from "node:path";
 const KNOWLEDGE_DIR = path.join(process.cwd(), "data");
 
 const MEDICAL_ESCALATION_PATTERNS = [
-  /血尿|尿血|發燒|劇痛|很痛|排不出尿|尿不出來|傷口|感染|腫起來|化膿/,
+  /血尿|尿血|發燒|劇痛|很痛|疼痛|痛痛|不舒服|排不出尿|尿不出來|傷口|感染|腫起來|化膿/,
   /報告|檢查結果|癌|腫瘤|攝護腺指數|PSA|超音波|切片/,
   /吃藥|藥物|抗生素|副作用|過敏|劑量|停藥|懷孕|小孩|兒童/
 ];
