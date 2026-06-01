@@ -66,10 +66,11 @@ const DOCTOR_MISSPELLINGS = [
 ];
 
 const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|預約/;
+const TEMPORARY_CHANGE_CONFIRMATION = "臨時異動會偷改版，請以 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。";
 
 export function answerFixedScheduleQuestion(message, now = new Date()) {
   if (!SCHEDULE_INTENT_PATTERN.test(message)) return null;
-  if (hasExplicitDate(message)) return null;
+  if (hasExplicitDate(message) && !hasRelativeDay(message)) return null;
 
   const day = resolveRequestedDay(message, now);
   const period = PERIOD_ALIASES.find(([, pattern]) => pattern.test(message))?.[0];
@@ -82,7 +83,7 @@ export function answerFixedScheduleQuestion(message, now = new Date()) {
   const dayLabel = buildDayLabel(message, day);
 
   if (!FIXED_SCHEDULE[day]) {
-    return `${dayLabel}固定門診表沒有一般門診時段。臨時異動請以線上掛號或電話 02-2511-9488 確認。`;
+    return `${dayLabel}固定門診表沒有一般門診時段，別撲空。${TEMPORARY_CHANGE_CONFIRMATION}`;
   }
 
   if (!period) {
@@ -92,18 +93,18 @@ export function answerFixedScheduleQuestion(message, now = new Date()) {
   const clinic = FIXED_SCHEDULE[day][period];
   const time = periodToTime(period);
   if (clinic === "休診") {
-    return `${dayLabel}${period}（${time}）休診。臨時異動請以線上掛號或電話 02-2511-9488 確認。`;
+    return `${dayLabel}${period}（${time}）休診，這關沒開。${TEMPORARY_CHANGE_CONFIRMATION}`;
   }
 
   if (clinic === "手術") {
-    return `${dayLabel}${period}（${time}）是手術時段，不是一般門診。可查看線上掛號或電話 02-2511-9488 確認。`;
+    return `${dayLabel}${period}（${time}）是手術時段，不是一般門診，別衝錯副本。可查看 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。`;
   }
 
   if (/泌尿科/.test(message) && clinic.includes("肛門直腸外科")) {
-    return `${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。建議改查其他時段。`;
+    return `${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`;
   }
 
-  return `${dayLabel}${period}（${time}）是${clinic}門診。臨時異動請以線上掛號或電話確認。`;
+  return `${dayLabel}${period}（${time}）是${clinic}門診。${TEMPORARY_CHANGE_CONFIRMATION}`;
 }
 
 function resolveRequestedDay(message, now) {
@@ -134,6 +135,10 @@ function resolveRelativeDayOffset(message) {
   if (/明天|明日/.test(message)) return 1;
   if (/今天|今日/.test(message)) return 0;
   return null;
+}
+
+function hasRelativeDay(message) {
+  return resolveRelativeDayOffset(message) !== null;
 }
 
 function getTaipeiWeekday(date) {
@@ -179,7 +184,7 @@ function buildFullDayReply(day, dayLabel) {
   return [
     `${dayLabel}固定門診：`,
     ...lines,
-    "臨時異動請以線上掛號或電話確認。"
+    TEMPORARY_CHANGE_CONFIRMATION
   ].join("\n");
 }
 
@@ -197,15 +202,15 @@ function buildDoctorScheduleReply(doctor) {
 
   if (lines.length === 0) return `${doctor}固定門診表沒有一般門診時段。`;
 
-  return [`${doctor}固定門診：`, ...lines, "臨時異動請以線上掛號或電話確認。"].join("\n");
+  return [`${doctor}固定門診：`, ...lines, TEMPORARY_CHANGE_CONFIRMATION].join("\n");
 }
 
 function buildMisspelledDoctorScheduleReply({ inputName, intendedDoctor }) {
   return [
-    `目前固定門診表沒有「${inputName}」。`,
+    `固定門診表沒有「${inputName}」，這位應該沒解鎖。`,
     `如果您是指「${intendedDoctor}」，固定門診如下：`,
     ...buildDoctorScheduleLines(intendedDoctor),
-    "臨時異動請以線上掛號或電話確認。"
+    TEMPORARY_CHANGE_CONFIRMATION
   ].join("\n");
 }
 

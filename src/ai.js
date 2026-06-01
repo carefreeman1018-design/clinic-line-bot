@@ -7,11 +7,11 @@ const client = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
 export async function draftReply({ message, chunks, shouldEscalate, conversationHistory = [] }) {
   if (shouldEscalate) {
-    return "這需要醫師看診判斷。請先預約門診，或留下聯絡方式讓診所協助。";
+    return "這題不能隔空判，別硬撐。請先預約門診讓醫師看，或留下聯絡方式讓診所協助。";
   }
 
   if (chunks.length === 0) {
-    return "目前查不到明確公告。請留下問題重點，診所人員確認後回覆。";
+    return "目前沒查到明確公告，先別腦補。請留下問題重點，診所人員確認後回覆。";
   }
 
   if (!client) {
@@ -38,7 +38,8 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
         role: "system",
         content: [
           "你是泌尿科診所 LINE 官方帳號的客服助理。",
-          "請用溫和、專業、精簡的語氣回答。",
+          "請用精簡、清楚、帶一點中二屁孩感的語氣回答，但仍要禮貌、可信、不能冒犯病人。",
+          "可以輕微吐槽或用俏皮提醒，例如「先別腦補」、「這題不能隔空判」、「不要硬扛」，但不要粗俗、不要嘲笑病情、不要使用髒話。",
           "短答優先：一般問題最多 1 到 2 句；只有使用者要求詳細說明時才列點。",
           "不要使用多餘寒暄或結尾祝福，例如「您好」、「感謝您的訊息」、「祝您健康平安」、「若有其他問題歡迎詢問」。",
           "不要重複提醒同一件事；能直接回答就直接回答。",
@@ -50,7 +51,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
           "LINE VOOM 的休診、公休、停診公告只有在使用者問到同一個日期、同一位醫師或同一段連假時才可覆蓋固定門診表。",
           "如果 LINE VOOM 公告日期已經過去，請明確說那是過去公告，不要把它當成未來或一般週期性門診狀態。",
           "不得診斷、開藥、判斷個人病情、解讀個人檢查報告。",
-          "若資料不足，請簡短說目前無法確認，並建議轉真人或預約門診。",
+          "若資料不足，請簡短說目前無法確認，語氣可以俏皮但不要亂猜，並建議轉真人或預約門診。",
           "回答使用繁體中文，適合 LINE 閱讀。"
         ].join("\n")
       },
@@ -62,7 +63,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
     ]
   });
 
-  return response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
+  return response.choices[0]?.message?.content?.trim() || "目前無法確認，別硬猜。建議由診所人員協助回覆。";
 }
 
 function summarizeChunk(content) {

@@ -104,13 +104,13 @@ async function handleLineEvent(event) {
     await rememberConversationExchange(userId, message, reply);
   } catch (error) {
     console.error(error);
-    await safeReplyText(event.replyToken, "系統暫時查不到資料，請稍後再試或留下問題。");
+    await safeReplyText(event.replyToken, "系統剛剛卡了一下，先別急。請稍後再試或留下問題。");
   }
 }
 
 async function buildReply(message, relevantChunks, conversationHistory = []) {
   if (shouldEscalate(message)) {
-    return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、完全排不出尿或大量出血，請立即就醫。";
+    return "這題不能隔空判，別硬扛。請預約門診讓醫師看，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
   }
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message);
@@ -138,7 +138,7 @@ function buildAssistanceFollowUpReply(userId, message) {
   if (!isAffirmative(message)) return null;
 
   pendingAssistanceByUser.delete(userId);
-  return "請留下姓名、電話、方便聯絡/預約時段、簡短狀況。若劇烈疼痛、發燒、完全排不出尿或大量出血，請立即就醫。";
+  return "請留下姓名、電話、方便聯絡/預約時段、簡短狀況。若劇烈疼痛、發燒、尿不出來或大量出血，別等 LINE，請立即就醫或讓醫師看。";
 }
 
 function rememberAssistanceIfNeeded(userId, message) {
