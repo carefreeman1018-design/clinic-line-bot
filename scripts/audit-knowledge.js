@@ -155,6 +155,7 @@ const BASIC_INFO_REPLY_CASES = [
   ["掛號系統在哪", ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"]],
   ["如何預約手術", ["https://lin.ee/qDUYijn", "https://appointment.uromeeme.inncom.cloud/", "手術預約"]],
   ["官網首頁和線上掛號網址是同一個網站嗎？請不要混在一起。", ["https://uromeeme.com/", "https://appointment.uromeeme.inncom.cloud/", "不同"]],
+  ["官方 LINE ID、加好友連結、電話各是什麼？", ["@455twnga", "https://lin.ee/qDUYijn", "02-2511-9488"]],
   ["官方 LINE ID 是 @455twnga，VOOM 貼文又寫 @uromeeme，客服該怎麼回答？", ["@455twnga", "https://lin.ee/qDUYijn", "@uromeeme"]]
 ];
 

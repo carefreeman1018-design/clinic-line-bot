@@ -26,6 +26,14 @@ export function answerBasicInfoQuestion(message) {
     return "UroMe 是津久診所的英文識別。";
   }
 
+  if (asksOfficialLineContactBundle(normalized)) {
+    return [
+      `津久診所官方 LINE ID 是 @455twnga。`,
+      `加好友連結是 ${LINE_ADD_FRIEND_URL}。`,
+      "診所電話是 02-2511-9488。"
+    ].join("\n");
+  }
+
   if (/官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(normalized)) {
     return `津久診所官方 LINE ID 是 @455twnga，加好友連結是 ${LINE_ADD_FRIEND_URL}。`;
   }
@@ -71,6 +79,10 @@ function asksMrtAccess(message) {
 
 function asksWebsiteDistinction(message) {
   return /官網|官方網站|首頁/.test(message) && /線上掛號|掛號網址|appointment|預約連結/i.test(message);
+}
+
+function asksOfficialLineContactBundle(message) {
+  return /官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(message) && /電話|打給|聯絡|聯絡方式|幾號/.test(message);
 }
 
 function asksSurgeryAppointment(message) {
