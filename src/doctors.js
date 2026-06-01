@@ -72,6 +72,100 @@ const DOCTOR_SPECIALTIES = {
   ]
 };
 
+const DOCTOR_PROFILES = {
+  "陳偉傑醫師": {
+    current: ["津久診所院長"],
+    education: ["臺北醫學大學臨床醫學研究所博士候選人", "長庚大學醫學士"],
+    experience: [
+      "臺北醫學大學附設醫院泌尿科主治醫師",
+      "臺北醫學大學附設醫院泌尿科總醫師",
+      "臺北醫學大學附設醫院病房主任",
+      "史瓦帝尼王國駐診主治醫師",
+      "臺灣泌尿科醫學會會員",
+      "韓國 Proud Urology 認可私密整形醫師",
+      "Rezūm 水蒸氣消融術原廠認證醫師"
+    ],
+    certificates: ["泌尿科專科醫師"]
+  },
+  "羅詩修醫師": {
+    current: ["津久診所執行院長"],
+    education: ["臺北醫學大學醫學士"],
+    experience: [
+      "臺北醫學大學附設醫院泌尿科主治醫師",
+      "臺北醫學大學附設醫院泌尿科總醫師",
+      "臺灣泌尿科醫學會會員",
+      "臺灣尿失禁防治協會委員",
+      "韓國 Proud Urology 認可私密整形醫師",
+      "Rezūm 水蒸氣消融術原廠認證醫師"
+    ],
+    certificates: ["泌尿科專科醫師"]
+  },
+  "李齊泰醫師": {
+    current: ["津久診所泌尿科主治醫師", "臺北醫學大學附設醫院泌尿科主治醫師"],
+    education: ["臺北醫學大學醫學士"],
+    experience: [
+      "臺北醫學大學附設醫院泌尿科總醫師",
+      "美國泌尿科醫學會會員",
+      "台灣泌尿科醫學會會員",
+      "性傳染症友善門診醫師",
+      "IRCAD 國際微創中心高階腹腔鏡縫合認證",
+      "Rezūm 水蒸氣消融術原廠認證醫師"
+    ],
+    certificates: ["泌尿科專科醫師"]
+  },
+  "吳致寬醫師": {
+    current: ["津久診所泌尿科主治醫師", "臺北醫學大學附設醫院泌尿科主治醫師"],
+    education: ["臺灣大學醫學士"],
+    experience: [
+      "臺北醫學大學附設醫院泌尿科總醫師",
+      "臺灣泌尿科醫學會會員",
+      "臺灣男性學醫學會會員",
+      "Rezūm 水蒸氣消融術原廠認證醫師"
+    ],
+    certificates: ["泌尿科專科醫師"]
+  },
+  "蔡曜州醫師": {
+    current: [
+      "津久診所首席顧問",
+      "教育部部定副教授",
+      "臺北慈濟醫院泌尿科主任",
+      "臺灣疝氣醫學會常務理事",
+      "臺灣泌尿楓城學會理事",
+      "臺灣皮質醛酮學會常務理事"
+    ],
+    education: ["國立臺灣大學醫工所博士", "臺北醫學院（現臺北醫學大學）醫學系"],
+    experience: [
+      "臺北醫學大學附設醫院泌尿科主任",
+      "臺灣皮質醛酮學會秘書長",
+      "花蓮慈濟大學專任副教授",
+      "臺灣泌尿科醫學會腹腔鏡手術委員會副主委",
+      "臺北慈濟醫院主治醫師",
+      "教育部部定講師",
+      "恩主公醫院主治醫師"
+    ],
+    certificates: ["泌尿科專科醫師"]
+  },
+  "陳嘉哲醫師": {
+    current: ["津久診所肛門直腸外科主任"],
+    education: ["臺北醫學大學醫學士"],
+    experience: ["臺北醫學大學附設醫院大腸直腸外科主治醫師", "臺北醫學大學附設醫院急症外傷科主治醫師"],
+    certificates: ["臺灣外科醫學會專科醫師", "臺灣大腸直腸外科醫學會專科醫師", "臺灣外傷醫學會專科醫師"]
+  },
+  "李彥錞醫師": {
+    current: ["津久診所整形外科主治醫師", "聯新國際醫院整形外科主治醫師"],
+    education: ["中山醫學大學醫學士"],
+    experience: [
+      "基隆長庚紀念醫院主治醫師",
+      "林口長庚紀念醫院整形外科總醫師",
+      "林口長庚紀念醫院整形外科住院醫師",
+      "美國加州爾灣醫院整形外科臨床研究",
+      "美國紐約 MSKCC 癌症醫學中心臨床研究",
+      "美國密西根醫學中心臨床研究"
+    ],
+    certificates: ["整形外科專科醫師"]
+  }
+};
+
 const DOCTOR_ALIASES = [
   ["陳偉傑醫師", /陳偉傑|陳醫師|陳醫生/],
   ["羅詩修醫師", /羅詩修|羅醫師|羅醫生/],
@@ -85,9 +179,17 @@ const DOCTOR_ALIASES = [
 export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   const doctor = resolveDoctor(message);
   const isSpecialtyQuestion = /專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message);
+  const isProfileQuestion = /現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷/.test(message);
   const isDoctorFollowUp = Boolean(doctor) && /那|呢|其他|其它|別的/.test(message);
   const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
   if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
+
+  if (isProfileQuestion) {
+    const resolvedDoctor = doctor ?? findLastMentionedDoctor(conversationHistory);
+    if (!resolvedDoctor) return "想查哪位醫師的學經歷？請直接打醫師名字。";
+
+    return buildDoctorProfileReply(resolvedDoctor, message);
+  }
 
   const shouldAnswerSpecialty = isSpecialtyQuestion || (isDoctorFollowUp && hasRecentSpecialtyContext(conversationHistory));
 
@@ -100,6 +202,26 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildDoctorProfileReply(doctor, message) {
+  const profile = DOCTOR_PROFILES[doctor];
+  if (!profile) return `目前沒有整理到${doctor}的學經歷資料。`;
+
+  const lines = [];
+  if (/現職|職稱/.test(message)) lines.push(`${doctor}現職：${profile.current.join("、")}。`);
+  if (/學歷/.test(message)) lines.push(`${doctor}學歷：${profile.education.join("、")}。`);
+  if (/經歷|履歷|背景|資歷|認證/.test(message)) lines.push(`${doctor}經歷/認證：${profile.experience.join("、")}。`);
+  if (/證照|證書|專科/.test(message)) lines.push(`${doctor}專科證書：${profile.certificates.join("、")}。`);
+
+  if (lines.length > 0) return lines.join("\n");
+
+  return [
+    `${doctor}現職：${profile.current.join("、")}。`,
+    `學歷：${profile.education.join("、")}。`,
+    `經歷/認證：${profile.experience.slice(0, 4).join("、")}。`,
+    `專科證書：${profile.certificates.join("、")}。`
+  ].join("\n");
 }
 
 function buildOtherDoctorSpecialtyReply(message, conversationHistory) {

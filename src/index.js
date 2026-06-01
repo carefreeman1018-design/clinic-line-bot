@@ -10,10 +10,11 @@ import {
 } from "./conversation.js";
 import { answerBasicInfoQuestion } from "./basic-info.js";
 import { answerDoctorInfoQuestion } from "./doctors.js";
-import { loadKnowledge, retrieveRelevantChunks, shouldEscalate } from "./knowledge.js";
+import { loadKnowledge, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
 import { answerFixedScheduleQuestion } from "./schedule.js";
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
+import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -54,6 +55,7 @@ app.get("/health", async (_req, res) => {
     ok: true,
     lineConfigured: Boolean(channelSecret && channelAccessToken),
     openaiConfigured: Boolean(process.env.OPENAI_API_KEY),
+    vectorKnowledgeConfigured: isVectorKnowledgeConfigured(),
     conversationMemoryConfigured: isConversationMemoryConfigured(),
     settingsStoreConfigured: isSettingsStoreConfigured(),
     lineVoomSyncEnabled: voomSyncEnabled,
@@ -73,8 +75,7 @@ app.post("/debug/draft-reply", async (req, res) => {
   const lineUserId = String(req.body.lineUserId ?? "").trim();
   const conversationHistory = await loadConversationHistory(lineUserId);
   const chunks = await loadKnowledge();
-  const relevantChunks = retrieveRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
-  const reply = await buildReply(message, relevantChunks, conversationHistory);
+  const { reply, relevantChunks } = await buildReplyAndMatches(message, chunks, conversationHistory);
 
   res.json({
     reply,
@@ -131,8 +132,7 @@ async function handleLineEvent(event) {
 
     const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
-    const relevantChunks = retrieveRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
-    const reply = await buildReply(message, relevantChunks, conversationHistory);
+    const { reply } = await buildReplyAndMatches(message, chunks, conversationHistory);
     rememberAssistanceIfNeeded(userId, message);
 
     await safeReplyText(event.replyToken, reply);
@@ -171,32 +171,39 @@ function isAdminUser(userId) {
   return Boolean(userId && adminUserIds.has(userId));
 }
 
-async function buildReply(message, relevantChunks, conversationHistory = []) {
+async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const simpleReply = buildSimpleReply(message);
-  if (simpleReply) return simpleReply;
+  if (simpleReply) return { reply: simpleReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
-    return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
+    return {
+      reply: "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。",
+      relevantChunks: []
+    };
   }
 
   const basicInfoReply = answerBasicInfoQuestion(message);
-  if (basicInfoReply) return basicInfoReply;
+  if (basicInfoReply) return { reply: basicInfoReply, relevantChunks: [] };
 
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
-  if (announcementReply) return announcementReply;
+  if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
-  if (doctorInfoReply) return doctorInfoReply;
+  if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
-  if (fixedScheduleReply) return fixedScheduleReply;
+  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
 
-  return draftReply({
+  const relevantChunks = await retrieveHybridRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
+
+  const reply = await draftReply({
     message,
     chunks: relevantChunks,
     shouldEscalate: shouldEscalate(message),
     conversationHistory
   });
+
+  return { reply, relevantChunks };
 }
 
 function buildSimpleReply(message) {

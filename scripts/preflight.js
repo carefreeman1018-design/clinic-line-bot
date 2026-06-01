@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { loadKnowledge, retrieveRelevantChunks } from "../src/knowledge.js";
+import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "../src/vector-knowledge.js";
 
 const REQUIRED_ENV_KEYS = ["LINE_CHANNEL_SECRET", "LINE_CHANNEL_ACCESS_TOKEN"];
 const REQUIRED_FILES = [
@@ -33,16 +34,37 @@ async function main() {
   const chunks = await loadKnowledge();
   if (chunks.length === 0) issues.push("Knowledge base loaded 0 chunks");
 
-  const queryResults = SAMPLE_QUERIES.map((query) => ({
-    query,
-    matches: retrieveRelevantChunks(chunks, query, 2).map((chunk) => `${chunk.source}:${chunk.title}`)
-  }));
+  const vectorKnowledgeConfigured = isVectorKnowledgeConfigured();
+  const queryResults = await Promise.all(
+    SAMPLE_QUERIES.map(async (query) => {
+      const matches = vectorKnowledgeConfigured
+        ? await retrieveHybridRelevantChunks(chunks, query, 2)
+        : retrieveRelevantChunks(chunks, query, 2);
+
+      return {
+        query,
+        matches: matches.map((chunk) => `${chunk.source}:${chunk.title}`)
+      };
+    })
+  );
 
   for (const result of queryResults) {
     if (result.matches.length === 0) issues.push(`No knowledge match for sample query: ${result.query}`);
   }
 
-  console.log(JSON.stringify({ ok: issues.length === 0, chunks: chunks.length, queryResults, issues }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        ok: issues.length === 0,
+        chunks: chunks.length,
+        vectorKnowledgeConfigured,
+        queryResults,
+        issues
+      },
+      null,
+      2
+    )
+  );
 
   if (issues.length > 0) process.exitCode = 1;
 }

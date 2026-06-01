@@ -141,6 +141,40 @@ SUPABASE_SETTINGS_TABLE=bot_settings
 
 沒有設定 Supabase 時，bot 開關只會存在目前執行中的記憶體，服務重啟後會回到開啟。
 
+## 向量知識庫檢索
+
+資料量變大後，bot 支援用 OpenAI embeddings + Supabase `pgvector` 做向量檢索。規則直答仍會優先處理電話、地址、門診、LINE VOOM、醫師資料與醫療安全問題；只有一般知識庫問題才會進入向量/關鍵字混合檢索。若向量檢索未設定或失敗，會自動退回原本關鍵字檢索。
+
+先到 Supabase SQL Editor 執行：
+
+```sql
+-- 內容請使用 repo 內的 supabase/knowledge_chunks.sql
+```
+
+目前 `supabase/knowledge_chunks.sql` 使用 `vector(1536)`，對應預設的 `text-embedding-3-small`。若要改用不同維度的 embedding model，需要同步調整 SQL 裡的 vector 維度。
+
+接著設定環境變數：
+
+```text
+OPENAI_API_KEY=你的_OpenAI_API_Key
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+SUPABASE_URL=你的_Supabase_Project_URL
+SUPABASE_SERVICE_ROLE_KEY=你的_Supabase_Service_Role_Key
+SUPABASE_KNOWLEDGE_TABLE=knowledge_chunks
+SUPABASE_KNOWLEDGE_MATCH_RPC=match_knowledge_chunks
+VECTOR_KNOWLEDGE_ENABLED=true
+VECTOR_KNOWLEDGE_MATCH_COUNT=6
+VECTOR_KNOWLEDGE_MIN_SIMILARITY=0.25
+```
+
+每次新增或修改 `data/*.md` 後，重新同步 embeddings：
+
+```bash
+npm run sync:embeddings
+```
+
+同步會重建 `knowledge_chunks` 表中的知識段落。`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。
+
 ## 本機測試
 
 ```bash
@@ -173,10 +207,16 @@ npm run preflight
    - `LINE_ADMIN_USER_IDS`
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL`
+   - `OPENAI_EMBEDDING_MODEL`
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `SUPABASE_CONVERSATION_TABLE`
    - `SUPABASE_SETTINGS_TABLE`
+   - `SUPABASE_KNOWLEDGE_TABLE`
+   - `SUPABASE_KNOWLEDGE_MATCH_RPC`
+   - `VECTOR_KNOWLEDGE_ENABLED`
+   - `VECTOR_KNOWLEDGE_MATCH_COUNT`
+   - `VECTOR_KNOWLEDGE_MIN_SIMILARITY`
    - `LINE_VOOM_URL`
    - `LINE_VOOM_OUTPUT`
    - `LINE_VOOM_KEYWORDS`

@@ -15,6 +15,7 @@ const OFFICIAL_SERVICE_TERMS = [
   "攝護腺肥大治療",
   "腎結石",
   "輸尿管結石",
+  "男性泌尿道感染",
   "100% 匿名篩檢",
   "HPV",
   "皮蛇疫苗",
@@ -101,6 +102,16 @@ const DOCTOR_INFO_CASES = [
     expectedTerms: ["李齊泰醫師", "菜花全方位治療", "顯微輸精管重接", "軟式輸尿管鏡高能雷射碎石手術"]
   },
   {
+    question: "陳偉傑醫師學歷和經歷",
+    conversationHistory: [],
+    expectedTerms: ["陳偉傑醫師", "臺北醫學大學臨床醫學研究所博士候選人", "長庚大學醫學士", "Rezūm 水蒸氣消融術原廠認證醫師"]
+  },
+  {
+    question: "陳嘉哲醫師有什麼證照？",
+    conversationHistory: [],
+    expectedTerms: ["陳嘉哲醫師", "臺灣外科醫學會專科醫師", "臺灣大腸直腸外科醫學會專科醫師"]
+  },
+  {
     question: "那羅醫生呢",
     conversationHistory: [
       {
@@ -144,7 +155,7 @@ const BASIC_INFO_CASES = [
   {
     question: "津久診所在哪裡？捷運怎麼去？",
     source: "clinic-info.md",
-    expectedTerms: ["松江路 276 號 3 樓", "行天宮站", "4 號出口"]
+    expectedTerms: ["松江路 276 號 3 樓", "行天宮站", "4 號出口", "40 秒"]
   },
   {
     question: "診所電話幾號？",
@@ -164,13 +175,20 @@ const BASIC_INFO_CASES = [
   {
     question: "開車去附近可以停車嗎？",
     source: "clinic-info.md",
-    expectedTerms: ["收費停車場"]
+    expectedTerms: ["台灣聯通停車場", "聯邦佳佳大樓停車場"]
+  },
+  {
+    question: "坐公車去津久診所可以在哪站下？",
+    source: "clinic-info.md",
+    expectedTerms: ["捷運行天宮站", "松江新村", "民權松江路口"]
   }
 ];
 
 const BASIC_INFO_REPLY_CASES = [
   ["我人在松江路附近，診所地址的郵遞區號是 104091 嗎？", ["104091", "松江路 276 號 3 樓"]],
-  ["如果從行天宮站 4 號出口出來，官網說步行大約多久？", ["行天宮站", "4 號出口", "步行約 1 分鐘"]],
+  ["如果從行天宮站 4 號出口出來，官網說步行大約多久？", ["行天宮站", "4 號出口", "步行約 40 秒"]],
+  ["開車去附近可以停哪裡？", ["台灣聯通停車場", "聯邦佳佳大樓停車場"]],
+  ["坐公車要在哪一站下車？", ["捷運行天宮站", "松江新村", "民權松江路口"]],
   ["診所英文識別 UroMe 是不是官方資料裡寫的？", ["UroMe", "英文識別"]],
   ["掛號系統在哪", ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"]],
   ["如何預約手術", ["https://lin.ee/qDUYijn", "https://appointment.uromeeme.inncom.cloud/", "手術預約"]],
@@ -194,6 +212,21 @@ const PROCEDURE_RETRIEVAL_CASES = [
     question: "小孩包莖可以處理嗎？",
     source: "circumcision.md",
     expectedTerms: ["包皮或龜頭反覆發炎", "嵌頓性包莖", "醫師專業診斷"]
+  },
+  {
+    question: "男生尿道炎你們有看嗎？",
+    source: "male-uti.md",
+    expectedTerms: ["男性泌尿道感染", "攝護腺炎", "膀胱炎", "尿道炎"]
+  },
+  {
+    question: "你們有 HPV 疫苗和皮蛇疫苗嗎？",
+    source: "vaccines.md",
+    expectedTerms: ["HPV", "皮蛇疫苗", "官方 LINE"]
+  },
+  {
+    question: "包皮手術後怎麼換藥？",
+    source: "wound-care.md",
+    expectedTerms: ["清、擦、噴、塗", "生理食鹽水", "官方 LINE"]
   }
 ];
 
@@ -211,6 +244,7 @@ const SERVICE_CASE_ALIASES = new Map([
   ["男性私密處微創手術", ["陰莖增大", "龜頭減敏"]],
   ["攝護腺肥大治療", ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift"]],
   ["腎結石", ["腎結石", "輸尿管結石"]],
+  ["男性泌尿道感染", ["男性泌尿道感染", "攝護腺炎", "尿道炎"]],
   ["100% 匿名篩檢", ["100% 匿名篩檢"]],
   ["HPV", ["HPV", "疫苗"]],
   ["皮蛇疫苗", ["皮蛇疫苗"]],
