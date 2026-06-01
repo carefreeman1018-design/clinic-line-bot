@@ -1,0 +1,21 @@
+{
+  "name": "clinic-line-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --env-file=.env src/index.js",
+    "check": "node --check src/index.js && node --check src/knowledge.js && node --check src/ai.js && node --check src/line.js && node --check scripts/sync-line-voom.js && node --check scripts/preflight.js",
+    "preflight": "node --env-file=.env scripts/preflight.js",
+    "sync:voom": "node scripts/sync-line-voom.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "openai": "^4.77.0"
+  }
+}

@@ -1,0 +1,96 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+
+const KNOWLEDGE_DIR = path.join(process.cwd(), "data");
+
+const MEDICAL_ESCALATION_PATTERNS = [
+  /血尿|尿血|發燒|劇痛|很痛|排不出尿|尿不出來|傷口|感染|腫起來|化膿/,
+  /報告|檢查結果|癌|腫瘤|攝護腺指數|PSA|超音波|切片/,
+  /吃藥|藥物|抗生素|副作用|過敏|劑量|停藥|懷孕|小孩|兒童/
+];
+
+export async function loadKnowledge() {
+  const filenames = await fs.readdir(KNOWLEDGE_DIR);
+  const markdownFiles = filenames
+    .filter((filename) => filename.endsWith(".md"))
+    .sort();
+
+  const chunksByFile = await Promise.all(
+    markdownFiles.map(async (filename) => {
+      const filePath = path.join(KNOWLEDGE_DIR, filename);
+      const raw = await fs.readFile(filePath, "utf8");
+      return splitMarkdown(raw, filename);
+    })
+  );
+
+  return chunksByFile.flat();
+}
+
+export function shouldEscalate(message) {
+  return MEDICAL_ESCALATION_PATTERNS.some((pattern) => pattern.test(message));
+}
+
+export function retrieveRelevantChunks(chunks, query, limit = 4) {
+  const queryTerms = tokenize(query);
+
+  return chunks
+    .map((chunk) => ({
+      ...chunk,
+      score: scoreChunk(chunk, queryTerms)
+    }))
+    .filter((chunk) => chunk.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+}
+
+function splitMarkdown(raw, source) {
+  const sections = raw
+    .split(/\n(?=#{1,6}\s+)/g)
+    .map((section) => section.trim())
+    .filter(Boolean);
+
+  return sections.map((content, index) => {
+    const title = content.match(/^#{1,6}\s+(.+)$/m)?.[1] ?? `段落 ${index + 1}`;
+    return {
+      id: `${source}:${index + 1}`,
+      source,
+      title,
+      content
+    };
+  });
+}
+
+function scoreChunk(chunk, queryTerms) {
+  const haystack = `${chunk.title}\n${chunk.content}`;
+  const haystackTerms = tokenize(haystack);
+  const haystackSet = new Set(haystackTerms);
+
+  return queryTerms.reduce((score, term) => {
+    if (haystack.includes(term)) return score + 3;
+    if (haystackSet.has(term)) return score + 1;
+    return score;
+  }, 0);
+}
+
+function tokenize(text) {
+  const normalized = text.toLowerCase();
+  const latinTerms = normalized.match(/[a-z0-9]+/g) ?? [];
+  const cjkTerms = extractCjkTerms(normalized);
+  return [...latinTerms, ...cjkTerms].filter((term) => term.length > 0);
+}
+
+function extractCjkTerms(text) {
+  const sequences = text.match(/[\u4e00-\u9fff]+/g) ?? [];
+  const terms = [];
+
+  for (const sequence of sequences) {
+    for (let index = 0; index < sequence.length; index += 1) {
+      for (let length = 1; length <= 4; length += 1) {
+        const term = sequence.slice(index, index + length);
+        if (term.length === length) terms.push(term);
+      }
+    }
+  }
+
+  return terms;
+}
