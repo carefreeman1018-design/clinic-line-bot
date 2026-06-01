@@ -113,6 +113,17 @@ const DOCTOR_INFO_CASES = [
       }
     ],
     expectedTerms: ["羅詩修醫師", "男性/女性排尿障礙", "攝護腺水蒸氣消融手術", "性傳染病檢測/治療"]
+  },
+  {
+    question: "那其他醫師呢？不要再列羅詩修。",
+    conversationHistory: [
+      {
+        role: "assistant",
+        content: "羅詩修醫師主治專長：精雕微創包皮槍手術、無刀口結紮手術、男性/女性排尿障礙。"
+      }
+    ],
+    expectedTerms: ["其他醫師主治專長", "陳偉傑醫師", "李齊泰醫師", "吳致寬醫師", "陳嘉哲醫師"],
+    forbiddenTerms: ["羅詩修醫師"]
   }
 ];
 
@@ -382,9 +393,9 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     );
   }
 
-  for (const { question, conversationHistory, expectedTerms } of DOCTOR_INFO_CASES) {
+  for (const { question, conversationHistory, expectedTerms, forbiddenTerms = [] } of DOCTOR_INFO_CASES) {
     const reply = answerDoctorInfoQuestion(question, conversationHistory);
-    caseResults.push(checkReplyCase({ round, type: "doctor-info", question, reply, expectedTerms, issues }));
+    caseResults.push(checkReplyCase({ round, type: "doctor-info", question, reply, expectedTerms, forbiddenTerms, issues }));
   }
 
   for (const [question, expectedTerms] of LINE_OVERRIDE_QUESTIONS) {

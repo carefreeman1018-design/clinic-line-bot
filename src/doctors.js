@@ -86,6 +86,9 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   const doctor = resolveDoctor(message);
   const isSpecialtyQuestion = /專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message);
   const isDoctorFollowUp = Boolean(doctor) && /那|呢|其他|其它|別的/.test(message);
+  const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
+  if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
+
   const shouldAnswerSpecialty = isSpecialtyQuestion || (isDoctorFollowUp && hasRecentSpecialtyContext(conversationHistory));
 
   if (!shouldAnswerSpecialty) return null;
@@ -97,6 +100,20 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildOtherDoctorSpecialtyReply(message, conversationHistory) {
+  if (!/其他|其它|別的/.test(message) || !/醫師|醫生/.test(message)) return null;
+  if (!hasRecentSpecialtyContext(conversationHistory)) return null;
+
+  const excludedDoctor = /不要再列|不要列|不用列|排除/.test(message)
+    ? findLastMentionedDoctor(conversationHistory)
+    : null;
+
+  const doctors = Object.keys(DOCTOR_SPECIALTIES).filter((doctor) => doctor !== excludedDoctor);
+  const lines = doctors.map((doctor) => `${doctor}：${DOCTOR_SPECIALTIES[doctor].slice(0, 3).join("、")}`);
+
+  return ["以下列其他醫師主治專長摘要：", ...lines].join("\n");
 }
 
 function resolveDoctor(message) {
