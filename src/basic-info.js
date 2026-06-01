@@ -35,12 +35,8 @@ export function answerBasicInfoQuestion(message) {
     return "UroMe 是津久診所的英文識別。";
   }
 
-  if (asksOfficialLineContactBundle(normalized)) {
-    return [
-      `津久診所官方 LINE ID 是 @455twnga。`,
-      `加好友連結是 ${LINE_ADD_FRIEND_URL}。`,
-      "診所電話是 02-2511-9488。"
-    ].join("\n");
+  if (asksBasicInfoBundle(normalized)) {
+    return buildBasicInfoBundleReply(normalized);
   }
 
   if (/官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(normalized)) {
@@ -94,8 +90,42 @@ function asksWebsiteDistinction(message) {
   return /官網|官方網站|首頁/.test(message) && /線上掛號|掛號網址|appointment|預約連結/i.test(message);
 }
 
-function asksOfficialLineContactBundle(message) {
-  return /官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(message) && /電話|打給|聯絡|聯絡方式|幾號/.test(message);
+function asksBasicInfoBundle(message) {
+  const requestedItems = [
+    /官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i,
+    /電話|打給|聯絡|聯絡方式|幾號/,
+    /地址|位置|地點|幾樓|診所在哪|津久在哪|松江路在哪/,
+    /線上掛號|預約掛號|預約連結|掛號連結|appointment|掛號網址|掛號系統|線上預約|網路掛號/i
+  ].filter((pattern) => pattern.test(message)).length;
+
+  return requestedItems >= 2;
+}
+
+function buildBasicInfoBundleReply(message) {
+  const lines = [];
+
+  if (asksAddressInfo(message)) {
+    lines.push("診所地址是 104091 台北市中山區松江路 276 號 3 樓。");
+  }
+
+  if (/電話|打給|聯絡|聯絡方式|幾號/.test(message)) {
+    lines.push("診所電話是 02-2511-9488。");
+  }
+
+  if (/官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(message)) {
+    lines.push(`津久診所官方 LINE ID 是 @455twnga。`);
+    lines.push(`加好友連結是 ${LINE_ADD_FRIEND_URL}。`);
+  }
+
+  if (/線上掛號|預約掛號|預約連結|掛號連結|appointment|掛號網址|掛號系統|線上預約|網路掛號/i.test(message)) {
+    lines.push(`官網「立即預約」頁有「預約掛號」入口，線上掛號系統網址是 ${APPOINTMENT_URL}。`);
+  }
+
+  return lines.join("\n");
+}
+
+function asksAddressInfo(message) {
+  return /地址|位置|地點|幾樓|診所在哪|津久在哪|松江路在哪/.test(message);
 }
 
 function asksSurgeryAppointment(message) {
