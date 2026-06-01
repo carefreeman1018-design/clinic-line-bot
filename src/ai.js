@@ -16,7 +16,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
 
   if (!client) {
     const bestChunk = chunks[0];
-    return summarizeChunk(bestChunk.content);
+    return appendOfficialLinks(summarizeChunk(bestChunk.content), chunks);
   }
 
   const context = chunks
@@ -64,10 +64,14 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
     ]
   });
 
-  return response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
+  const reply = response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
+  return appendOfficialLinks(reply, chunks);
 }
 
 function summarizeChunk(content) {
+  const suggestedReply = content.match(/建議回覆：\s*\n+「([\s\S]*?)」/)?.[1]?.trim();
+  if (suggestedReply) return suggestedReply;
+
   return content
     .replace(/^#+\s+.+$/gm, "")
     .replace(/>.+$/gm, "")
@@ -82,4 +86,19 @@ function getTaipeiToday() {
     month: "2-digit",
     day: "2-digit"
   }).format(new Date());
+}
+
+function appendOfficialLinks(reply, chunks) {
+  const urls = extractOfficialWebsiteUrls(chunks);
+  if (urls.length === 0) return reply;
+
+  const label = urls.length === 1 ? "官網介紹：" : "官網介紹：";
+  return `${reply}\n\n${label}\n${urls.join("\n")}`;
+}
+
+function extractOfficialWebsiteUrls(chunks) {
+  const urls = chunks.flatMap((chunk) => chunk.sourceUrls ?? []);
+  return [...new Set(urls)]
+    .filter((url) => /^https:\/\/(www\.)?uromeeme\.com\//.test(url))
+    .slice(0, 2);
 }

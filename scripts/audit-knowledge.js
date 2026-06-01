@@ -449,6 +449,26 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     caseResults.push(checkReplyCase({ round, type: "medical-escalation", question, reply, expectedTerms, issues }));
   }
 
+  for (const question of ["我想問割包皮", "PEP 72小時內可以諮詢嗎", "低能量震波適合嗎"]) {
+    const chunksForQuestion = retrieveRelevantChunks(chunks, question, 4);
+    const reply = await draftReply({
+      message: question,
+      chunks: chunksForQuestion,
+      shouldEscalate: false
+    });
+
+    caseResults.push(
+      checkReplyCase({
+        round,
+        type: "official-link-reply",
+        question,
+        reply,
+        expectedTerms: ["官網介紹：", "https://uromeeme.com/"],
+        issues
+      })
+    );
+  }
+
   for (const question of buildGeneratedQuestionList()) {
     const chunksForQuestion = retrieveRelevantChunks(chunks, question, 4);
     const reply =

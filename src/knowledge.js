@@ -74,6 +74,7 @@ export function retrieveRelevantChunks(chunks, query, limit = 4) {
 }
 
 function splitMarkdown(raw, source) {
+  const sourceUrls = extractUrls(raw);
   const sections = raw
     .split(/\n(?=#{1,6}\s+)/g)
     .map((section) => section.trim())
@@ -84,10 +85,15 @@ function splitMarkdown(raw, source) {
     return {
       id: `${source}:${index + 1}`,
       source,
+      sourceUrls,
       title,
       content
     };
   });
+}
+
+function extractUrls(text) {
+  return [...new Set(text.match(/https?:\/\/[^\s)]+/g) ?? [])];
 }
 
 function scoreChunk(chunk, queryTerms) {
