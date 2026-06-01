@@ -3,6 +3,7 @@ import express from "express";
 import { draftReply } from "./ai.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
+import { answerFixedScheduleQuestion } from "./schedule.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -44,11 +45,7 @@ app.post("/debug/draft-reply", async (req, res) => {
 
   const chunks = await loadKnowledge();
   const relevantChunks = retrieveRelevantChunks(chunks, message);
-  const reply = await draftReply({
-    message,
-    chunks: relevantChunks,
-    shouldEscalate: shouldEscalate(message)
-  });
+  const reply = await buildReply(message, relevantChunks);
 
   res.json({
     reply,
@@ -80,11 +77,7 @@ async function handleLineEvent(event) {
     const message = event.message.text.trim();
     const chunks = await loadKnowledge();
     const relevantChunks = retrieveRelevantChunks(chunks, message);
-    const reply = await draftReply({
-      message,
-      chunks: relevantChunks,
-      shouldEscalate: shouldEscalate(message)
-    });
+    const reply = await buildReply(message, relevantChunks);
 
     await safeReplyText(event.replyToken, reply);
   } catch (error) {
@@ -94,6 +87,17 @@ async function handleLineEvent(event) {
       "不好意思，系統剛剛沒有順利查到資料。請您稍後再試，或留下問題讓診所人員協助回覆。"
     );
   }
+}
+
+async function buildReply(message, relevantChunks) {
+  const fixedScheduleReply = answerFixedScheduleQuestion(message);
+  if (fixedScheduleReply) return fixedScheduleReply;
+
+  return draftReply({
+    message,
+    chunks: relevantChunks,
+    shouldEscalate: shouldEscalate(message)
+  });
 }
 
 async function safeReplyText(replyToken, message) {
