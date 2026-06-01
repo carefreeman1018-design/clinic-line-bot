@@ -6,14 +6,16 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --env-file=.env src/index.js",
-    "check": "node --check src/index.js && node --check src/knowledge.js && node --check src/ai.js && node --check src/line.js && node --check src/schedule.js && node --check scripts/sync-line-voom.js && node --check scripts/preflight.js",
+    "check": "node --check src/index.js && node --check src/knowledge.js && node --check src/ai.js && node --check src/conversation.js && node --check src/line.js && node --check src/schedule.js && node --check scripts/sync-line-voom.js && node --check scripts/preflight.js && node --check scripts/audit-knowledge.js",
     "preflight": "node --env-file=.env scripts/preflight.js",
+    "audit:knowledge": "node scripts/audit-knowledge.js",
     "sync:voom": "node scripts/sync-line-voom.js"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "openai": "^4.77.0"

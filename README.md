@@ -54,6 +54,33 @@ LINE_VOOM_URL="https://linevoom.line.me/user/..." npm run sync:voom
 
 建議正式部署後用 Zeabur Cron、GitHub Actions 或另一個排程服務每天同步一次。若 LINE VOOM 改版或暫時抓不到，bot 仍會保留 `data/doctor-schedule.md` 的人工公告。
 
+## Supabase 對話記憶
+
+若要讓 bot 記得同一位 LINE 使用者先前的對話，請在 Supabase SQL Editor 建立資料表：
+
+```sql
+create table if not exists line_conversation_messages (
+  id bigserial primary key,
+  line_user_id text not null,
+  role text not null check (role in ('user', 'assistant')),
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists line_conversation_messages_user_time_idx
+on line_conversation_messages (line_user_id, created_at, id);
+```
+
+接著在 Zeabur 或 `.env` 設定：
+
+```text
+SUPABASE_URL=你的_Supabase_Project_URL
+SUPABASE_SERVICE_ROLE_KEY=你的_Supabase_Service_Role_Key
+SUPABASE_CONVERSATION_TABLE=line_conversation_messages
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。設定完成後，bot 會依 LINE `userId` 讀取該使用者全部歷史對話，回覆後也會把本輪使用者訊息與 bot 回覆寫入 Supabase。
+
 ## 本機測試
 
 ```bash
@@ -85,6 +112,9 @@ npm run preflight
    - `LINE_CHANNEL_ACCESS_TOKEN`
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL`
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `SUPABASE_CONVERSATION_TABLE`
    - `LINE_VOOM_URL`
    - `LINE_VOOM_OUTPUT`
    - `LINE_VOOM_KEYWORDS`

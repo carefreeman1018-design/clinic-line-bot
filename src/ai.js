@@ -2,27 +2,33 @@ import OpenAI from "openai";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
-const TODAY = "2026-06-01";
 
 const client = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
-export async function draftReply({ message, chunks, shouldEscalate }) {
+export async function draftReply({ message, chunks, shouldEscalate, conversationHistory = [] }) {
   if (shouldEscalate) {
-    return "您好，這個狀況需要醫師看過實際情形才比較安全判斷。建議您直接預約門診，或留下方便聯絡的方式，我們請診所人員協助安排。";
+    return "這需要醫師看診判斷。請先預約門診，或留下聯絡方式讓診所協助。";
   }
 
   if (chunks.length === 0) {
-    return "您好，這個問題我目前沒有查到診所已公告的明確資訊。為了避免回覆不準確，建議您留下想詢問的重點，我們請診所人員確認後再回覆您。";
+    return "目前查不到明確公告。請留下問題重點，診所人員確認後回覆。";
   }
 
   if (!client) {
     const bestChunk = chunks[0];
-    return `您好，根據目前診所資訊：\n\n${summarizeChunk(bestChunk.content)}\n\n若您要確認個人狀況或預約門診，也可以留下方便的時段，我們協助您安排。`;
+    return summarizeChunk(bestChunk.content);
   }
 
   const context = chunks
     .map((chunk) => `【${chunk.title}】\n${chunk.content}`)
     .join("\n\n---\n\n");
+
+  const historyMessages = conversationHistory
+    .filter((historyMessage) => ["user", "assistant"].includes(historyMessage.role))
+    .map((historyMessage) => ({
+      role: historyMessage.role,
+      content: historyMessage.content
+    }));
 
   const response = await client.chat.completions.create({
     model: OPENAI_MODEL,
@@ -32,17 +38,23 @@ export async function draftReply({ message, chunks, shouldEscalate }) {
         role: "system",
         content: [
           "你是泌尿科診所 LINE 官方帳號的客服助理。",
-          "請用溫和、專業、簡潔、像醫師本人親切回覆病人的語氣。",
+          "請用溫和、專業、精簡的語氣回答。",
+          "短答優先：一般問題最多 1 到 2 句；只有使用者要求詳細說明時才列點。",
+          "不要使用多餘寒暄或結尾祝福，例如「您好」、「感謝您的訊息」、「祝您健康平安」、「若有其他問題歡迎詢問」。",
+          "不要重複提醒同一件事；能直接回答就直接回答。",
           "只能根據提供的診所知識庫內容回答，不要編造資訊。",
-          `今天日期是 ${TODAY}。`,
+          "你可以參考先前對話來理解代名詞、延續問題與使用者已提供的資訊。",
+          "如果先前對話與目前診所知識庫衝突，請以目前提供的診所知識庫為準。",
+          `今天日期是 ${getTaipeiToday()}。`,
           "使用者詢問固定每週門診時，優先依官網固定門診表回答；不要拿已過期或不同年份的 LINE VOOM 公告回答固定門診問題。",
           "LINE VOOM 的休診、公休、停診公告只有在使用者問到同一個日期、同一位醫師或同一段連假時才可覆蓋固定門診表。",
           "如果 LINE VOOM 公告日期已經過去，請明確說那是過去公告，不要把它當成未來或一般週期性門診狀態。",
           "不得診斷、開藥、判斷個人病情、解讀個人檢查報告。",
-          "若資料不足，請誠實說目前無法確認，並建議轉真人或預約門診。",
-          "回答使用繁體中文，長度以 LINE 訊息好讀為主。"
+          "若資料不足，請簡短說目前無法確認，並建議轉真人或預約門診。",
+          "回答使用繁體中文，適合 LINE 閱讀。"
         ].join("\n")
       },
+      ...historyMessages,
       {
         role: "user",
         content: `使用者問題：${message}\n\n診所知識庫：\n${context}`
@@ -50,7 +62,7 @@ export async function draftReply({ message, chunks, shouldEscalate }) {
     ]
   });
 
-  return response.choices[0]?.message?.content?.trim() || "您好，這個問題我目前無法確認，建議由診所人員協助回覆會比較準確。";
+  return response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
 }
 
 function summarizeChunk(content) {
@@ -58,5 +70,14 @@ function summarizeChunk(content) {
     .replace(/^#+\s+.+$/gm, "")
     .replace(/>.+$/gm, "")
     .trim()
-    .slice(0, 700);
+    .slice(0, 240);
+}
+
+function getTaipeiToday() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
 }

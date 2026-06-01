@@ -3,6 +3,22 @@ import path from "node:path";
 
 const KNOWLEDGE_DIR = path.join(process.cwd(), "data");
 
+const STOP_TERMS = new Set([
+  "我想",
+  "想問",
+  "津久",
+  "診所",
+  "你們",
+  "有沒",
+  "沒有",
+  "有做",
+  "可以",
+  "在你",
+  "諮詢",
+  "請問",
+  "您好"
+]);
+
 const MEDICAL_ESCALATION_PATTERNS = [
   /血尿|尿血|發燒|劇痛|很痛|疼痛|痛痛|不舒服|排不出尿|尿不出來|傷口|感染|腫起來|化膿/,
   /報告|檢查結果|癌|腫瘤|攝護腺指數|PSA|超音波|切片/,
@@ -62,11 +78,12 @@ function splitMarkdown(raw, source) {
 
 function scoreChunk(chunk, queryTerms) {
   const haystack = `${chunk.title}\n${chunk.content}`;
+  const normalizedHaystack = haystack.toLowerCase();
   const haystackTerms = tokenize(haystack);
   const haystackSet = new Set(haystackTerms);
 
   return queryTerms.reduce((score, term) => {
-    if (haystack.includes(term)) return score + 3;
+    if (normalizedHaystack.includes(term)) return score + 3;
     if (haystackSet.has(term)) return score + 1;
     return score;
   }, 0);
@@ -74,9 +91,10 @@ function scoreChunk(chunk, queryTerms) {
 
 function tokenize(text) {
   const normalized = text.toLowerCase();
+  const dateTerms = normalized.match(/\b\d{1,2}\/\d{1,2}\b/g) ?? [];
   const latinTerms = normalized.match(/[a-z0-9]+/g) ?? [];
   const cjkTerms = extractCjkTerms(normalized);
-  return [...latinTerms, ...cjkTerms].filter((term) => term.length > 0);
+  return [...dateTerms, ...latinTerms, ...cjkTerms].filter((term) => term.length > 0 && !STOP_TERMS.has(term));
 }
 
 function extractCjkTerms(text) {
@@ -85,7 +103,7 @@ function extractCjkTerms(text) {
 
   for (const sequence of sequences) {
     for (let index = 0; index < sequence.length; index += 1) {
-      for (let length = 1; length <= 4; length += 1) {
+      for (let length = 2; length <= 4; length += 1) {
         const term = sequence.slice(index, index + length);
         if (term.length === length) terms.push(term);
       }

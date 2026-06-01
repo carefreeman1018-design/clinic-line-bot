@@ -1,6 +1,11 @@
 import "dotenv/config";
 import express from "express";
 import { draftReply } from "./ai.js";
+import {
+  isConversationMemoryConfigured,
+  loadConversationHistory,
+  rememberConversationExchange
+} from "./conversation.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
 import { answerFixedScheduleQuestion } from "./schedule.js";
@@ -33,7 +38,8 @@ app.get("/health", (_req, res) => {
   res.json({
     ok: true,
     lineConfigured: Boolean(channelSecret && channelAccessToken),
-    openaiConfigured: Boolean(process.env.OPENAI_API_KEY)
+    openaiConfigured: Boolean(process.env.OPENAI_API_KEY),
+    conversationMemoryConfigured: isConversationMemoryConfigured()
   });
 });
 
@@ -45,12 +51,15 @@ app.post("/debug/draft-reply", async (req, res) => {
   const message = String(req.body.message ?? "").trim();
   if (!message) return res.status(400).json({ error: "message is required" });
 
+  const lineUserId = String(req.body.lineUserId ?? "").trim();
+  const conversationHistory = await loadConversationHistory(lineUserId);
   const chunks = await loadKnowledge();
-  const relevantChunks = retrieveRelevantChunks(chunks, message);
-  const reply = await buildReply(message, relevantChunks);
+  const relevantChunks = retrieveRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
+  const reply = await buildReply(message, relevantChunks, conversationHistory);
 
   res.json({
     reply,
+    conversationHistoryCount: conversationHistory.length,
     matches: relevantChunks.map((chunk) => ({
       source: chunk.source,
       title: chunk.title,
@@ -81,27 +90,27 @@ async function handleLineEvent(event) {
     const followUpReply = buildAssistanceFollowUpReply(userId, message);
     if (followUpReply) {
       await safeReplyText(event.replyToken, followUpReply);
+      await rememberConversationExchange(userId, message, followUpReply);
       return;
     }
 
+    const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
-    const relevantChunks = retrieveRelevantChunks(chunks, message);
-    const reply = await buildReply(message, relevantChunks);
+    const relevantChunks = retrieveRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
+    const reply = await buildReply(message, relevantChunks, conversationHistory);
     rememberAssistanceIfNeeded(userId, message);
 
     await safeReplyText(event.replyToken, reply);
+    await rememberConversationExchange(userId, message, reply);
   } catch (error) {
     console.error(error);
-    await safeReplyText(
-      event.replyToken,
-      "不好意思，系統剛剛沒有順利查到資料。請您稍後再試，或留下問題讓診所人員協助回覆。"
-    );
+    await safeReplyText(event.replyToken, "系統暫時查不到資料，請稍後再試或留下問題。");
   }
 }
 
-async function buildReply(message, relevantChunks) {
+async function buildReply(message, relevantChunks, conversationHistory = []) {
   if (shouldEscalate(message)) {
-    return "您好，這個狀況需要醫師看過實際情形才比較安全判斷。建議您儘快預約門診，或留下姓名、電話與方便聯絡/看診的時段，我們請診所人員協助安排。\n\n如果有劇烈疼痛、發燒、完全排不出尿、大量出血或症狀快速惡化，請不要等 LINE 回覆，建議直接就近急診或立即就醫。";
+    return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、完全排不出尿或大量出血，請立即就醫。";
   }
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message);
@@ -110,7 +119,8 @@ async function buildReply(message, relevantChunks) {
   return draftReply({
     message,
     chunks: relevantChunks,
-    shouldEscalate: shouldEscalate(message)
+    shouldEscalate: shouldEscalate(message),
+    conversationHistory
   });
 }
 
@@ -128,7 +138,7 @@ function buildAssistanceFollowUpReply(userId, message) {
   if (!isAffirmative(message)) return null;
 
   pendingAssistanceByUser.delete(userId);
-  return "好的，我們請診所人員協助您。\n\n請您留下：\n1. 姓名\n2. 聯絡電話\n3. 方便聯絡或想預約的時段\n4. 簡短狀況，例如疼痛位置、多久了、是否有發燒或血尿\n\n若目前疼痛劇烈、發燒、完全排不出尿或大量出血，請先直接就近急診或立即就醫。";
+  return "請留下姓名、電話、方便聯絡/預約時段、簡短狀況。若劇烈疼痛、發燒、完全排不出尿或大量出血，請立即就醫。";
 }
 
 function rememberAssistanceIfNeeded(userId, message) {
@@ -141,6 +151,14 @@ function rememberAssistanceIfNeeded(userId, message) {
 
 function isAffirmative(message) {
   return /^(好|好的|可以|需要|要|麻煩|麻煩你|請幫我|幫我|ok|OK|yes|Yes|好啊|可以啊)[。！!.\s]*$/.test(message.trim());
+}
+
+function buildContextualQuery(message, conversationHistory) {
+  const historyText = conversationHistory
+    .map((historyMessage) => historyMessage.content)
+    .join("\n");
+
+  return [historyText, message].filter(Boolean).join("\n");
 }
 
 async function safeReplyText(replyToken, message) {
