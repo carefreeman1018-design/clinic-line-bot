@@ -123,7 +123,7 @@ async function buildReply(message, relevantChunks, conversationHistory = []) {
     return "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
   }
 
-  const fixedScheduleReply = answerFixedScheduleQuestion(message);
+  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return fixedScheduleReply;
 
   return draftReply({

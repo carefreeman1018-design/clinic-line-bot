@@ -34,7 +34,22 @@ const FIXED_SCHEDULE_QUESTIONS = [
   ["週三晚上有泌尿科嗎", ["陳嘉哲醫師", "不是一般泌尿科門診"]],
   ["週六晚上有看診嗎", ["休診"]],
   ["羅醫生什麼時候看診？", ["羅詩修醫師", "週一晚診", "週二午診", "週四早診", "週五午診", "週六早診"]],
-  ["羅世修醫生什麼時候看診？", ["沒有「羅世修醫師」", "如果您是指「羅詩修醫師」", "週一晚診", "週二午診", "週四早診", "週五午診", "週六早診"]]
+  ["羅世修醫生什麼時候看診？", ["沒有「羅世修醫師」", "如果您是指「羅詩修醫師」", "週一晚診", "週二午診", "週四早診", "週五午診", "週六早診"]],
+  ["有哪些醫生？", ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師"]]
+];
+
+const CONTEXTUAL_SCHEDULE_CASES = [
+  {
+    question: "喔喔那其他醫生呢",
+    conversationHistory: [
+      {
+        role: "assistant",
+        content: "羅詩修醫師固定門診：\n週一晚診（18:00-20:30）\n週二午診（13:30-17:00）"
+      }
+    ],
+    expectedTerms: ["其他固定門診醫師", "陳偉傑醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師"],
+    forbiddenTerms: ["羅詩修醫師"]
+  }
 ];
 
 const LINE_OVERRIDE_QUESTIONS = [
@@ -120,6 +135,7 @@ const SCHEDULE_CASES = [
   ["週日有看診嗎？", ["沒有一般門診時段"], []],
   ["羅醫生什麼時候看診？", ["羅詩修醫師", "週一晚診", "週二午診", "週四早診", "週五午診", "週六早診"], []],
   ["羅世修醫生什麼時候看診？", ["沒有「羅世修醫師」", "如果您是指「羅詩修醫師」", "週一晚診", "週二午診", "週四早診", "週五午診", "週六早診"], []],
+  ["有哪些醫生？", ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師"], []],
   ["今天晚上誰看診？", ["今天（週一）", "羅詩修醫師"], []],
   ["明天下午有醫師嗎？", ["明天（週二）", "羅詩修醫師"], []],
   ["後天早上可以看診嗎？", ["後天（週三）", "手術時段"], []]
@@ -234,6 +250,25 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
     }
   }
 
+  for (const { question, conversationHistory, expectedTerms, forbiddenTerms = [] } of CONTEXTUAL_SCHEDULE_CASES) {
+    const reply = answerFixedScheduleQuestion(
+      question,
+      new Date("2026-06-01T00:00:00+08:00"),
+      conversationHistory
+    );
+    caseResults.push(
+      checkReplyCase({
+        round,
+        type: "contextual-schedule",
+        question,
+        reply,
+        expectedTerms,
+        forbiddenTerms,
+        issues
+      })
+    );
+  }
+
   for (const [question, expectedTerms] of LINE_OVERRIDE_QUESTIONS) {
     const fixedReply = answerFixedScheduleQuestion(question, new Date("2026-06-01T00:00:00+08:00"));
     if (fixedReply) {
@@ -320,6 +355,7 @@ async function runRound({ round, clinicInfo, doctorSchedule, chunks }) {
       officialServiceTerms: OFFICIAL_SERVICE_TERMS.length,
       staleClaimTerms: STALE_CLAIM_TERMS.length,
       fixedScheduleQuestions: FIXED_SCHEDULE_QUESTIONS.length,
+      contextualScheduleQuestions: CONTEXTUAL_SCHEDULE_CASES.length,
       lineOverrideQuestions: LINE_OVERRIDE_QUESTIONS.length,
       expandedQuestionCases: caseResults.length,
       generatedReplyChecks: buildGeneratedQuestionList().length
@@ -345,6 +381,7 @@ function buildGeneratedQuestionList() {
     ...buildServiceCases().map(({ question }) => question),
     ...SCHEDULE_CASES.map(([question]) => question),
     ...FIXED_SCHEDULE_QUESTIONS.map(([question]) => question),
+    ...CONTEXTUAL_SCHEDULE_CASES.map(({ question }) => question),
     ...LINE_OVERRIDE_QUESTIONS.map(([question]) => question),
     ...LINE_RETRIEVAL_CASES.map(({ question }) => question),
     ...ESCALATION_CASES

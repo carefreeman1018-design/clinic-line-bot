@@ -57,6 +57,8 @@ const DOCTOR_ALIASES = [
   ["陳嘉哲醫師", /陳嘉哲/]
 ];
 
+const FIXED_DOCTORS = ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師"];
+
 const DOCTOR_MISSPELLINGS = [
   {
     pattern: /羅世修/,
@@ -68,7 +70,7 @@ const DOCTOR_MISSPELLINGS = [
 const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|預約/;
 const TEMPORARY_CHANGE_CONFIRMATION = "臨時異動請以 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。";
 
-export function answerFixedScheduleQuestion(message, now = new Date()) {
+export function answerFixedScheduleQuestion(message, now = new Date(), conversationHistory = []) {
   if (!SCHEDULE_INTENT_PATTERN.test(message)) return null;
   if (hasExplicitDate(message) && !hasRelativeDay(message)) return null;
 
@@ -76,6 +78,8 @@ export function answerFixedScheduleQuestion(message, now = new Date()) {
   const period = PERIOD_ALIASES.find(([, pattern]) => pattern.test(message))?.[0];
   const doctor = resolveRequestedDoctor(message);
   const misspelledDoctor = resolveMisspelledDoctor(message);
+  const doctorListReply = buildDoctorListReply(message, conversationHistory);
+  if (!day && doctorListReply) return doctorListReply;
   if (!day && misspelledDoctor) return buildMisspelledDoctorScheduleReply(misspelledDoctor);
   if (!day && doctor) return buildDoctorScheduleReply(doctor);
   if (!day) return null;
@@ -120,6 +124,34 @@ function resolveRequestedDoctor(message) {
 
 function resolveMisspelledDoctor(message) {
   return DOCTOR_MISSPELLINGS.find(({ pattern }) => pattern.test(message)) ?? null;
+}
+
+function buildDoctorListReply(message, conversationHistory) {
+  if (!/哪些醫師|哪些醫生|有誰|哪幾位|醫師名單|醫生名單|其他醫師|其他醫生|別的醫師|別的醫生/.test(message)) {
+    return null;
+  }
+
+  const excludedDoctor = /其他|其它|別的/.test(message) ? findLastMentionedDoctor(conversationHistory) : null;
+  const doctors = FIXED_DOCTORS.filter((doctor) => doctor !== excludedDoctor);
+  const doctorText = doctors
+    .map((doctor) => (doctor === "陳嘉哲醫師" ? "陳嘉哲醫師（肛門直腸外科）" : doctor))
+    .join("、");
+
+  if (excludedDoctor && doctors.length > 0) {
+    return `其他固定門診醫師有：${doctorText}。想查哪位的時段，直接打醫師名字即可。`;
+  }
+
+  return `固定門診表目前有：${doctorText}。想查哪位的時段，直接打醫師名字即可。`;
+}
+
+function findLastMentionedDoctor(conversationHistory) {
+  for (const historyMessage of [...conversationHistory].reverse()) {
+    const content = historyMessage.content ?? "";
+    const doctor = FIXED_DOCTORS.find((name) => content.includes(name));
+    if (doctor) return doctor;
+  }
+
+  return null;
 }
 
 function hasExplicitDate(message) {
