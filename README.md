@@ -7,8 +7,9 @@
 1. LINE Developers 的 `Channel secret`
 2. LINE Developers 的 `Channel access token`
 3. OpenAI API key，可先不填，但填了回答會更自然
-4. 診所/官方帳號資訊，放到 `data/clinic-info.md`
-5. 醫師門診、休診與臨時異動，放到 `data/doctor-schedule.md`
+4. 可管理 bot 開關的 LINE 使用者 ID，設定到 `LINE_ADMIN_USER_IDS`
+5. 診所/官方帳號資訊，放到 `data/clinic-info.md`
+6. 醫師門診、休診與臨時異動，放到 `data/doctor-schedule.md`
 
 ## 更新醫師門診與休診
 
@@ -54,6 +55,21 @@ LINE_VOOM_URL="https://linevoom.line.me/user/..." npm run sync:voom
 
 建議正式部署後用 Zeabur Cron、GitHub Actions 或另一個排程服務每天同步一次。若 LINE VOOM 改版或暫時抓不到，bot 仍會保留 `data/doctor-schedule.md` 的人工公告。
 
+目前 bot 啟動後也會自動排程每天同步一次 LINE VOOM，預設為台北時間 03:00。可用環境變數調整：
+
+```text
+LINE_VOOM_SYNC_ENABLED=true
+LINE_VOOM_SYNC_TIME=03:00
+```
+
+若要暫停內建排程，設定：
+
+```text
+LINE_VOOM_SYNC_ENABLED=false
+```
+
+同步失敗時只會寫入 log，不會讓 webhook 服務停止；下一天會再自動嘗試。
+
 ## Supabase 對話記憶
 
 若要讓 bot 記得同一位 LINE 使用者先前的對話，請在 Supabase SQL Editor 建立資料表：
@@ -80,6 +96,50 @@ SUPABASE_CONVERSATION_TABLE=line_conversation_messages
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。設定完成後，bot 會依 LINE `userId` 讀取該使用者全部歷史對話，回覆後也會把本輪使用者訊息與 bot 回覆寫入 Supabase。
+
+## 醫生開關 bot
+
+若要讓醫生或櫃台能直接用 LINE 控制 bot 是否回覆，請先在環境變數設定管理員白名單：
+
+```text
+LINE_ADMIN_USER_IDS=Uxxxxxxxx,Uyyyyyyyy
+```
+
+多個 LINE userId 用逗號分隔。只有白名單內的帳號可以使用管理指令：
+
+```text
+bot 關閉
+bot 開啟
+bot 狀態
+```
+
+也可以使用：
+
+```text
+機器人關閉
+機器人開啟
+機器人狀態
+```
+
+當 bot 關閉時，一般病人傳訊息不會收到 bot 自動回覆，也不會觸發 OpenAI 或寫入新的 bot 回覆紀錄，方便真人接手。
+
+正式部署建議使用 Supabase 保存開關狀態，避免服務重啟後回到預設開啟。請在 Supabase SQL Editor 建立設定表：
+
+```sql
+create table if not exists bot_settings (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamptz not null default now()
+);
+```
+
+若要自訂表名，可設定：
+
+```text
+SUPABASE_SETTINGS_TABLE=bot_settings
+```
+
+沒有設定 Supabase 時，bot 開關只會存在目前執行中的記憶體，服務重啟後會回到開啟。
 
 ## 本機測試
 
@@ -110,14 +170,18 @@ npm run preflight
 3. 設定環境變數：
    - `LINE_CHANNEL_SECRET`
    - `LINE_CHANNEL_ACCESS_TOKEN`
+   - `LINE_ADMIN_USER_IDS`
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL`
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `SUPABASE_CONVERSATION_TABLE`
+   - `SUPABASE_SETTINGS_TABLE`
    - `LINE_VOOM_URL`
    - `LINE_VOOM_OUTPUT`
    - `LINE_VOOM_KEYWORDS`
+   - `LINE_VOOM_SYNC_ENABLED`
+   - `LINE_VOOM_SYNC_TIME`
 4. 部署成功後，取得 Zeabur 的公開網址。
 5. 到 LINE Developers > Messaging API > Webhook URL，填入：
 

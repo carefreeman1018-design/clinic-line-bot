@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { draftReply } from "../src/ai.js";
+import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerDoctorInfoQuestion } from "../src/doctors.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate as shouldEscalateMessage } from "../src/knowledge.js";
 import { answerFixedScheduleQuestion } from "../src/schedule.js";
@@ -144,6 +145,34 @@ const BASIC_INFO_CASES = [
     question: "開車去附近可以停車嗎？",
     source: "clinic-info.md",
     expectedTerms: ["收費停車場"]
+  }
+];
+
+const BASIC_INFO_REPLY_CASES = [
+  ["我人在松江路附近，診所地址的郵遞區號是 104091 嗎？", ["104091", "松江路 276 號 3 樓"]],
+  ["如果從行天宮站 4 號出口出來，官網說步行大約多久？", ["行天宮站", "4 號出口", "步行約 1 分鐘"]],
+  ["診所英文識別 UroMe 是不是官方資料裡寫的？", ["UroMe", "英文識別"]],
+  ["掛號系統在哪", ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"]],
+  ["如何預約手術", ["https://lin.ee/qDUYijn", "https://appointment.uromeeme.inncom.cloud/", "手術預約"]],
+  ["官網首頁和線上掛號網址是同一個網站嗎？請不要混在一起。", ["https://uromeeme.com/", "https://appointment.uromeeme.inncom.cloud/", "不同"]],
+  ["官方 LINE ID 是 @455twnga，VOOM 貼文又寫 @uromeeme，客服該怎麼回答？", ["@455twnga", "https://lin.ee/qDUYijn", "@uromeeme"]]
+];
+
+const PROCEDURE_RETRIEVAL_CASES = [
+  {
+    question: "我想問割包皮",
+    source: "circumcision.md",
+    expectedTerms: ["雙主治增粗包皮槍手術", "包皮槍 5.0", "包皮環切手術", "術前評估"]
+  },
+  {
+    question: "包皮過長需要割嗎？",
+    source: "circumcision.md",
+    expectedTerms: ["包皮過長", "造成困擾", "由泌尿科醫師看診評估"]
+  },
+  {
+    question: "小孩包莖可以處理嗎？",
+    source: "circumcision.md",
+    expectedTerms: ["包皮或龜頭反覆發炎", "嵌頓性包莖", "醫師專業診斷"]
   }
 ];
 
@@ -372,6 +401,15 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     caseResults.push(checkRetrievalCase({ round, type: "basic-info", chunks, issues, ...testCase }));
   }
 
+  for (const [question, expectedTerms] of BASIC_INFO_REPLY_CASES) {
+    const reply = answerBasicInfoQuestion(question);
+    caseResults.push(checkReplyCase({ round, type: "basic-info-reply", question, reply, expectedTerms, issues }));
+  }
+
+  for (const testCase of PROCEDURE_RETRIEVAL_CASES) {
+    caseResults.push(checkRetrievalCase({ round, type: "procedure-retrieval", chunks, issues, ...testCase }));
+  }
+
   for (const question of GREETING_NO_RETRIEVAL_CASES) {
     const matches = retrieveRelevantChunks(chunks, question, 4);
     if (matches.length > 0) {
@@ -414,6 +452,7 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
   for (const question of buildGeneratedQuestionList()) {
     const chunksForQuestion = retrieveRelevantChunks(chunks, question, 4);
     const reply =
+      answerBasicInfoQuestion(question) ||
       answerFixedScheduleQuestion(question, new Date("2026-06-01T00:00:00+08:00")) ||
       (await draftReply({
         message: question,
@@ -457,6 +496,7 @@ function buildServiceCases() {
 function buildGeneratedQuestionList() {
   return [
     ...BASIC_INFO_CASES.map(({ question }) => question),
+    ...PROCEDURE_RETRIEVAL_CASES.map(({ question }) => question),
     ...OFFICIAL_SERVICE_TERMS.map((term) => `診所有提供${term}嗎？`),
     ...buildServiceCases().map(({ question }) => question),
     ...SCHEDULE_CASES.map(([question]) => question),

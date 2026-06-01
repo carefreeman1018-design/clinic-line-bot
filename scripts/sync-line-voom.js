@@ -14,14 +14,11 @@ const DEFAULT_KEYWORDS = [
   "連假"
 ];
 
-const voomUrl = process.env.LINE_VOOM_URL || DEFAULT_VOOM_URL;
-const outputPath = process.env.LINE_VOOM_OUTPUT || DEFAULT_OUTPUT_PATH;
-const keywords = (process.env.LINE_VOOM_KEYWORDS || DEFAULT_KEYWORDS.join(","))
-  .split(",")
-  .map((keyword) => keyword.trim())
-  .filter(Boolean);
-
-async function main() {
+export async function syncLineVoomAnnouncements({
+  voomUrl = process.env.LINE_VOOM_URL || DEFAULT_VOOM_URL,
+  outputPath = process.env.LINE_VOOM_OUTPUT || DEFAULT_OUTPUT_PATH,
+  keywords = parseKeywords(process.env.LINE_VOOM_KEYWORDS)
+} = {}) {
   const html = await fetchText(voomUrl);
   const nextData = parseNextData(html);
   const posts = extractPosts(nextData);
@@ -41,7 +38,15 @@ async function main() {
   });
 
   await fs.writeFile(outputPath, markdown, "utf8");
-  console.log(`Wrote ${announcementPosts.length} LINE VOOM announcement(s) to ${outputPath}`);
+  return {
+    outputPath,
+    postCount: announcementPosts.length
+  };
+}
+
+async function main() {
+  const result = await syncLineVoomAnnouncements();
+  console.log(`Wrote ${result.postCount} LINE VOOM announcement(s) to ${result.outputPath}`);
 }
 
 async function fetchText(url) {
@@ -114,6 +119,13 @@ function matchesKeywords(text, keywordList) {
   return keywordList.some((keyword) => text.includes(keyword));
 }
 
+function parseKeywords(value) {
+  return (value || DEFAULT_KEYWORDS.join(","))
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+}
+
 function normalizeText(text) {
   return text
     .replace(/\r\n/g, "\n")
@@ -170,7 +182,9 @@ function formatDateTime(date) {
   }).format(date);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

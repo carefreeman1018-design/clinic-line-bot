@@ -1,20 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "./supabase.js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const CONVERSATION_TABLE = process.env.SUPABASE_CONVERSATION_TABLE || "line_conversation_messages";
 const MAX_IN_MEMORY_MESSAGES_PER_USER = 40;
 const inMemoryConversationByUser = new Map();
-
-const supabase =
-  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
-    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false
-        }
-      })
-    : null;
 
 export function isConversationMemoryConfigured() {
   return Boolean(supabase);

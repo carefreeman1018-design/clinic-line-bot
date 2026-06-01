@@ -4,6 +4,7 @@
 
 資料來源：
 - 官網：https://uromeeme.com/
+- 官網立即預約頁：https://uromeeme.com/contact-us/
 - 線上掛號：https://appointment.uromeeme.inncom.cloud/
 - LINE 官方帳號：https://lin.ee/qDUYijn
 
@@ -45,9 +46,13 @@ LINE 加好友連結：https://lin.ee/qDUYijn
 
 ## 看診與預約
 
-目前官網提供線上掛號入口，患者可透過線上掛號系統預約。
+官網「立即預約」頁在醫師服務地點與頁尾服務區塊提供兩個入口：「線上諮詢」會連到 LINE，「預約掛號」會連到線上掛號系統。
 
 線上掛號網址：https://appointment.uromeeme.inncom.cloud/
+
+官網公告提到，若需要快速通關服務（當天看診當天手術），例如割包皮、結紮、100% 匿名篩檢、疫苗接種等，請加 LINE 預約。
+
+LINE 加好友連結：https://lin.ee/qDUYijn
 
 若使用者詢問是否能現場掛號、當日是否還有名額、臨時異動、國定假日或醫師門診異動，請建議使用者以線上掛號頁、LINE 官方帳號或電話 02-2511-9488 確認。
 
@@ -117,6 +122,19 @@ LINE 加好友連結：https://lin.ee/qDUYijn
 - 猛健樂門診
 
 客服可依公開服務項目簡短說明診所有提供相關評估或治療，但不能替病人判斷病因、嚴重程度或治療方案。
+
+各服務主題的官網內容已拆分整理於下列檔案，回答時優先參考對應主題檔：
+
+- 割包皮、包皮槍、包皮環切、包莖：`data/circumcision.md`
+- 男性無刀口結紮、雷射結紮、輸精管結紮：`data/vasectomy.md`
+- 攝護腺肥大、雷射剜除、水蒸氣消融、綠光雷射、Urolift：`data/prostate.md`
+- 腎結石、輸尿管結石、軟式輸尿管鏡、鈥雷射碎石：`data/stone-treatment.md`
+- 性病篩檢、匿名篩檢、菜花、HPV、PrEP、PEP：`data/std-prep-pep.md`
+- 性功能障礙、勃起功能障礙、早洩、低能量震波：`data/sexual-function-shockwave.md`
+- 男性私密處微創手術、陰莖增大、龜頭減敏：`data/male-private-surgery.md`
+- 女性泌尿、漏尿、尿失禁、美磁波鍛肌椅：`data/female-urology-muscle-chair.md`
+- 痔瘡、廔管、肛裂、肛門性病：`data/anal-colorectal.md`
+- 客製化功能性修復點滴、猛健樂門診：`data/wellness-weight.md`
 
 ## 攝護腺肥大與雷射手術
 
