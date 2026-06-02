@@ -24,6 +24,7 @@ import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
 import { answerParaphimosisQuestion } from "./paraphimosis.js";
+import { answerPriapismQuestion } from "./priapism.js";
 import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
@@ -208,6 +209,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const paraphimosisReply = answerParaphimosisQuestion(message);
   if (paraphimosisReply) return { reply: paraphimosisReply, relevantChunks: [] };
+
+  const priapismReply = answerPriapismQuestion(message);
+  if (priapismReply) return { reply: priapismReply, relevantChunks: [] };
 
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };

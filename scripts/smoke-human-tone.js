@@ -6,6 +6,7 @@ import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerParaphimosisQuestion } from "../src/paraphimosis.js";
+import { answerPriapismQuestion } from "../src/priapism.js";
 import { answerProstateQuestion } from "../src/prostate.js";
 import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "../src/schedule.js";
@@ -19,6 +20,14 @@ import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "priapism after erectile medication gives urgent boundary",
+    reply:
+      answerPriapismQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？不要貼連結，直接講下一步。") ||
+      answerSexualFunctionQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？不要貼連結，直接講下一步。"),
+    expected: ["勃起快 5 小時", "退不下來", "陰莖疼痛", "持續勃起", "缺血風險", "LINE 不能直接診斷", "不建議只冰敷", "睡覺", "等待自行消退", "立即就醫", "急診", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "可以先冰敷", "等它退", "不用急診", "低能量震波"]
+  },
   {
     name: "paraphimosis urgent question beats wound care memory",
     reply:
