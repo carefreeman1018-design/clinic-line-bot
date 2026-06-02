@@ -40,8 +40,14 @@ const cases = [
   {
     name: "hpv vaccine price allergy answers service and safety boundary",
     reply: answerVaccineQuestion("我想打九價 HPV 疫苗，你們有嗎？價錢多少？我有藥物過敏，能不能直接打？請回答重點就好。"),
-    expected: ["HPV", "九價", "價格", "02-2511-9488", "過敏", "不能直接判斷"],
+    expected: ["HPV", "九價", "價格", "02-2511-9488", "個人狀況", "醫師或診所人員"],
     forbidden: ["傷口", "發燒", "尿不出來", "大量出血", "https://", "lin.ee", "官網介紹："]
+  },
+  {
+    name: "hpv vaccine male prior sex dose same-day price stays bounded",
+    reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？不要貼連結，講重點。"),
+    expected: ["HPV", "九價", "性行為", "劑數", "今天", "庫存", "價格", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "一定", "元"]
   },
   {
     name: "pep concise answer suppresses extra link",
