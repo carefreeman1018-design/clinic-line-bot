@@ -19,6 +19,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "prostate treatment preserves ejaculation catheter same-day boundary",
+    reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接判斷", "不能先保證", "保留射精", "不用插尿管", "今天", "直接手術", "費用", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "哪個最好", "可以保證", "不用評估", "可以直接做", "元"]
+  },
+  {
     name: "mounjaro thyroid pancreatitis history and weight loss promise stays bounded",
     reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？不要貼連結，直接講下一步。"),
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "BMI", "共病", "糖尿病藥", "甲狀腺癌", "胰臟炎", "確認風險", "不能保證", "瘦幾公斤", "費用", "02-2511-9488"],
