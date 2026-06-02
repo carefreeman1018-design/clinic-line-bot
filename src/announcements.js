@@ -11,6 +11,7 @@ export function answerLineVoomAnnouncementQuestion(message) {
 
   const requestedDates = extractRequestedMonthDays(normalizedMessage);
   if (requestedDates.length === 0) return null;
+  if (asksCurrentScheduleWithPastAnnouncement(normalizedMessage, requestedDates)) return null;
 
   const requestedDoctor = DOCTOR_NAMES.find((doctor) => normalizedMessage.includes(doctor));
   const posts = loadLineVoomPosts();
@@ -23,6 +24,28 @@ export function answerLineVoomAnnouncementQuestion(message) {
   if (!matchingPost) return null;
 
   return buildAnnouncementReply(matchingPost, requestedDates, requestedDoctor, normalizedMessage);
+}
+
+function asksCurrentScheduleWithPastAnnouncement(message, requestedDates) {
+  if (!/(這週|本週|下週|今天|明天|後天)/.test(message)) {
+    return false;
+  }
+
+  return requestedDates.some((date) => isPastMonthDay(date, new Date()));
+}
+
+function isPastMonthDay(date, now) {
+  const [month, day] = date.split("/").map(Number);
+  const nowParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(now);
+  const values = Object.fromEntries(nowParts.map((part) => [part.type, Number(part.value)]));
+  const requested = Date.UTC(values.year, month - 1, day);
+  const today = Date.UTC(values.year, values.month - 1, values.day);
+  return requested < today;
 }
 
 function stripTestQuestionPrefix(message) {

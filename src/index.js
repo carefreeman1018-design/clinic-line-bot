@@ -196,9 +196,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
     };
   }
 
-  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
-  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
-
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
@@ -240,6 +237,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const reportResultReply = answerReportResultQuestion(message);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
+
+  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
+  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
 
   const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
   if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
