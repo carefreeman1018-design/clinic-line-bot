@@ -9,6 +9,9 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
 
   if (isHpvVaccineQuestion(message) || followUpContext?.includesHpv) {
     parts.push("官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。");
+    if (hasCurrentHpvWartConcern(message)) {
+      parts.push("HPV 疫苗主要是預防方向，不能用來治療已經出現的菜花或肉芽病灶；目前有疑似菜花時，需先由醫師看病灶並評估篩檢與治療。");
+    }
   }
 
   if (isSkinShinglesVaccineQuestion(message) || followUpContext?.includesSkinShingles) {
@@ -50,6 +53,10 @@ function asksPriceOrStock(message) {
 
 function asksPersonalSuitability(message) {
   return /過敏|懷孕|備孕|慢性病|免疫|吃藥|用藥|藥物|適合|能不能|可不可以|可以直接打|直接打|馬上打|今天.*打|副作用|禁忌|性行為|有用|有效|幾劑|幾針|劑數|間隔|時程/.test(message);
+}
+
+function hasCurrentHpvWartConcern(message) {
+  return /菜花|尖銳濕疣|肉芽|疣|病灶|小顆粒|顆粒|突起|私密處.*長|生殖器.*長|陰莖.*長|陰部.*長|肛門.*長|會不會.*好|治療|治好|直接好/.test(message);
 }
 
 function resolveVaccineFollowUpContext(message, conversationHistory) {

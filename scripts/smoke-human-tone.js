@@ -446,6 +446,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
   },
   {
+    name: "hpv vaccine current warts does not imply treatment",
+    reply: answerVaccineQuestion("我私密處最近長了幾顆小肉芽，朋友說可能是菜花。如果我今天打九價 HPV 疫苗，這些菜花會不會直接好？伴侶要不要一起打？我也想順便打皮蛇疫苗，兩種可以同一天打嗎？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["HPV", "九價", "菜花", "肉芽", "不能用來治療", "病灶", "醫師", "篩檢與治療", "皮蛇疫苗", "價格", "庫存", "兩種疫苗能否同一天打", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "會直接好", "可以治療", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
+  },
+  {
     name: "hpv vaccine male prior sex dose same-day price stays bounded",
     reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？不要貼連結，講重點。"),
     expected: ["HPV", "九價", "性行為", "劑數", "今天", "庫存", "價格", "02-2511-9488"],
