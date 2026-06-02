@@ -146,6 +146,11 @@ const LINE_OVERRIDE_QUESTIONS = [
 
 const LINE_ANNOUNCEMENT_REPLY_CASES = [
   ["2026/5/19 週二晚上李齊泰醫師有看診嗎？請依 LINE VOOM 公告回答。", ["5/19", "李齊泰醫師", "停診一次", "100%匿名篩檢"]],
+  {
+    question: "我看到 5/19 晚上李齊泰醫師停診，那天如果只是要做匿名篩檢或打疫苗，還能去嗎？請簡短回答。",
+    expectedTerms: ["5/19", "李齊泰醫師", "停診一次", "100%匿名篩檢", "疫苗接種服務照常營業"],
+    forbiddenTerms: ["官方 LINE", "線上掛號"]
+  },
   ["5/22 到 5/25 診所有沒有公休公告？", ["5/22 到 5/25", "公休"]],
   ["2026/4/14 李齊泰醫師晚上是否停診一次？", ["4/14", "李齊泰醫師", "停診一次"]],
   ["2025/5/30 端午連假是否正常看診？", ["5/30", "正常看診"]],
@@ -497,9 +502,12 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     });
   }
 
-  for (const [question, expectedTerms] of LINE_ANNOUNCEMENT_REPLY_CASES) {
+  for (const testCase of LINE_ANNOUNCEMENT_REPLY_CASES) {
+    const { question, expectedTerms, forbiddenTerms = [] } = Array.isArray(testCase)
+      ? { question: testCase[0], expectedTerms: testCase[1] }
+      : testCase;
     const reply = answerLineVoomAnnouncementQuestion(question);
-    caseResults.push(checkReplyCase({ round, type: "line-announcement-reply", question, reply, expectedTerms, issues }));
+    caseResults.push(checkReplyCase({ round, type: "line-announcement-reply", question, reply, expectedTerms, forbiddenTerms, issues }));
   }
 
   for (const testCase of BASIC_INFO_CASES) {

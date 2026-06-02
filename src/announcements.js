@@ -3,7 +3,7 @@ import fs from "node:fs";
 const LINE_VOOM_ANNOUNCEMENTS_PATH = new URL("../data/line-voom-announcements.md", import.meta.url);
 const DOCTOR_NAMES = ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師", "蔡曜州醫師"];
 const ANNOUNCEMENT_INTENT_PATTERN = /LINE\s*VOOM|VOOM|公告|停診|休診|公休|休假|連假|正常看診|照常看診|有診|看診|門診|營業/i;
-const CONFIRMATION_TEXT = "實際可掛號狀態仍請以官方 LINE、線上掛號或電話 02-2511-9488 確認。";
+const CONFIRMATION_TEXT = "如要確認當天名額，可電話 02-2511-9488。";
 
 export function answerLineVoomAnnouncementQuestion(message) {
   const normalizedMessage = stripTestQuestionPrefix(message);
@@ -22,7 +22,7 @@ export function answerLineVoomAnnouncementQuestion(message) {
 
   if (!matchingPost) return null;
 
-  return buildAnnouncementReply(matchingPost, requestedDates, requestedDoctor);
+  return buildAnnouncementReply(matchingPost, requestedDates, requestedDoctor, normalizedMessage);
 }
 
 function stripTestQuestionPrefix(message) {
@@ -44,30 +44,39 @@ function loadLineVoomPosts() {
   }));
 }
 
-function buildAnnouncementReply(post, requestedDates, requestedDoctor) {
+function buildAnnouncementReply(post, requestedDates, requestedDoctor, message) {
   const dateText = requestedDates.join(" 到 ");
   const doctorText = requestedDoctor ? `${requestedDoctor}` : "診所";
   const serviceNote = extractServiceNote(post.content);
+  const confirmationText = wantsBriefReply(message) ? "" : CONFIRMATION_TEXT;
 
   if (/正常看診|照常看診/.test(post.content)) {
     const mixedScheduleReply = buildMixedNormalAndHolidayReply(post.content, requestedDates, doctorText);
-    if (mixedScheduleReply) return [mixedScheduleReply, CONFIRMATION_TEXT].join("\n");
+    if (mixedScheduleReply) return compactLines([mixedScheduleReply, confirmationText]);
 
-    return [`我查到 LINE VOOM 公告：${dateText} ${doctorText}正常看診。`, CONFIRMATION_TEXT].join("\n");
+    return compactLines([`我查到 LINE VOOM 公告：${dateText} ${doctorText}正常看診。`, confirmationText]);
   }
 
   if (/公休|一起休息|休公休/.test(post.content) && !requestedDoctor) {
-    return [`我查到 LINE VOOM 公告：${dateText} 診所有公休/休息公告。`, CONFIRMATION_TEXT].join("\n");
+    return compactLines([`我查到 LINE VOOM 公告：${dateText} 診所有公休/休息公告。`, confirmationText]);
   }
 
   if (/停診|休診/.test(post.content)) {
     const lines = [`我查到 LINE VOOM 公告：${dateText} ${doctorText}停診一次。`];
     if (serviceNote) lines.push(serviceNote);
-    lines.push(CONFIRMATION_TEXT);
-    return lines.join("\n");
+    lines.push(confirmationText);
+    return compactLines(lines);
   }
 
-  return [`我查到 LINE VOOM 公告提到 ${dateText}，建議以公告內容與官方 LINE 確認細節。`, CONFIRMATION_TEXT].join("\n");
+  return compactLines([`我查到 LINE VOOM 公告提到 ${dateText}，建議以公告內容確認細節。`, confirmationText]);
+}
+
+function compactLines(lines) {
+  return lines.filter(Boolean).join("\n");
+}
+
+function wantsBriefReply(message) {
+  return /簡短|短一點|不要講太長|一句話|直接回答/.test(message);
 }
 
 function buildMixedNormalAndHolidayReply(content, requestedDates, doctorText) {
