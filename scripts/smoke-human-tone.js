@@ -63,6 +63,14 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己買", "擦 7 天", "擦七天", "擦兩週", "元"]
   },
   {
+    name: "wart medication question is not routed to wound care",
+    reply:
+      answerWoundCareQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。") ||
+      answerStdTreatmentQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。"),
+    expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
+  },
+  {
     name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
     reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，不要貼連結，請直接告訴我下一步。"),
     expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],

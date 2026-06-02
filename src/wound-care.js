@@ -30,7 +30,7 @@ export function answerWoundCareQuestion(message) {
 }
 
 function isWoundCareQuestion(message) {
-  return /包皮|割包皮|包皮槍|術後|手術後|傷口|釘子|水腫|換藥|洗澡|藥膏|紗布/.test(message);
+  return /包皮|割包皮|包皮槍|術後|手術後|傷口|釘子|紗布/.test(message);
 }
 
 function hasPossibleWoundAbnormality(message) {
