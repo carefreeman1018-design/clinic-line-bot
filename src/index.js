@@ -19,6 +19,7 @@ import { answerVaccineQuestion } from "./vaccines.js";
 import { answerCircumcisionFastPassQuestion } from "./surgery.js";
 import { answerFemaleUrologyQuestion } from "./female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
+import { answerVasectomyQuestion } from "./vasectomy.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -197,6 +198,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const malePrivateReply = answerMalePrivateSurgeryQuestion(message);
   if (malePrivateReply) return { reply: malePrivateReply, relevantChunks: [] };
+
+  const vasectomyReply = answerVasectomyQuestion(message);
+  if (vasectomyReply) return { reply: vasectomyReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

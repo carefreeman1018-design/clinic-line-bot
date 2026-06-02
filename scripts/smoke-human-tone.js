@@ -3,9 +3,16 @@ import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
+import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "vasectomy same-day price reversal keeps boundary without link",
+    reply: answerVasectomyQuestion("我想做男性結紮，可以今天直接做嗎？以後如果後悔能保證接回來嗎？費用多少？不要貼連結，請講重點。"),
+    expected: ["男性無刀口結紮", "當天", "費用", "不能保證恢復生育", "醫師術前評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "保證接回來", "一定", "元"]
+  },
   {
     name: "male private surgery price outcome keeps boundary without link",
     reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
