@@ -8,6 +8,7 @@ import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerPepVisitScheduleFollowUp } from "../src/schedule.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
+import { answerStoneQuestion } from "../src/stone-treatment.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
@@ -64,6 +65,22 @@ const cases = [
     reply: answerMaleUtiUrgentQuestion("我尿尿很痛又發燒，可以先吃抗生素嗎？今天晚上能看嗎？不要貼連結，講重點。", new Date("2026-06-02T04:00:00Z")),
     expected: ["尿痛", "發燒", "不能建議先吃", "抗生素", "今天晚上", "李齊泰醫師", "18:00-20:30", "02-2511-9488", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
+  },
+  {
+    name: "stone urgent pain hematuria gives er boundary without links",
+    reply: answerStoneQuestion("我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？不要貼連結，請直接告訴我下一步。"),
+    expected: ["右腰痛到冒冷汗", "尿有點紅", "LINE 判斷", "腎結石", "輸尿管結石", "劇痛", "血尿", "優先急診", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "一定是結石"]
+  },
+  {
+    name: "pep memory does not intercept stone urgent question",
+    reply: answerPepVisitScheduleFollowUp(
+      "我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？不要貼連結，請直接告訴我下一步。",
+      new Date("2026-06-02T06:00:00+08:00"),
+      [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "午診", "晚診"]
   },
   {
     name: "vasectomy same-day price reversal keeps boundary without link",

@@ -24,6 +24,7 @@ import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
 import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
+import { answerStoneQuestion } from "./stone-treatment.js";
 import { answerWoundCareQuestion } from "./wound-care.js";
 
 const app = express();
@@ -212,6 +213,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const prostateReply = answerProstateQuestion(message);
   if (prostateReply) return { reply: prostateReply, relevantChunks: [] };
+
+  const stoneReply = answerStoneQuestion(message);
+  if (stoneReply) return { reply: stoneReply, relevantChunks: [] };
 
   const reportResultReply = answerReportResultQuestion(message);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
