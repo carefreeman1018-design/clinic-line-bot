@@ -265,6 +265,14 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "雷射剜除", "水蒸氣消融", "Urolift", "綠光雷射", "費用"]
   },
   {
+    name: "psa report with bph procedure request blocks skipping biopsy",
+    reply:
+      answerReportResultQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？不要貼連結，直接講下一步。") ||
+      answerProstateQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "病史", "切片", "醫師評估", "水蒸氣消融", "Urolift", "不能用來取代", "癌症風險評估", "不能用來保證跳過必要切片", "費用", "門診評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "可以今天直接做", "可以不用切片", "元"]
+  },
+  {
     name: "prostate treatment choice cost and ejaculation avoids pep context",
     reply: answerProstateQuestion("我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "Urolift", "夜尿", "尿流變細", "影響射精", "費用", "醫師", "02-2511-9488"],
