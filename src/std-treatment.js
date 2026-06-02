@@ -3,6 +3,10 @@ const PHONE = "02-2511-9488";
 export function answerStdTreatmentQuestion(message) {
   if (!isStdTreatmentQuestion(message)) return null;
 
+  if (shouldPrioritizeWartQuestion(message)) {
+    return answerWartQuestion(message);
+  }
+
   if (isPepQuestion(message)) {
     return answerPepQuestion(message);
   }
@@ -10,16 +14,7 @@ export function answerStdTreatmentQuestion(message) {
   if (!asksMedicationDiagnosisOrTreatment(message)) return null;
 
   if (isWartQuestion(message)) {
-    const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
-      ? "伴侶是否需要一起檢查或篩檢，也建議門診時一起詢問醫師。"
-      : "";
-
-    return [
-      "診所有提供菜花 HPV 相關篩檢與治療評估。",
-      "菜花需要看病灶與檢查結果，LINE 不能診斷，也不能直接回答藥膏要擦幾天或建議自行買藥。",
-      partnerNote,
-      `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
-    ].join("");
+    return answerWartQuestion(message);
   }
 
   return [
@@ -33,7 +28,27 @@ function isStdTreatmentQuestion(message) {
 }
 
 function isPepQuestion(message) {
+  if (/不是問\s*PEP|不問\s*PEP|換問|另一件事/.test(message) && isWartQuestion(message)) return false;
   return /PEP|暴露後|保險套破|無套|高風險/i.test(message);
+}
+
+function shouldPrioritizeWartQuestion(message) {
+  if (!isWartQuestion(message)) return false;
+  if (/不是問\s*PEP|不問\s*PEP|換問|另一件事/.test(message)) return true;
+  return /私密處|肉芽|病灶|顆粒|藥膏|擦幾天|擦多久|自己買|自己擦|伴侶/.test(message) && !/保險套破|無套|暴露後|高風險|PrEP/i.test(message);
+}
+
+function answerWartQuestion(message) {
+  const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+    ? "伴侶是否需要一起檢查或篩檢，也建議門診時一起詢問醫師。"
+    : "";
+
+  return [
+    "診所有提供菜花 HPV 相關篩檢與治療評估。",
+    "菜花需要看病灶與檢查結果，LINE 不能診斷，也不能直接回答藥膏要擦幾天或建議自行買藥。",
+    partnerNote,
+    `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
+  ].join("");
 }
 
 function answerPepQuestion(message) {

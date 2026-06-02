@@ -71,6 +71,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
   },
   {
+    name: "wart topic that negates pep does not trigger pep answer",
+    reply: answerStdTreatmentQuestion("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？不要貼連結，直接講下一步。"),
+    expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "02-2511-9488"],
+    forbidden: ["PEP 需", "72 小時", "保險套破", "無套", "暴露後", "官網介紹：", "https://", "lin.ee", "擦 7 天", "擦兩週"]
+  },
+  {
     name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
     reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，不要貼連結，請直接告訴我下一步。"),
     expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
