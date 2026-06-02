@@ -122,6 +122,10 @@ function buildBasicInfoBundleReply(message) {
     lines.push("診所地址是 104091 台北市中山區松江路 276 號 3 樓。");
   }
 
+  if (asksMrtAccess(message) || asksRouteInBundle(message)) {
+    lines.push("捷運行天宮站 4 號出口，出站後右轉，步行約 40 秒可看到招牌，搭電梯上 3 樓。");
+  }
+
   if (/電話|打給|聯絡|聯絡方式|幾號/.test(message)) {
     lines.push("診所電話是 02-2511-9488。");
   }
@@ -140,6 +144,10 @@ function buildBasicInfoBundleReply(message) {
 
 function asksAddressInfo(message) {
   return /地址|位置|地點|幾樓|診所在哪|津久在哪|松江路在哪/.test(message);
+}
+
+function asksRouteInBundle(message) {
+  return /捷運|MRT|出口|怎麼走|怎麼到|路線|門口|到門口/.test(message);
 }
 
 function asksSurgeryAppointment(message) {

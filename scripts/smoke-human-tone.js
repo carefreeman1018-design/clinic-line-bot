@@ -363,6 +363,12 @@ const cases = [
     forbidden: ["https://", "contact-us", "appointment", "官網介紹"]
   },
   {
+    name: "clinic access bundle includes address route and phone without link",
+    reply: answerBasicInfoQuestion("我等一下要去診所，請直接告訴我地址、捷運要從哪個出口出來、到門口怎麼走，還有電話多少。不要貼連結，也不要講官網，越短越好。"),
+    expected: ["松江路 276 號 3 樓", "行天宮站", "4 號出口", "右轉", "步行約 40 秒", "02-2511-9488"],
+    forbidden: ["https://", "contact-us", "appointment", "官網介紹", "官網", "官方 LINE"]
+  },
+  {
     name: "contextual urology follow-up does not append homepage",
     reply: await draftReply({
       message: "那我如果只是頻尿想看泌尿科，剛剛那一診就不要掛，對嗎？",
