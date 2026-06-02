@@ -2,11 +2,18 @@ import { draftReply } from "../src/ai.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
+import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "male uti fever antibiotic same-day stays safe and useful",
+    reply: answerMaleUtiUrgentQuestion("我尿尿很痛又發燒，可以先吃抗生素嗎？今天晚上能看嗎？不要貼連結，講重點。", new Date("2026-06-02T04:00:00Z")),
+    expected: ["尿痛", "發燒", "不能建議先吃", "抗生素", "今天晚上", "李齊泰醫師", "18:00-20:30", "02-2511-9488", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
+  },
   {
     name: "vasectomy same-day price reversal keeps boundary without link",
     reply: answerVasectomyQuestion("我想做男性結紮，可以今天直接做嗎？以後如果後悔能保證接回來嗎？費用多少？不要貼連結，請講重點。"),
