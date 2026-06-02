@@ -61,7 +61,7 @@ function deriveFixedDoctors(schedule) {
 }
 
 export function answerFixedScheduleQuestion(message, now = new Date(), conversationHistory = []) {
-  if (answerLineVoomAnnouncementQuestion(message)) return null;
+  const announcementReply = answerLineVoomAnnouncementQuestion(message);
 
   const day = resolveRequestedDay(message, now);
   const periods = resolveRequestedPeriods(message);
@@ -71,8 +71,10 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   const doctorListReply = buildDoctorListReply(message, conversationHistory);
   const followUpDoctor = resolveFollowUpDoctor(message, conversationHistory);
   const hasScheduleIntent = SCHEDULE_INTENT_PATTERN.test(message);
+  const shouldBlendScheduleWithAnnouncement = Boolean(announcementReply && day && !hasExplicitFullDate(message));
 
   if (!hasScheduleIntent && !doctor && !misspelledDoctor && !doctorListReply && !followUpDoctor) return null;
+  if (announcementReply && !shouldBlendScheduleWithAnnouncement) return null;
 
   if (!day && doctorListReply) return doctorListReply;
   if (!day && misspelledDoctor) return buildMisspelledDoctorScheduleReply(misspelledDoctor);
@@ -81,43 +83,63 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   if (!day) return null;
 
   const dayLabel = buildDayLabel(message, day);
+  const contextNotes = [
+    buildPastAnnouncementNote(message, now),
+  ].filter(Boolean);
+  const routeNote = asksRouteInScheduleQuestion(message) ? buildMrtRouteNote() : null;
 
   if (!FIXED_SCHEDULE[day]) {
-    return `${dayLabel}固定門診表沒有一般門診時段。${TEMPORARY_CHANGE_CONFIRMATION}`;
+    return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。${TEMPORARY_CHANGE_CONFIRMATION}`, routeNote]);
   }
 
   if (!period) {
-    return buildFullDayReply(day, dayLabel);
+    return compactLines([...contextNotes, buildFullDayReply(day, dayLabel), routeNote]);
   }
 
   if (periods.length > 1) {
-    return buildSelectedPeriodsReply(day, dayLabel, periods);
+    return compactLines([...contextNotes, buildSelectedPeriodsReply(day, dayLabel, periods), routeNote]);
   }
 
   const clinic = FIXED_SCHEDULE[day][period];
   const time = periodToTime(period);
   if (clinic === "休診") {
     if (asksForAlternativeClinicTime(message)) {
-      return [
+      return compactLines([
+        ...contextNotes,
         `${dayLabel}${period}（${time}）休診。`,
         buildAvailableClinicTimesReply(day),
-        TEMPORARY_CHANGE_CONFIRMATION
-      ].join("\n");
+        TEMPORARY_CHANGE_CONFIRMATION,
+        routeNote
+      ]);
     }
 
-    return `${dayLabel}${period}（${time}）休診。${TEMPORARY_CHANGE_CONFIRMATION}`;
+    return compactLines([...contextNotes, `${dayLabel}${period}（${time}）休診。${TEMPORARY_CHANGE_CONFIRMATION}`, routeNote]);
   }
 
   if (clinic === "手術") {
-    return `${dayLabel}${period}（${time}）是手術時段，不是一般門診。可查看 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。`;
+    if (asksForAlternativeClinicTime(message)) {
+      return compactLines([
+        ...contextNotes,
+        `${dayLabel}${period}（${time}）是手術時段，不是一般門診。`,
+        buildAvailableGeneralClinicTimesReply(day),
+        TEMPORARY_CHANGE_CONFIRMATION,
+        routeNote
+      ]);
+    }
+
+    return compactLines([
+      ...contextNotes,
+      `${dayLabel}${period}（${time}）是手術時段，不是一般門診。可查看 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。`,
+      routeNote
+    ]);
   }
 
   if (/泌尿科/.test(message) && clinic.includes("肛門直腸外科")) {
     const prefix = /不要掛|不適合|對嗎|可以掛|能掛/.test(message) ? "對，" : "";
-    return `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`;
+    return compactLines([...contextNotes, `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`, routeNote]);
   }
 
-  return `${dayLabel}${period}（${time}）是${clinic}門診。${TEMPORARY_CHANGE_CONFIRMATION}`;
+  return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。${TEMPORARY_CHANGE_CONFIRMATION}`, routeNote]);
 }
 
 export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
@@ -178,6 +200,10 @@ function resolveExplicitDateDay(message) {
 
   const [, year, month, day] = match;
   return getTaipeiWeekday(new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 4)));
+}
+
+function hasExplicitFullDate(message) {
+  return /\b20\d{2}[-/.年]\d{1,2}[-/.月]\d{1,2}/.test(message);
 }
 
 function resolveRequestedDoctor(message) {
@@ -312,6 +338,71 @@ function buildAvailableClinicTimesReply(day) {
     .filter(Boolean);
 
   return `${day}其他時段：\n${lines.join("\n")}`;
+}
+
+function buildAvailableGeneralClinicTimesReply(day) {
+  const schedule = FIXED_SCHEDULE[day];
+  const lines = ["早診", "午診", "晚診"]
+    .map((period) => {
+      const clinic = schedule[period];
+      if (clinic === "休診" || clinic === "手術") return null;
+      return `${period}（${periodToTime(period)}）：${clinic}`;
+    })
+    .filter(Boolean);
+
+  if (lines.length === 0) return `${day}沒有一般門診時段。`;
+  return `${day}可改一般門診時段：\n${lines.join("\n")}`;
+}
+
+function buildPastAnnouncementNote(message, now) {
+  if (!/LINE\s*VOOM|VOOM|公告|公休|休診|停診/i.test(message)) return null;
+
+  const pastDates = extractRequestedMonthDays(message)
+    .filter((date) => isPastMonthDay(date, now));
+  if (pastDates.length === 0) return null;
+
+  return `${pastDates.join(" 到 ")} 是過去 LINE VOOM 公告，不能直接當成這週或之後的門診狀態。`;
+}
+
+function extractRequestedMonthDays(text) {
+  const dates = [];
+  const numericMatches = text.matchAll(/(?:^|[^\dA-Za-z])(?:20\d{2}[/-])?(\d{1,2})[/-](\d{1,2})(?=$|[^\d])/g);
+  for (const match of numericMatches) dates.push(normalizeMonthDay(match[1], match[2]));
+
+  const chineseMatches = text.matchAll(/(\d{1,2})月(\d{1,2})[日號]?/g);
+  for (const match of chineseMatches) dates.push(normalizeMonthDay(match[1], match[2]));
+
+  return [...new Set(dates)];
+}
+
+function normalizeMonthDay(month, day) {
+  return `${Number(month)}/${Number(day)}`;
+}
+
+function isPastMonthDay(date, now) {
+  const [month, day] = date.split("/").map(Number);
+  const nowParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(now);
+  const values = Object.fromEntries(nowParts.map((part) => [part.type, Number(part.value)]));
+  const requested = Date.UTC(values.year, month - 1, day);
+  const today = Date.UTC(values.year, values.month - 1, values.day);
+  return requested < today;
+}
+
+function asksRouteInScheduleQuestion(message) {
+  return /行天宮|捷運|MRT|4\s*號出口|四號出口|怎麼走|怎麼去|路線|交通/.test(message);
+}
+
+function buildMrtRouteNote() {
+  return "捷運可搭到行天宮站 4 號出口，出站右轉步行約 40 秒，搭電梯上 3 樓。";
+}
+
+function compactLines(lines) {
+  return lines.filter(Boolean).join("\n");
 }
 
 function buildDoctorScheduleReply(doctor) {

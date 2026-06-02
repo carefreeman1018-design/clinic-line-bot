@@ -196,6 +196,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
     };
   }
 
+  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
+  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
+
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
@@ -256,9 +259,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
   if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
-
-  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
-  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
 
   const relevantChunks = await retrieveHybridRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
 
