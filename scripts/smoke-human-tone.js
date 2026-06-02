@@ -235,6 +235,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接做", "今天可以直接做", "保證", "元"]
   },
   {
+    name: "female urology hematuria fever back pain urgent boundary",
+    reply: answerFemaleUrologyQuestion("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？不要貼連結，直接講下一步。"),
+    expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "發燒", "血尿", "腰痛", "盡快就醫", "LINE 回覆", "尿痛", "先評估是否感染", "今天能不能直接做", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接坐", "可以今天直接", "保證", "元"]
+  },
+  {
     name: "circumcision same-day surgery price gives next step without link",
     reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？不要貼連結，直接告訴我下一步。"),
     expected: ["割包皮", "快速通關", "費用", "醫師術前評估", "02-2511-9488"],

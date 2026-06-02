@@ -25,6 +25,10 @@ function asksSuitabilityPriceOrNextStep(message) {
 function buildSafetyNotes(message) {
   const notes = [];
 
+  if (/發燒|高燒|血尿|尿.*血|尿.*紅|腰痛|腰.*痛|腰.*痠|嚴重疼痛|劇痛|很痛/.test(message)) {
+    notes.push("若有發燒、血尿、腰痛或嚴重疼痛，需盡快就醫或先電話確認，不建議只等 LINE 回覆。");
+  }
+
   if (/尿痛|尿尿.*痛|解尿.*痛|排尿.*痛|泌尿道感染|感染/.test(message)) {
     notes.push("有尿痛時需先評估是否感染，不能只線上判斷或直接安排療程。");
   }
