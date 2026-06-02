@@ -19,6 +19,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "stone fever pain medication and same-day lithotripsy boundary",
+    reply: answerStoneQuestion("我現在左腰痛到冒冷汗，尿有點紅，還有發燒，怕是輸尿管結石。可以先吃止痛藥等明天嗎？你們今天能不能直接幫我體外震波或鈥雷射碎石？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["腰痛", "冒冷汗", "尿有點紅", "發燒", "LINE 判斷", "輸尿管結石", "劇痛", "血尿", "急診", "立即就醫", "不建議", "止痛藥", "等到明天", "體外震波", "鈥雷射碎石", "費用", "醫師", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "等明天", "今天能直接", "可以直接", "元"]
+  },
+  {
     name: "prostate treatment preserves ejaculation catheter same-day boundary",
     reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？不要貼連結，直接講下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接判斷", "不能先保證", "保留射精", "不用插尿管", "今天", "直接手術", "費用", "02-2511-9488"],
