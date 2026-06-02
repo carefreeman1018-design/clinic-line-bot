@@ -223,6 +223,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const maleUtiUrgentReply = answerMaleUtiUrgentQuestion(message);
   if (maleUtiUrgentReply) return { reply: maleUtiUrgentReply, relevantChunks: [] };
 
+  const reportResultReply = answerReportResultQuestion(message);
+  if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
+
   const prostateReply = answerProstateQuestion(message);
   if (prostateReply) return { reply: prostateReply, relevantChunks: [] };
 
@@ -234,9 +237,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const analColorectalReply = answerAnalColorectalQuestion(message);
   if (analColorectalReply) return { reply: analColorectalReply, relevantChunks: [] };
-
-  const reportResultReply = answerReportResultQuestion(message);
-  if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
