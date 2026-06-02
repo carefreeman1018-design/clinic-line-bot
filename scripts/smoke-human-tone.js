@@ -107,6 +107,20 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "哪個最好", "可以保證", "不用評估", "可以直接做", "元"]
   },
   {
+    name: "prostate question after circumcision context does not inherit old topic",
+    reply: await buildTestReply(
+      "我爸夜尿很多、尿流越來越細，想問攝護腺肥大。水蒸氣、Urolift、綠光雷射哪個比較適合？可以保證不插尿管、保留射精嗎？今天能直接處理嗎？",
+      [
+        { role: "user", content: "我想做割包皮手術，有推薦的醫生嗎？" },
+        { role: "assistant", content: "割包皮/包皮槍可先掛泌尿科或男性門診評估。" },
+        { role: "user", content: "那今天如果要先諮詢包皮槍，這幾位醫師分別是什麼時段？" },
+        { role: "assistant", content: "今天（週二）可先參考這幾位有包皮手術相關專長的門診。" }
+      ]
+    ),
+    expected: ["攝護腺肥大", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接判斷", "不能先保證", "保留射精", "不用插尿管", "02-2511-9488"],
+    forbidden: ["割包皮", "包皮槍", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "官網介紹：", "https://", "lin.ee", "可以保證"]
+  },
+  {
     name: "acute urinary retention beats prostate procedure pricing",
     reply: answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["幾乎尿不出來", "下腹脹痛", "冒冷汗", "急性尿液滯留", "泌尿道阻塞", "LINE 不能直接診斷", "不建議撐到明天", "不能先安排 Urolift", "水蒸氣消融", "費用", "導尿", "急診", "立即就醫"],

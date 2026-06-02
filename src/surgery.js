@@ -16,11 +16,12 @@ export function answerCircumcisionFastPassQuestion(message, conversationHistory 
     return answerCircumcisionDoctorSchedule(now);
   }
 
+  if (!hasDirectCircumcisionQuestion) return null;
+
   if (asksCircumcisionDoctorRecommendation(message)) {
     return answerCircumcisionDoctorRecommendation();
   }
 
-  if (!hasDirectCircumcisionQuestion) return null;
   if (!asksFastPassPriceOrNextStep(message)) return null;
 
   const parts = [
