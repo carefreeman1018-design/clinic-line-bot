@@ -21,6 +21,7 @@ import { answerFemaleUrologyQuestion } from "./female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
+import { answerReportResultQuestion } from "./report-results.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -205,6 +206,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const maleUtiUrgentReply = answerMaleUtiUrgentQuestion(message);
   if (maleUtiUrgentReply) return { reply: maleUtiUrgentReply, relevantChunks: [] };
+
+  const reportResultReply = answerReportResultQuestion(message);
+  if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

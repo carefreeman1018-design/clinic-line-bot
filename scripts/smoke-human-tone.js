@@ -3,11 +3,18 @@ import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
+import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "psa report cancer biopsy question avoids diagnosis",
+    reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
+    expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
+  },
   {
     name: "male uti fever antibiotic same-day stays safe and useful",
     reply: answerMaleUtiUrgentQuestion("我尿尿很痛又發燒，可以先吃抗生素嗎？今天晚上能看嗎？不要貼連結，講重點。", new Date("2026-06-02T04:00:00Z")),
