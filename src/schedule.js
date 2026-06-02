@@ -20,7 +20,7 @@ const DAY_ALIASES = [
 const PERIOD_ALIASES = [
   ["早診", /早上|上午|早診|09:30|9:30/],
   ["午診", /下午|午診|13:30|1:30/],
-  ["晚診", /晚上|晚診|夜診|18:00|6:00/]
+  ["晚診", /晚上|晚診|夜診|18:00|6:00|週[一二三四五六日]晚|周[一二三四五六日]晚|星期[一二三四五六日天]晚|禮拜[一二三四五六日天]晚/]
 ];
 
 const DOCTOR_ALIASES = [
@@ -108,7 +108,8 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   }
 
   if (/泌尿科/.test(message) && clinic.includes("肛門直腸外科")) {
-    return `${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`;
+    const prefix = /不要掛|不適合|對嗎|可以掛|能掛/.test(message) ? "對，" : "";
+    return `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`;
   }
 
   return `${dayLabel}${period}（${time}）是${clinic}門診。${TEMPORARY_CHANGE_CONFIRMATION}`;
