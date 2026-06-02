@@ -194,7 +194,7 @@ const BASIC_INFO_REPLY_CASES = [
   ["坐公車要在哪一站下車？", ["捷運行天宮站", "松江新村", "民權松江路口"]],
   ["診所英文識別 UroMe 是不是官方資料裡寫的？", ["UroMe", "英文識別"]],
   ["掛號系統在哪", ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"]],
-  ["如何預約手術", ["https://lin.ee/qDUYijn", "https://appointment.uromeeme.inncom.cloud/", "手術預約"]],
+  ["如何預約手術", ["https://appointment.uromeeme.inncom.cloud/", "留下姓名", "02-2511-9488"]],
   ["官網首頁和線上掛號網址是同一個網站嗎？請不要混在一起。", ["https://uromeeme.com/", "https://appointment.uromeeme.inncom.cloud/", "不同"]],
   ["官方 LINE ID、加好友連結、電話各是什麼？", ["@455twnga", "https://lin.ee/qDUYijn", "02-2511-9488"]],
   ["請問津久診所的地址、電話、官方 LINE ID 和線上掛號連結分別是什麼？", ["松江路 276 號 3 樓", "02-2511-9488", "@455twnga", "https://appointment.uromeeme.inncom.cloud/"]],
@@ -258,6 +258,7 @@ const SERVICE_QUESTION_TEMPLATES = [
 ];
 
 const SERVICE_CASE_ALIASES = new Map([
+  ["包皮槍", ["包皮槍", "包皮環切"]],
   ["包皮槍手術", ["包皮槍", "包皮環切"]],
   ["無刀口男性結紮手術", ["男性結紮"]],
   ["男性私密處微創手術", ["陰莖增大", "龜頭減敏"]],
@@ -276,6 +277,28 @@ const SERVICE_CASE_ALIASES = new Map([
   ["痔瘡微創手術", ["痔瘡微創手術", "廔管手術", "肛裂手術"]],
   ["客製化功能性修復點滴", ["客製化功能性修復點滴"]],
   ["猛健樂門診", ["猛健樂門診"]]
+]);
+
+const SERVICE_CASE_SOURCES = new Map([
+  ["包皮槍", ["clinic-info.md", "circumcision.md"]],
+  ["包皮槍手術", ["clinic-info.md", "circumcision.md"]],
+  ["無刀口男性結紮手術", ["clinic-info.md", "vasectomy.md"]],
+  ["男性私密處微創手術", ["clinic-info.md", "male-private-surgery.md"]],
+  ["攝護腺肥大治療", ["clinic-info.md", "prostate.md"]],
+  ["腎結石", ["clinic-info.md", "stone-treatment.md"]],
+  ["男性泌尿道感染", ["clinic-info.md", "male-uti.md"]],
+  ["100% 匿名篩檢", ["clinic-info.md", "std-prep-pep.md"]],
+  ["HPV", ["clinic-info.md", "std-prep-pep.md", "vaccines.md"]],
+  ["皮蛇疫苗", ["clinic-info.md", "vaccines.md"]],
+  ["PrEP", ["clinic-info.md", "std-prep-pep.md"]],
+  ["PEP", ["clinic-info.md", "std-prep-pep.md"]],
+  ["性功能障礙治療", ["clinic-info.md", "sexual-function-shockwave.md"]],
+  ["低能量震波治療", ["clinic-info.md", "sexual-function-shockwave.md"]],
+  ["女性泌尿道問題", ["clinic-info.md", "female-urology-muscle-chair.md"]],
+  ["美磁波鍛肌椅", ["clinic-info.md", "female-urology-muscle-chair.md"]],
+  ["痔瘡微創手術", ["clinic-info.md", "anal-colorectal.md"]],
+  ["客製化功能性修復點滴", ["clinic-info.md", "wellness-weight.md"]],
+  ["猛健樂門診", ["clinic-info.md", "wellness-weight.md"]]
 ]);
 
 const SCHEDULE_CASES = [
@@ -588,7 +611,7 @@ function buildServiceCases() {
   return OFFICIAL_SERVICE_TERMS.flatMap((term) =>
     SERVICE_QUESTION_TEMPLATES.map((template) => ({
       question: template.replace("{term}", term),
-      source: "clinic-info.md",
+      sources: SERVICE_CASE_SOURCES.get(term) ?? ["clinic-info.md"],
       expectedTerms: SERVICE_CASE_ALIASES.get(term) ?? [term]
     }))
   );
@@ -610,14 +633,15 @@ function buildGeneratedQuestionList() {
   ];
 }
 
-function checkRetrievalCase({ round, type, chunks, question, source, expectedTerms, issues }) {
+function checkRetrievalCase({ round, type, chunks, question, source, sources, expectedTerms, issues }) {
   const matches = retrieveRelevantChunks(chunks, question, 4);
   const matchText = matches.map((chunk) => `${chunk.source}\n${chunk.content}`).join("\n");
-  const hasExpectedSource = !source || matches.some((chunk) => chunk.source === source);
+  const expectedSources = sources ?? (source ? [source] : []);
+  const hasExpectedSource = expectedSources.length === 0 || matches.some((chunk) => expectedSources.includes(chunk.source));
   const missingTerms = expectedTerms.filter((term) => !matchText.includes(term));
 
   if (!hasExpectedSource) {
-    issues.push(formatIssue(round, `${type} 檢索沒有命中 ${source}：${question}`));
+    issues.push(formatIssue(round, `${type} 檢索沒有命中 ${expectedSources.join(" 或 ")}：${question}`));
   }
 
   for (const term of missingTerms) {

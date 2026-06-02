@@ -4,6 +4,26 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const MAX_REPLY_CHARS = Number(process.env.MAX_REPLY_CHARS || 360);
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
+const OFFICIAL_TOPIC_URLS = [
+  { pattern: /PEP|事後預防|暴露後|72\s*小時|愛滋.*事後/i, url: "https://uromeeme.com/pep/" },
+  { pattern: /PrEP|事前預防|暴露前|愛滋.*事前/i, url: "https://uromeeme.com/prep/" },
+  { pattern: /猛健樂|Mounjaro|Tirzepatide|瘦瘦筆|體重管理|減重/i, url: "https://uromeeme.com/%e7%8c%9b%e5%81%a5%e6%a8%82%e9%96%80%e8%a8%ba/" },
+  { pattern: /術後注意|術後照護|術後怎麼|手術後注意|包皮.*術後/, url: "https://uromeeme.com/after_surgery/" },
+  { pattern: /換藥|包紮|生理食鹽水|水腫|釘子|紗布|傷口照顧/, url: "https://uromeeme.com/wound_care/" },
+  { pattern: /低能量震波|線性震波|震波治療|LI-ESWT|Piezowave/i, url: "https://uromeeme.com/%e4%bd%8e%e8%83%bd%e9%87%8f%e9%9c%87%e6%b3%a2%e6%b2%bb%e7%99%82/" },
+  { pattern: /性功能障礙|勃起功能|陽痿|不舉|硬度|容易軟|早洩|持久/i, url: "https://uromeeme.com/%e6%80%a7%e5%8a%9f%e8%83%bd%e9%9a%9c%e7%a4%99%e6%b2%bb%e7%99%82/" },
+  { pattern: /女性泌尿|女性.*泌尿道感染|女性.*漏尿|漏尿|尿失禁|骨盆底肌|美磁波|鍛肌椅|高密度磁波/, url: "https://uromeeme.com/%e5%a5%b3%e6%80%a7%e6%b3%8c%e5%b0%bf%e9%81%93%e6%84%9f%e6%9f%93-%e6%bc%8f%e5%b0%bf/" },
+  { pattern: /男性.*泌尿道感染|尿道炎|膀胱炎|睪丸炎|副睪丸炎|攝護腺炎|泌尿道感染/, url: "https://uromeeme.com/%e7%94%b7%e6%80%a7%e6%b3%8c%e5%b0%bf%e9%81%93%e6%84%9f%e6%9f%93/" },
+  { pattern: /腎結石|輸尿管結石|尿路結石|膀胱結石|結石|軟式輸尿管鏡|FURS/i, url: "https://uromeeme.com/%e8%85%8e%e7%b5%90%e7%9f%b3-%e8%bc%b8%e5%b0%bf%e7%ae%a1%e7%b5%90%e7%9f%b3%e6%b2%bb%e7%99%82/" },
+  { pattern: /水蒸氣消融|Rezum|攝護腺水蒸氣/i, url: "https://uromeeme.com/%e6%b0%b4%e8%92%b8%e6%b0%a3%e6%b6%88%e8%9e%8d%e6%89%8b%e8%a1%93/" },
+  { pattern: /攝護腺肥大|前列腺肥大|BPH|夜尿|排尿困難|尿滯留/i, url: "https://uromeeme.com/%e6%94%9d%e8%ad%b7%e8%85%ba%e8%82%a5%e5%a4%a7%e6%b2%bb%e7%99%82/" },
+  { pattern: /匿名篩檢|性病|菜花|梅毒|淋病|披衣菌|尖銳濕疣|HPV(?!\s*疫苗)|HIV|愛滋/i, url: "https://uromeeme.com/%e6%80%a7%e7%97%85%e6%b2%bb%e7%99%82/" },
+  { pattern: /HPV\s*疫苗|九價|子宮頸癌疫苗/i, url: "https://uromeeme.com/video/hpv%e7%96%ab%e8%8b%97%e5%ae%a3%e5%b0%8e%e5%bd%b1%e7%89%87%ef%bd%9c%e8%a8%ba%e6%89%80%e7%af%87-2025%e5%b9%b4%e5%ba%a6/" },
+  { pattern: /客製化功能性修復點滴|功能性修復點滴|點滴|疲勞|護肝|免疫提升|術後修復/, url: "https://uromeeme.com/%e5%ae%a2%e8%a3%bd%e5%8c%96%e5%8a%9f%e8%83%bd%e6%80%a7%e4%bf%ae%e5%be%a9%e9%bb%9e%e6%bb%b4/" },
+  { pattern: /男性私密|私密處微創|陰莖增大|龜頭減敏|繫帶|珍珠丘疹|包皮繫帶|GG\s*增大/i, url: "https://uromeeme.com/%e7%94%b7%e6%80%a7%e7%a7%81%e5%af%86%e8%99%95%e9%86%ab%e7%be%8e%e5%be%ae%e5%89%b5%e6%89%8b%e8%a1%93/" },
+  { pattern: /無刀口.*結紮|男性結紮|結紮|輸精管/, url: "https://uromeeme.com/%e7%84%a1%e5%88%80%e5%8f%a3%e7%b5%90%e7%b4%ae%e6%89%8b%e8%a1%93/" },
+  { pattern: /割包皮|包皮槍|包皮環切|包莖|包皮過長/, url: "https://uromeeme.com/treatment1/" }
+];
 
 const client = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
@@ -142,6 +162,13 @@ function normalizeReplyForLineContext(reply, message) {
     .replace(/https:\/\/lin\.ee\/[^\s)）]+/gi, "")
     .replace(/(?:建議|可|可以)?先?(?:加|加入)官方\s*LINE\s*(?:預約)?(?:快速通關服務)?[，,、；;]?\s*/gi, "")
     .replace(/(?:官方\s*LINE\s*加好友連結|加好友連結)[:：]?\s*/gi, "")
+    .replace(/(?:建議|可|可以)?先?透過官方\s*LINE\s*或電話/gi, "可以透過電話")
+    .replace(/官方\s*LINE\s*或電話/gi, "電話")
+    .replace(/透過官方\s*LINE\s*預約/gi, "由診所人員協助預約")
+    .replace(/(?:諮詢|預約)[，,、；;]\s*或電話/gi, "可以電話")
+    .replace(/報告可透過官方\s*LINE\s*查詢/gi, "報告查詢需由診所人員協助")
+    .replace(/請拍照傳官方\s*LINE\s*或回診確認/gi, "請直接回診或電話確認；若診所人員需要照片，再依指示傳送")
+    .replace(/拍照傳官方\s*LINE/gi, "依診所人員指示傳照片")
     .replace(/[（(]\s*[）)]/g, "")
     .replace(/(?:預約)?快速通關服務[，,、；;]?\s*或/gi, "可以")
     .replace(/[ \t]+\n/g, "\n")
@@ -150,11 +177,7 @@ function normalizeReplyForLineContext(reply, message) {
 }
 
 function findCanonicalOfficialTopicUrl(message) {
-  if (/割包皮|包皮槍|包皮環切|包莖|包皮過長/.test(message)) {
-    return "https://uromeeme.com/treatment1/";
-  }
-
-  return null;
+  return OFFICIAL_TOPIC_URLS.find((topic) => topic.pattern.test(message))?.url ?? null;
 }
 
 function isOfficialWebsiteUrl(url) {
@@ -230,7 +253,8 @@ function buildUrlLabel(url) {
 }
 
 function isServiceTopicQuery(message) {
-  return /痔瘡|痔|廔管|肛裂|肛門性病|肛門菜花|肛門疾病|肛門問題|大腸直腸/.test(message);
+  return OFFICIAL_TOPIC_URLS.some((topic) => topic.pattern.test(message)) ||
+    /痔瘡|痔|廔管|肛裂|肛門性病|肛門菜花|肛門疾病|肛門問題|大腸直腸|疫苗|皮蛇/.test(message);
 }
 
 function isBroadOfficialUrl(url) {

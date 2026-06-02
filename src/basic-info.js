@@ -1,5 +1,4 @@
 const HOME_URL = "https://uromeeme.com/";
-const CONTACT_URL = "https://uromeeme.com/contact-us/";
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const LINE_ADD_FRIEND_URL = "https://lin.ee/qDUYijn";
 
@@ -49,9 +48,9 @@ export function answerBasicInfoQuestion(message) {
 
   if (asksSurgeryAppointment(normalized)) {
     return [
-      `手術預約建議先加官方 LINE 諮詢：${LINE_ADD_FRIEND_URL}`,
-      `若要一般預約掛號，官網「立即預約」頁的「預約掛號」入口是 ${APPOINTMENT_URL}。`,
-      `官網立即預約頁：${CONTACT_URL}`
+      `手術或快速通關預約可以先用線上掛號：${APPOINTMENT_URL}`,
+      "也可以留下姓名、電話、想預約的項目與方便時段，診所人員再協助確認。",
+      "電話：02-2511-9488"
     ].join("\n");
   }
 
