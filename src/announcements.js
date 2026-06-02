@@ -50,6 +50,9 @@ function buildAnnouncementReply(post, requestedDates, requestedDoctor) {
   const serviceNote = extractServiceNote(post.content);
 
   if (/正常看診|照常看診/.test(post.content)) {
+    const mixedScheduleReply = buildMixedNormalAndHolidayReply(post.content, requestedDates, doctorText);
+    if (mixedScheduleReply) return [mixedScheduleReply, CONFIRMATION_TEXT].join("\n");
+
     return [`我查到 LINE VOOM 公告：${dateText} ${doctorText}正常看診。`, CONFIRMATION_TEXT].join("\n");
   }
 
@@ -65,6 +68,26 @@ function buildAnnouncementReply(post, requestedDates, requestedDoctor) {
   }
 
   return [`我查到 LINE VOOM 公告提到 ${dateText}，建議以公告內容與官方 LINE 確認細節。`, CONFIRMATION_TEXT].join("\n");
+}
+
+function buildMixedNormalAndHolidayReply(content, requestedDates, doctorText) {
+  const normalDates = requestedDates.filter((date) => dateLineMatches(content, date, /正常看診|照常看診|照原營業時間看診/));
+  const holidayDates = requestedDates.filter((date) => dateLineMatches(content, date, /公休日|公休|休息/) && !normalDates.includes(date));
+
+  if (normalDates.length === 0 || holidayDates.length === 0) return null;
+
+  return [
+    `我查到 LINE VOOM 公告：${normalDates.join("、")} ${doctorText}正常看診。`,
+    `${holidayDates.join("、")} 照常為公休日。`
+  ].join("\n");
+}
+
+function dateLineMatches(content, date, pattern) {
+  const [month, day] = date.split("/");
+  const datePattern = new RegExp(`${month}\\s*/\\s*0?${day}(?:\\D|$)`);
+  return content
+    .split("\n")
+    .some((line) => datePattern.test(line) && pattern.test(line));
 }
 
 function extractServiceNote(content) {
