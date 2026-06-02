@@ -23,6 +23,7 @@ import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
+import { answerWoundCareQuestion } from "./wound-care.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -213,6 +214,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const stdTreatmentReply = answerStdTreatmentQuestion(message);
   if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };
+
+  const woundCareReply = answerWoundCareQuestion(message);
+  if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

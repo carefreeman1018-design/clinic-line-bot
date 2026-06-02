@@ -1,0 +1,37 @@
+const PHONE = "02-2511-9488";
+
+export function answerWoundCareQuestion(message) {
+  if (!isWoundCareQuestion(message)) return null;
+
+  if (hasPossibleWoundAbnormality(message)) {
+    return [
+      "術後第 5 天水腫或釘子旁黃黃的狀況，LINE 不能直接判斷是否為感染或流膿。",
+      "前 2 週傷口建議不要碰水；藥膏與換藥方式也不要自行加量或亂改。",
+      `請先拍清楚照片傳給診所或直接回診/電話 ${PHONE} 確認。若疼痛加劇、明顯流膿、發燒、傷口裂開、排尿困難或大量出血，請盡快就醫。`
+    ].join("");
+  }
+
+  if (/洗澡|碰水/.test(message)) {
+    return [
+      "官網提醒前 2 週傷口建議最好不要碰到水。",
+      "之後仍要看傷口狀況，若不確定是否能碰水，請拍照傳給診所或回診確認。"
+    ].join("");
+  }
+
+  if (/換藥|藥膏|包紮/.test(message)) {
+    return [
+      "包皮術後通常依醫囑一天換藥一次、約兩週，薄擦藥膏後包紮。",
+      "若不確定傷口狀況或想改藥膏用法，請先拍照傳給診所或回診確認。"
+    ].join("");
+  }
+
+  return null;
+}
+
+function isWoundCareQuestion(message) {
+  return /包皮|割包皮|包皮槍|術後|手術後|傷口|釘子|水腫|換藥|洗澡|藥膏|紗布/.test(message);
+}
+
+function hasPossibleWoundAbnormality(message) {
+  return /流膿|膿|黃黃|感染|發燒|裂開|出血|血|很痛|疼痛加劇|排尿困難|尿不出來|水腫|腫|不確定|正常嗎|是不是/.test(message);
+}
