@@ -62,6 +62,10 @@ function buildAnnouncementReply(post, requestedDates, requestedDoctor, message) 
   }
 
   if (/停診|休診/.test(post.content)) {
+    if (asksWhetherTemporaryChangeIsRecurring(message)) {
+      return `${dateText} 是${doctorText}停診一次，不是每週都停診。固定門診仍請以門診表與最新公告為準。`;
+    }
+
     const lines = [`我查到 LINE VOOM 公告：${dateText} ${doctorText}停診一次。`];
     if (serviceNote) lines.push(serviceNote);
     lines.push(confirmationText);
@@ -77,6 +81,11 @@ function compactLines(lines) {
 
 function wantsBriefReply(message) {
   return /簡短|短一點|不要講太長|一句話|直接回答/.test(message);
+}
+
+function asksWhetherTemporaryChangeIsRecurring(message) {
+  return /只有|那一次|一次|每週|每個|固定|都停|長期|以後/.test(message) &&
+    /停診|休診|公休|停/.test(message);
 }
 
 function buildMixedNormalAndHolidayReply(content, requestedDates, doctorText) {
