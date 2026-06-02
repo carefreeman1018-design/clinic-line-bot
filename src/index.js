@@ -16,6 +16,7 @@ import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./s
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 import { answerVaccineQuestion } from "./vaccines.js";
+import { answerCircumcisionFastPassQuestion } from "./surgery.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -185,6 +186,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const vaccineReply = answerVaccineQuestion(message);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
+
+  const surgeryReply = answerCircumcisionFastPassQuestion(message);
+  if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

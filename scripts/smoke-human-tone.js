@@ -1,8 +1,15 @@
 import { draftReply } from "../src/ai.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
+import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "circumcision same-day surgery price gives next step without link",
+    reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？不要貼連結，直接告訴我下一步。"),
+    expected: ["割包皮", "快速通關", "費用", "醫師術前評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "保證", "一定可以", "元"]
+  },
   {
     name: "hpv vaccine price allergy answers service and safety boundary",
     reply: answerVaccineQuestion("我想打九價 HPV 疫苗，你們有嗎？價錢多少？我有藥物過敏，能不能直接打？請回答重點就好。"),
