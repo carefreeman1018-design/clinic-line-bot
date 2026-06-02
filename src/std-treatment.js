@@ -10,9 +10,14 @@ export function answerStdTreatmentQuestion(message) {
   if (!asksMedicationDiagnosisOrTreatment(message)) return null;
 
   if (isWartQuestion(message)) {
+    const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+      ? "伴侶是否需要一起檢查或篩檢，也建議門診時一起詢問醫師。"
+      : "";
+
     return [
       "診所有提供菜花 HPV 相關篩檢與治療評估。",
       "菜花需要看病灶與檢查結果，LINE 不能診斷，也不能直接回答藥膏要擦幾天或建議自行買藥。",
+      partnerNote,
       `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
     ].join("");
   }

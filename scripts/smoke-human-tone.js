@@ -67,7 +67,7 @@ const cases = [
     reply:
       answerWoundCareQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。") ||
       answerStdTreatmentQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。"),
-    expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
+    expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "醫師確認", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
   },
   {
@@ -100,6 +100,19 @@ const cases = [
     ),
     expected: ["PEP 是越早評估越好", "匿名篩檢", "先讓醫師評估 PEP 較優先", "今天（週二）", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "PrEP 是暴露前預防", "午診"]
+  },
+  {
+    name: "pep memory does not intercept wart partner medication question",
+    reply: answerPepVisitScheduleFollowUp(
+      "我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以看文字先判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。",
+      new Date("2026-06-02T12:00:00+08:00"),
+      [
+        { role: "user", content: "我昨晚保險套破掉，現在大概 14 小時，很擔心 HIV，想問 PEP。" },
+        { role: "assistant", content: "14 小時仍在 72 小時內，PEP 需要由醫師評估，LINE 不能直接開藥。" }
+      ]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP", "72 小時", "李齊泰醫師", "午診", "晚診"]
   },
   {
     name: "psa report cancer biopsy question avoids diagnosis",
