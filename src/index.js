@@ -209,15 +209,15 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 function buildSimpleReply(message) {
   const normalized = message.trim();
   if (/^(hi|hello|hey|哈囉|嗨|你好|您好|早安|午安|晚安)[。！!.\s]*$/i.test(normalized)) {
-    return "您好，想問門診、預約、交通，或診所有沒有提供某項服務？";
+    return "我在。你想查門診、預約、交通，還是想問診所有沒有提供某項服務？";
   }
 
   if (/^(謝謝|感謝|thanks|thank you|thx)[。！!.\s]*$/i.test(normalized)) {
-    return "不客氣。";
+    return "不客氣，有需要我再幫你查。";
   }
 
   if (/^(ok|okay|好|好的|了解|收到)[。！!.\s]*$/i.test(normalized)) {
-    return "收到。";
+    return "收到，我先幫你記著這個脈絡。";
   }
 
   return null;
@@ -237,7 +237,7 @@ function buildAssistanceFollowUpReply(userId, message) {
   if (!isAffirmative(message)) return null;
 
   pendingAssistanceByUser.delete(userId);
-  return "請留下姓名、電話、方便聯絡/預約時段、簡短狀況。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。";
+  return "可以，請留下姓名、電話、方便聯絡或預約的時段，還有簡短狀況。若有劇烈疼痛、發燒、尿不出來或大量出血，請不要等 LINE 回覆，先立即就醫。";
 }
 
 function rememberAssistanceIfNeeded(userId, message) {
