@@ -122,6 +122,22 @@ const cases = [
     forbidden: ["https://", "contact-us", "appointment", "官網介紹"]
   },
   {
+    name: "contextual urology follow-up does not append homepage",
+    reply: await draftReply({
+      message: "那我如果只是頻尿想看泌尿科，剛剛那一診就不要掛，對嗎？",
+      chunks: [
+        {
+          title: "男性泌尿道感染與頻尿",
+          content: "頻尿、夜尿或排尿不順可能有不同原因，建議掛一般泌尿科門診由醫師評估。",
+          sourceUrls: ["https://uromeeme.com/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["頻尿", "泌尿科"],
+    forbidden: ["官網介紹：", "https://uromeeme.com/"]
+  },
+  {
     name: "test code alone does not inherit old article link",
     reply: await draftReply({
       message: "H27-01",

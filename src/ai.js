@@ -302,7 +302,8 @@ function isBroadOfficialUrl(url) {
 }
 
 function isBroadUrlRequested(message) {
-  return /醫師|醫生|專長|陳嘉哲|官網|官方網站|首頁|品牌|特色|團隊|一站式|預約|掛號|交通|地址/.test(message);
+  return /官網|官方網站|首頁|品牌|特色|團隊|一站式|醫師介紹|醫生介紹|官方介紹/.test(message) ||
+    /(預約|掛號|交通|地址|醫師|醫生|專長).*(網址|連結|頁面|官網|介紹)/.test(message);
 }
 
 function isOfficialLineRequested(message) {
@@ -315,5 +316,9 @@ function isClinicAccessQuery(message) {
 
 function hasUsefulLinkIntent(message) {
   const withoutTestCode = message.replace(/\b[A-Z]\d{2}-\d{2}\b/gi, "");
-  return extractLinkTerms(withoutTestCode).length > 0 || isBroadUrlRequested(withoutTestCode);
+  return hasExplicitOfficialLinkIntent(withoutTestCode) || isBroadUrlRequested(withoutTestCode);
+}
+
+function hasExplicitOfficialLinkIntent(message) {
+  return /官網|官方網站|網址|連結|頁面|文章|衛教|影片|新聞|報導|案例|在哪|給我|提供|可以看|看得到|有沒有.*(文章|影片|新聞|報導|案例)/.test(message);
 }
