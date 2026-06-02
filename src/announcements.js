@@ -26,7 +26,7 @@ export function answerLineVoomAnnouncementQuestion(message) {
 }
 
 function stripTestQuestionPrefix(message) {
-  return message.replace(/^\s*[A-Z]{1,4}\d{1,3}[-_]\d{1,3}\s*[：:]\s*/i, "");
+  return message.replace(/^\s*[A-Z]{1,4}\d{1,3}[-_]\d{1,3}(?:\s*[：:]|\s+)/i, "");
 }
 
 function loadLineVoomPosts() {
@@ -98,7 +98,7 @@ function extractServiceNote(content) {
 
 function extractRequestedMonthDays(text) {
   const dates = [];
-  const numericMatches = text.matchAll(/(?:20\d{2}[/-])?(\d{1,2})[/-](\d{1,2})/g);
+  const numericMatches = text.matchAll(/(?:^|[^\dA-Za-z])(?:20\d{2}[/-])?(\d{1,2})[/-](\d{1,2})(?=$|[^\d])/g);
   for (const match of numericMatches) dates.push(normalizeMonthDay(match[1], match[2]));
 
   const chineseMatches = text.matchAll(/(\d{1,2})月(\d{1,2})[日號]?/g);
