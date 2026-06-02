@@ -159,6 +159,7 @@ function appendOfficialLinks(reply, chunks, message) {
 
 function extractOfficialWebsiteUrls(chunks, message) {
   if (isClinicAccessQuery(message)) return [];
+  if (shouldSuppressExtraLinks(message)) return [];
 
   const canonicalTopicUrl = findCanonicalOfficialTopicUrl(message);
   if (canonicalTopicUrl) return [canonicalTopicUrl];
@@ -321,4 +322,10 @@ function hasUsefulLinkIntent(message) {
 
 function hasExplicitOfficialLinkIntent(message) {
   return /官網|官方網站|網址|連結|頁面|文章|衛教|影片|新聞|報導|案例|在哪|給我|提供|可以看|看得到|有沒有.*(文章|影片|新聞|報導|案例)/.test(message);
+}
+
+function shouldSuppressExtraLinks(message) {
+  if (hasExplicitOfficialLinkIntent(message)) return false;
+
+  return /講重點|重點就好|簡短|短答|不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|只要.*重點/.test(message);
 }

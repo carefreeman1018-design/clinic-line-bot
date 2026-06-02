@@ -10,6 +10,22 @@ const cases = [
     forbidden: ["傷口", "發燒", "尿不出來", "大量出血", "https://", "lin.ee", "官網介紹："]
   },
   {
+    name: "pep concise answer suppresses extra link",
+    reply: await draftReply({
+      message: "我昨晚無套性行為後很焦慮，現在大概過了 30 小時。你們可以做 PEP 嗎？我能不能直接去拿藥？請講重點就好。",
+      chunks: [
+        {
+          title: "PrEP、PEP 與匿名篩檢",
+          content: "診所有提供 PEP 評估。PEP 需在暴露後 72 小時內盡快開始，但不能線上直接判斷或開藥，需由醫師評估後處理。",
+          sourceUrls: ["https://uromeeme.com/pep/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["PEP", "72", "醫師"],
+    forbidden: ["官網介紹：", "https://"]
+  },
+  {
     name: "medical escalation",
     reply: await draftReply({
       message: "我尿血是不是很嚴重",
