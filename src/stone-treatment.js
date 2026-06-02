@@ -3,6 +3,14 @@ const PHONE = "02-2511-9488";
 export function answerStoneQuestion(message) {
   if (!isStoneQuestion(message)) return null;
 
+  if (hasUpperUrinaryEmergency(message)) {
+    return [
+      "血尿或尿色發紅合併腰痛/側腹痛和發燒，需要警覺腎臟或輸尿管感染、結石合併感染等急症風險，LINE 不能判斷原因。",
+      "不建議先吃止痛藥或家裡抗生素撐到明天，也不能先安排體外震波、鈥雷射碎石或報費用。",
+      `請現在直接急診/立即就醫；若要同步確認診所能否協助，可電話 ${PHONE}，但不要因此延誤處理。`
+    ].join("");
+  }
+
   if (hasUrgentStoneConcern(message)) {
     return [
       "右腰痛到冒冷汗、尿有點紅，不能只用 LINE 判斷是不是腎結石或輸尿管結石。",
@@ -24,4 +32,12 @@ function isStoneQuestion(message) {
 
 function hasUrgentStoneConcern(message) {
   return /冒冷汗|劇痛|很痛|痛到|血尿|尿.*紅|發燒|尿不出來|排不出尿|急診|今天|現在|急|明顯不舒服/i.test(message);
+}
+
+function hasUpperUrinaryEmergency(message) {
+  const hasBloodUrine = /血尿|尿.*血|尿.*紅|尿裡.*紅|尿色.*紅/.test(message);
+  const hasFlankOrWaistPain = /腰.*痛|側腹.*痛|腰腹.*痛|右腰|左腰|腎絞痛|痛到|劇痛|很痛/.test(message);
+  const hasFever = /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
+
+  return hasBloodUrine && hasFlankOrWaistPain && hasFever;
 }
