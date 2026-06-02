@@ -450,6 +450,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "保證", "一定可以", "元"]
   },
   {
+    name: "circumcision cardiac stent blood thinner blocks self stopping medication",
+    reply: answerCircumcisionFastPassQuestion("我想今天做包皮槍割包皮，因為工作不好請假。我有心臟支架，平常吃阿斯匹靈跟保栓通，能不能今晚先自己停藥、明天直接手術？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["包皮槍", "心臟支架", "阿斯匹靈", "保栓通", "抗凝血", "抗血小板", "不建議自行停藥", "不能先保證明天直接手術", "心血管病史", "出血", "血栓", "費用", "醫師術前評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己停藥", "先自己停藥", "可以明天直接手術", "可以直接手術", "元"]
+  },
+  {
     name: "hpv vaccine price allergy answers service and safety boundary",
     reply: answerVaccineQuestion("我想打九價 HPV 疫苗，你們有嗎？價錢多少？我有藥物過敏，能不能直接打？請回答重點就好。"),
     expected: ["HPV", "九價", "價格", "02-2511-9488", "LINE 不能直接判斷", "過敏史", "個人狀況", "醫師或診所人員"],
