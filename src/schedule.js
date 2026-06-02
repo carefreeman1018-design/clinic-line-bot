@@ -145,6 +145,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
   if (!hasRecentPepContext(conversationHistory)) return null;
   if (hasCompetingMedicalTopic(message)) return null;
+  if (hasNewPepRiskOrMedicationQuestion(message)) return null;
   if (!hasPepVisitFollowUpIntent(message)) return null;
 
   const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
@@ -166,6 +167,10 @@ export function answerPepVisitScheduleFollowUp(message, now = new Date(), conver
 
 function hasPepVisitFollowUpIntent(message) {
   return /下午|晚上|晚診|夜診|時段|掛|門診|看診|預約|現場|直接到|到診|下一步|怎麼去/.test(message);
+}
+
+function hasNewPepRiskOrMedicationQuestion(message) {
+  return /(\d{1,3})\s*小時|上週|昨天|保險套破|無套|PrEP|補救|超過時間|已經過|還能吃\s*PEP|能不能吃\s*PEP/i.test(message);
 }
 
 function hasCompetingMedicalTopic(message) {

@@ -194,6 +194,19 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
   },
   {
+    name: "pep schedule follow-up does not intercept new 80-hour prep rescue question",
+    reply: answerPepVisitScheduleFollowUp(
+      "我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？不要貼連結，請直接講下一步。",
+      new Date("2026-06-02T12:00:00+08:00"),
+      [
+        { role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" },
+        { role: "assistant", content: "60 小時仍在 72 小時內，PEP 需要由醫師評估。" }
+      ]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP 是越早評估越好", "今天（週二）", "李齊泰醫師", "晚診"]
+  },
+  {
     name: "prep does not replace condoms or post-exposure pep",
     reply: answerStdTreatmentQuestion("我最近想開始吃 PrEP，是不是吃了就不用戴套，也不會得梅毒、淋病或菜花？如果昨天已經無套了，吃 PrEP 可以補救嗎？不要貼連結，請直接告訴我下一步。"),
     expected: ["PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能預防梅毒、淋病、菜花", "PEP", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "02-2511-9488"],
