@@ -36,11 +36,16 @@ function answerPepQuestion(message) {
     ? "60 小時仍在官網提醒的 72 小時內，"
     : "PEP 需把握風險行為後 72 小時內，";
 
+  const prepClarification = /PrEP/i.test(message)
+    ? "PrEP 是暴露前預防，不是已發生暴露後的補救；PrEP 也不能預防梅毒、淋病、菜花等其他性病。"
+    : "";
+
   const anonymousScreening = /匿名|篩檢|驗性病|性病/.test(message)
     ? "匿名篩檢可一起詢問，官網說明可透過官方 LINE 預約，到診所後由護理人員安排篩檢。"
     : "PEP 不能預防其他性病，是否需要篩檢也請一起讓醫師評估。";
 
   return [
+    prepClarification,
     `${prefix}請今天盡快聯絡診所或到門診/急診由醫師評估；LINE 不能直接判斷或開藥。`,
     anonymousScreening,
     `下一步：先電話 ${PHONE} 確認最快可評估時段；若診所無法即時安排，請儘速就醫。`
