@@ -38,7 +38,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
 
   if (!client) {
     const bestChunk = chunks.find((chunk) => /建議回覆/.test(chunk.content)) ?? chunks[0];
-    return appendOfficialLinks(summarizeChunk(bestChunk.content), chunks, message);
+    return appendOfficialLinks(summarizeChunk(bestChunk.content, message), chunks, message);
   }
 
   const context = chunks
@@ -100,8 +100,8 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
   return appendOfficialLinks(reply, chunks, message);
 }
 
-function summarizeChunk(content) {
-  const suggestedReply = content.match(/建議回覆：\s*\n+「([\s\S]*?)」/)?.[1]?.trim();
+function summarizeChunk(content, message = "") {
+  const suggestedReply = selectSuggestedReply(content, message);
   if (suggestedReply) return suggestedReply;
 
   return content
@@ -109,6 +109,35 @@ function summarizeChunk(content) {
     .replace(/>.+$/gm, "")
     .trim()
     .slice(0, 240);
+}
+
+function selectSuggestedReply(content, message) {
+  const suggestions = [...content.matchAll(/使用者問：([\s\S]*?)\n\s*建議回覆：\s*\n+「([\s\S]*?)」/g)].map((match) => ({
+    question: match[1].trim(),
+    reply: match[2].trim()
+  }));
+
+  if (suggestions.length === 0) {
+    return content.match(/建議回覆：\s*\n+「([\s\S]*?)」/)?.[1]?.trim() ?? null;
+  }
+
+  const scoredSuggestions = suggestions
+    .map((suggestion) => ({
+      ...suggestion,
+      score: scoreSuggestedQuestion(suggestion.question, message)
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  return scoredSuggestions[0]?.reply ?? null;
+}
+
+function scoreSuggestedQuestion(suggestedQuestion, message) {
+  const messageTerms = extractLinkTerms(message);
+  const suggestedQuestionText = suggestedQuestion.toLowerCase();
+
+  return messageTerms.reduce((score, term) => {
+    return suggestedQuestionText.includes(term) ? score + term.length : score;
+  }, 0);
 }
 
 function getTaipeiToday() {

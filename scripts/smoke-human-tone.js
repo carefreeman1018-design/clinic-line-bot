@@ -151,6 +151,64 @@ const cases = [
     }),
     expected: ["痔瘡"],
     forbidden: ["官網介紹：", "鍛肌椅", "%E9%AB%98%E5%AF%86%E5%BA%A6"]
+  },
+  {
+    name: "skin shingles vaccine uses matching suggested reply",
+    reply: await draftReply({
+      message: "皮蛇疫苗可以打嗎",
+      chunks: [
+        {
+          title: "HPV、皮蛇疫苗與疫苗預約",
+          content: [
+            "## LINE 回覆建議",
+            "使用者問：「你們有 HPV 疫苗嗎？」「可以打九價 HPV 嗎？」",
+            "",
+            "建議回覆：",
+            "",
+            "「官網列出診所有提供 HPV 疫苗施打。」",
+            "",
+            "使用者問：「你們有皮蛇疫苗嗎？」",
+            "",
+            "建議回覆：",
+            "",
+            "「官網主要診療項目有列出皮蛇疫苗施打。建議先透過官方 LINE 或電話 02-2511-9488 確認庫存、費用與可預約時段。」"
+          ].join("\n"),
+          sourceUrls: ["https://uromeeme.com/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["皮蛇疫苗"],
+    forbidden: ["HPV 疫苗施打", "官網介紹："]
+  },
+  {
+    name: "anal wart uses matching suggested reply",
+    reply: await draftReply({
+      message: "肛門菜花可以處理嗎",
+      chunks: [
+        {
+          title: "痔瘡、廔管、肛裂與肛門性病",
+          content: [
+            "## LINE 回覆建議",
+            "使用者問：「痔瘡可以看嗎？」",
+            "",
+            "建議回覆：",
+            "",
+            "「診所有肛門直腸外科，官網列出痔瘡、廔管、肛裂等肛門疾病診斷與治療，也有痔瘡微創手術評估。建議預約門診由醫師檢查。」",
+            "",
+            "使用者問：「肛門菜花可以處理嗎？」",
+            "",
+            "建議回覆：",
+            "",
+            "「官網列出肛門性病診斷與治療。肛門菜花或其他病灶需要醫師實際檢查確認，建議預約肛門直腸外科或泌尿相關門診評估。」"
+          ].join("\n"),
+          sourceUrls: ["https://uromeeme.com/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["肛門菜花", "肛門性病", "https://uromeeme.com/%e6%80%a7%e7%97%85%e6%b2%bb%e7%99%82/"],
+    forbidden: ["痔瘡微創"]
   }
 ];
 
