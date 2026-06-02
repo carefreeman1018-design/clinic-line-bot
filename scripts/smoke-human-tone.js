@@ -1,10 +1,17 @@
 import { draftReply } from "../src/ai.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
+import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "male private surgery price outcome keeps boundary without link",
+    reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
+    expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "費用", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "一定", "元"]
+  },
   {
     name: "female urology muscle chair price keeps boundary without link",
     reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想問你們有美磁波鍛肌椅嗎？我可以直接做嗎？一次費用多少？不要貼連結，請講重點。"),

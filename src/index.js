@@ -18,6 +18,7 @@ import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vec
 import { answerVaccineQuestion } from "./vaccines.js";
 import { answerCircumcisionFastPassQuestion } from "./surgery.js";
 import { answerFemaleUrologyQuestion } from "./female-urology.js";
+import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -193,6 +194,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const femaleUrologyReply = answerFemaleUrologyQuestion(message);
   if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
+
+  const malePrivateReply = answerMalePrivateSurgeryQuestion(message);
+  if (malePrivateReply) return { reply: malePrivateReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {
