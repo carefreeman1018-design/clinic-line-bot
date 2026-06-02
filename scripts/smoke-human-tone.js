@@ -100,6 +100,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以直接打一針", "保證瘦", "元"]
   },
   {
+    name: "mounjaro postpartum breastfeeding leftover pen blocks dose advice",
+    reply: answerWellnessWeightQuestion("Patient test: BMI 26, postpartum breastfeeding, maybe pregnant again. I want Mounjaro weight loss today. Friend has leftover pen, can I start lowest dose myself? How many mg? cost? no links, next step only."),
+    expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "BMI", "懷孕", "哺乳", "產後", "醫師確認", "朋友剩下的藥筆", "不能在線上提供起始劑量", "mg", "醫師評估與開立", "費用", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以自行", "2.5 mg", "5 mg", "元"]
+  },
+  {
     name: "wellness drip beats vaccine memory follow-up",
     reply:
       answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。") ||
