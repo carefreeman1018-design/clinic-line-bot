@@ -175,6 +175,13 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const simpleReply = buildSimpleReply(message);
   if (simpleReply) return { reply: simpleReply, relevantChunks: [] };
 
+  if (isLowInformationMessage(message)) {
+    return {
+      reply: "我看得到這則訊息，但問題內容不夠明確。可以直接告訴我想問門診、預約、交通，還是哪一項服務嗎？",
+      relevantChunks: []
+    };
+  }
+
   if (shouldEscalate(message)) {
     return {
       reply: "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。",
@@ -250,6 +257,19 @@ function rememberAssistanceIfNeeded(userId, message) {
 
 function isAffirmative(message) {
   return /^(好|好的|可以|需要|要|麻煩|麻煩你|請幫我|幫我|ok|OK|yes|Yes|好啊|可以啊)[。！!.\s]*$/.test(message.trim());
+}
+
+function isLowInformationMessage(message) {
+  const normalized = message
+    .replace(/\b[A-Z]\d{2}-\d{2}\b/gi, "")
+    .replace(/[。！!？?，,、；;：:\s-]/g, "")
+    .trim();
+
+  if (!normalized) return true;
+  if (/^\d+$/.test(normalized)) return true;
+  if (/^[a-z]+$/i.test(normalized) && normalized.length <= 3) return true;
+
+  return false;
 }
 
 function buildContextualQuery(message, conversationHistory) {

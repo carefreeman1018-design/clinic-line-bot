@@ -114,6 +114,22 @@ const cases = [
     reply: answerBasicInfoQuestion("如何預約手術"),
     expected: ["https://appointment.uromeeme.inncom.cloud/", "留下姓名", "02-2511-9488"],
     forbidden: ["lin.ee", "加官方 LINE", "contact-us"]
+  },
+  {
+    name: "test code alone does not inherit old article link",
+    reply: await draftReply({
+      message: "H27-01",
+      chunks: [
+        {
+          title: "割包皮衛教",
+          content: "割包皮有什麼好處？可以參考官網文章。",
+          sourceUrls: ["https://uromeeme.com/health-education/%e5%89%b2%e5%8c%85%e7%9a%ae%e7%9a%84%e5%a5%bd%e8%99%95/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["割包皮"],
+    forbidden: ["官網介紹：", "health-education"]
   }
 ];
 

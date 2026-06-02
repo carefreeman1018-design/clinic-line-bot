@@ -129,8 +129,11 @@ function appendOfficialLinks(reply, chunks, message) {
 }
 
 function extractOfficialWebsiteUrls(chunks, message) {
+  if (isClinicAccessQuery(message)) return [];
+
   const canonicalTopicUrl = findCanonicalOfficialTopicUrl(message);
   if (canonicalTopicUrl) return [canonicalTopicUrl];
+  if (!hasUsefulLinkIntent(message)) return [];
 
   const candidates = new Map();
 
@@ -274,4 +277,13 @@ function isBroadUrlRequested(message) {
 
 function isOfficialLineRequested(message) {
   return /官方\s*LINE|line\s*id|LINE\s*ID|加好友|好友連結|lin\.ee/i.test(message);
+}
+
+function isClinicAccessQuery(message) {
+  return /診所|津久|你們|現場|門診/.test(message) && /如何去|怎麼去|怎麼走|怎麼到|交通|路線|地址|位置|在哪|到診|行天宮|捷運|公車|停車/.test(message);
+}
+
+function hasUsefulLinkIntent(message) {
+  const withoutTestCode = message.replace(/\b[A-Z]\d{2}-\d{2}\b/gi, "");
+  return extractLinkTerms(withoutTestCode).length > 0 || isBroadUrlRequested(withoutTestCode);
 }
