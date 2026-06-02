@@ -14,12 +14,21 @@ import { answerSexualFunctionQuestion } from "../src/sexual-function.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerStoneQuestion } from "../src/stone-treatment.js";
+import { answerTesticularTorsionQuestion } from "../src/testicular-torsion.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "teen sudden testicular pain gives torsion emergency boundary",
+    reply:
+      answerTesticularTorsionQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？不要貼連結，直接講下一步。") ||
+      answerMaleUtiUrgentQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？不要貼連結，直接講下一步。"),
+    expected: ["16 歲", "突然單側睪丸痛", "陰囊腫", "睪丸扭轉", "急性陰囊", "LINE 不能直接診斷", "不建議", "止痛藥", "拖到隔天", "缺血風險", "黃金六小時", "急診", "立即就醫", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃止痛藥", "觀察到明天", "先預約門診", "不用急診"]
+  },
   {
     name: "priapism after erectile medication gives urgent boundary",
     reply:

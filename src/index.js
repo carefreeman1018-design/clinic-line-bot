@@ -29,6 +29,7 @@ import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
 import { answerStoneQuestion } from "./stone-treatment.js";
+import { answerTesticularTorsionQuestion } from "./testicular-torsion.js";
 import { answerWellnessWeightQuestion } from "./wellness-weight.js";
 import { answerWoundCareQuestion } from "./wound-care.js";
 
@@ -212,6 +213,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const priapismReply = answerPriapismQuestion(message);
   if (priapismReply) return { reply: priapismReply, relevantChunks: [] };
+
+  const testicularTorsionReply = answerTesticularTorsionQuestion(message);
+  if (testicularTorsionReply) return { reply: testicularTorsionReply, relevantChunks: [] };
 
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
