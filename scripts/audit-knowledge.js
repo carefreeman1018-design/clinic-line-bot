@@ -9,7 +9,7 @@ import { answerFixedScheduleQuestion } from "../src/schedule.js";
 const DEFAULT_ROUNDS = 3;
 
 const OFFICIAL_SERVICE_TERMS = [
-  "雙主治增粗包皮槍手術",
+  "包皮槍",
   "無刀口男性結紮手術",
   "男性私密處微創手術",
   "攝護腺肥大治療",
@@ -205,7 +205,7 @@ const PROCEDURE_RETRIEVAL_CASES = [
   {
     question: "我想問割包皮",
     source: "circumcision.md",
-    expectedTerms: ["雙主治增粗包皮槍手術", "包皮槍 5.0", "包皮環切手術", "術前評估"]
+    expectedTerms: ["包皮槍 5.0", "包皮環切手術", "術前評估"]
   },
   {
     question: "包皮過長需要割嗎？",
@@ -258,7 +258,7 @@ const SERVICE_QUESTION_TEMPLATES = [
 ];
 
 const SERVICE_CASE_ALIASES = new Map([
-  ["雙主治增粗包皮槍手術", ["包皮槍", "包皮環切"]],
+  ["包皮槍手術", ["包皮槍", "包皮環切"]],
   ["無刀口男性結紮手術", ["男性結紮"]],
   ["男性私密處微創手術", ["陰莖增大", "龜頭減敏"]],
   ["攝護腺肥大治療", ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift"]],

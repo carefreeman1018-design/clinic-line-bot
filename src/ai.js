@@ -3,6 +3,7 @@ import OpenAI from "openai";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const MAX_REPLY_CHARS = Number(process.env.MAX_REPLY_CHARS || 360);
+const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 
 const client = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
@@ -50,6 +51,8 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
           "使用者問得很短或資訊不足時，不要硬湊答案；先回答能確認的部分，再問一個最必要的追問。",
           "如果使用者看起來焦慮，先穩住語氣，不製造恐慌，再給明確下一步。",
           "如果使用者是要預約、查門診、查交通，回答要偏行動導向，不要衛教化。",
+          "使用者已經在 LINE 對話裡，不要叫他再加官方 LINE，也不要主動貼官方 LINE 加好友連結；除非使用者明確詢問官方 LINE ID 或加好友連結。",
+          `若使用者問怎麼預約，可提供線上掛號：${APPOINTMENT_URL}，或請他留下姓名、電話與方便聯絡時段。`,
           "不要使用多餘寒暄或結尾祝福，例如「您好」、「感謝您的訊息」、「祝您健康平安」、「若有其他問題歡迎詢問」。",
           "不要重複提醒同一件事；能直接回答就直接回答。",
           "只能根據提供的診所知識庫內容回答，不要編造資訊。",
@@ -99,13 +102,16 @@ function getTaipeiToday() {
 
 function appendOfficialLinks(reply, chunks, message) {
   const urls = extractOfficialWebsiteUrls(chunks, message);
-  if (urls.length === 0) return reply;
+  const normalizedReply = normalizeReplyForLineContext(reply, message);
+  if (urls.length === 0) return normalizedReply;
 
-  const label = urls.length === 1 ? "官網介紹：" : "官網介紹：";
-  return `${reply}\n\n${label}\n${urls.join("\n")}`;
+  return `${normalizedReply}\n\n官網介紹：\n${urls[0]}`;
 }
 
 function extractOfficialWebsiteUrls(chunks, message) {
+  const canonicalTopicUrl = findCanonicalOfficialTopicUrl(message);
+  if (canonicalTopicUrl) return [canonicalTopicUrl];
+
   const candidates = new Map();
 
   for (const chunk of chunks) {
@@ -125,8 +131,30 @@ function extractOfficialWebsiteUrls(chunks, message) {
   const fallbackUrls = scoredUrls.filter((candidate) => candidate.score > 0);
 
   return (strongUrls.length > 0 ? strongUrls : fallbackUrls)
-    .slice(0, strongUrls.length > 0 ? 2 : 1)
+    .slice(0, 1)
     .map((candidate) => candidate.url);
+}
+
+function normalizeReplyForLineContext(reply, message) {
+  if (isOfficialLineRequested(message)) return reply;
+
+  return reply
+    .replace(/https:\/\/lin\.ee\/[^\s)）]+/gi, "")
+    .replace(/(?:建議|可|可以)?先?(?:加|加入)官方\s*LINE\s*(?:預約)?(?:快速通關服務)?[，,、；;]?\s*/gi, "")
+    .replace(/(?:官方\s*LINE\s*加好友連結|加好友連結)[:：]?\s*/gi, "")
+    .replace(/[（(]\s*[）)]/g, "")
+    .replace(/(?:預約)?快速通關服務[，,、；;]?\s*或/gi, "可以")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function findCanonicalOfficialTopicUrl(message) {
+  if (/割包皮|包皮槍|包皮環切|包莖|包皮過長/.test(message)) {
+    return "https://uromeeme.com/treatment1/";
+  }
+
+  return null;
 }
 
 function isOfficialWebsiteUrl(url) {
@@ -218,4 +246,8 @@ function isBroadOfficialUrl(url) {
 
 function isBroadUrlRequested(message) {
   return /醫師|醫生|專長|陳嘉哲|官網|官方網站|首頁|品牌|特色|團隊|一站式|預約|掛號|交通|地址/.test(message);
+}
+
+function isOfficialLineRequested(message) {
+  return /官方\s*LINE|line\s*id|LINE\s*ID|加好友|好友連結|lin\.ee/i.test(message);
 }
