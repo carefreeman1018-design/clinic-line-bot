@@ -23,6 +23,7 @@ import { answerFemaleUrologyQuestion } from "./female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
+import { answerParaphimosisQuestion } from "./paraphimosis.js";
 import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
@@ -204,6 +205,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const vaccineReply = answerVaccineQuestion(message, conversationHistory);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
+
+  const paraphimosisReply = answerParaphimosisQuestion(message);
+  if (paraphimosisReply) return { reply: paraphimosisReply, relevantChunks: [] };
 
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };

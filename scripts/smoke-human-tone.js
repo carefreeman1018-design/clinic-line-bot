@@ -5,6 +5,7 @@ import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
+import { answerParaphimosisQuestion } from "../src/paraphimosis.js";
 import { answerProstateQuestion } from "../src/prostate.js";
 import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "../src/schedule.js";
@@ -18,6 +19,14 @@ import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "paraphimosis urgent question beats wound care memory",
+    reply:
+      answerParaphimosisQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。") ||
+      answerWoundCareQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。"),
+    expected: ["包皮卡在龜頭", "龜頭腫紫", "很痛", "尿不太出來", "嵌頓性包莖", "LINE 不能直接診斷", "不建議自己硬推", "不建議等到明天", "立即就醫", "急診", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "釘子", "前 2 週", "不要碰水", "拍清楚照片", "可以自己硬推", "等明天"]
+  },
   {
     name: "stone fever pain medication and same-day lithotripsy boundary",
     reply: answerStoneQuestion("我現在左腰痛到冒冷汗，尿有點紅，還有發燒，怕是輸尿管結石。可以先吃止痛藥等明天嗎？你們今天能不能直接幫我體外震波或鈥雷射碎石？費用多少？不要貼連結，直接講下一步。"),
