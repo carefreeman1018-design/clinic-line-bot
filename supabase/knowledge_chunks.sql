@@ -33,19 +33,24 @@ returns table (
   metadata jsonb,
   similarity float
 )
-language sql
+language plpgsql
 stable
 as $$
-  select
-    knowledge_chunks.id,
-    knowledge_chunks.source,
-    knowledge_chunks.title,
-    knowledge_chunks.content,
-    knowledge_chunks.source_urls,
-    knowledge_chunks.metadata,
-    1 - (knowledge_chunks.embedding <=> query_embedding) as similarity
-  from knowledge_chunks
-  where 1 - (knowledge_chunks.embedding <=> query_embedding) >= min_similarity
-  order by knowledge_chunks.embedding <=> query_embedding
-  limit match_count;
+begin
+  perform set_config('ivfflat.probes', '100', true);
+
+  return query
+    select
+      knowledge_chunks.id,
+      knowledge_chunks.source,
+      knowledge_chunks.title,
+      knowledge_chunks.content,
+      knowledge_chunks.source_urls,
+      knowledge_chunks.metadata,
+      1 - (knowledge_chunks.embedding <=> query_embedding) as similarity
+    from knowledge_chunks
+    where 1 - (knowledge_chunks.embedding <=> query_embedding) >= min_similarity
+    order by knowledge_chunks.embedding <=> query_embedding
+    limit match_count;
+end;
 $$;
