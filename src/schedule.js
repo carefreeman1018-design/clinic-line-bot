@@ -136,6 +136,16 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 
   if (/泌尿科/.test(message) && clinic.includes("肛門直腸外科")) {
     const prefix = /不要掛|不適合|對嗎|可以掛|能掛/.test(message) ? "對，" : "";
+    if (asksForAlternativeClinicTime(message)) {
+      return compactLines([
+        ...contextNotes,
+        `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。`,
+        buildAvailableGeneralClinicTimesReply(day),
+        TEMPORARY_CHANGE_CONFIRMATION,
+        routeNote
+      ]);
+    }
+
     return compactLines([...contextNotes, `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`, routeNote]);
   }
 
@@ -347,7 +357,7 @@ function buildPeriodLine(day, period) {
 }
 
 function asksForAlternativeClinicTime(message) {
-  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|有診|可以看/.test(message);
+  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|該掛|掛哪|改哪|換哪|比較適合|有診|可以看|下一步/.test(message);
 }
 
 function buildAvailableClinicTimesReply(day) {
@@ -371,11 +381,12 @@ function buildAvailableGeneralClinicTimesReply(day) {
     .map((period) => {
       const clinic = schedule[period];
       if (clinic === "休診" || clinic === "手術") return null;
+      if (clinic.includes("肛門直腸外科")) return null;
       return `${period}（${periodToTime(period)}）：${clinic}`;
     })
     .filter(Boolean);
 
-  if (lines.length === 0) return `${day}沒有一般門診時段。`;
+  if (lines.length === 0) return `${day}沒有一般泌尿科門診時段。`;
   return `${day}可改一般門診時段：\n${lines.join("\n")}`;
 }
 
