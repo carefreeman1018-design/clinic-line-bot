@@ -295,6 +295,18 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "可以今天直接做", "可以不用切片", "元"]
   },
   {
+    name: "psa report follow-up says clinic review before surgery",
+    reply: answerReportResultQuestion(
+      "那我是不是先不要掛手術，先掛一般泌尿科看報告比較對？我很怕被直接安排手術，請不要貼連結。",
+      [
+        { role: "user", content: "我健檢 PSA 變成 7.8，超音波說攝護腺比較大。我是不是已經是攝護腺癌？可以不要切片、直接做水蒸氣或 Urolift 嗎？" },
+        { role: "assistant", content: "PSA 偏高不等於一定是攝護腺癌，是否需要切片與治療需由醫師評估。" }
+      ]
+    ),
+    expected: ["對", "先掛泌尿科門診", "PSA", "超音波", "檢查報告", "不要先把自己排成手術", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "水蒸氣消融", "Urolift", "不能用來取代", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接安排手術", "不用切片", "就是癌症", "不是癌症"]
+  },
+  {
     name: "prostate treatment choice cost and ejaculation avoids pep context",
     reply: answerProstateQuestion("我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "Urolift", "夜尿", "尿流變細", "影響射精", "費用", "醫師", "02-2511-9488"],

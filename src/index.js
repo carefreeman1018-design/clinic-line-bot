@@ -242,7 +242,7 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const maleUtiUrgentReply = answerMaleUtiUrgentQuestion(message);
   if (maleUtiUrgentReply) return { reply: maleUtiUrgentReply, relevantChunks: [] };
 
-  const reportResultReply = answerReportResultQuestion(message);
+  const reportResultReply = answerReportResultQuestion(message, conversationHistory);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
 
   const prostateReply = answerProstateQuestion(message);
