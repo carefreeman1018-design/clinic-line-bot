@@ -4,13 +4,24 @@ export function answerWellnessWeightQuestion(message) {
   if (!isWellnessWeightQuestion(message)) return null;
 
   if (isMounjaroQuestion(message)) {
+    const hasPregnancyOrBreastfeeding = /懷孕|備孕|哺乳|餵奶|母奶|產後|月經.*晚|可能.*孕|pregnan|breastfeeding|postpartum/i.test(message);
+    const asksSelfUseOrDose = /朋友|剩下|剩的|自己.*打|自行.*打|自己.*用|自行.*用|劑量|最低劑量|幾.*mg|多少.*mg|dose|leftover|lowest dose|myself/i.test(message);
+
+    if (hasPregnancyOrBreastfeeding && asksSelfUseOrDose) {
+      return [
+        "診所有猛健樂門診，但你正在產後/哺乳，又想用朋友剩下的藥筆，這種情況不能直接施打。",
+        "不建議自行使用，也不能在線上告訴你最低劑量或 mg 用法；是否適合需由醫師評估後開立。",
+        `下一步請先電話 ${PHONE} 確認可評估時段，並帶目前用藥與產後/哺乳狀況。`
+      ].join("");
+    }
+
     const historyNote = /甲狀腺癌|甲狀腺.*癌|胰臟炎|胰腺炎|胰臟/.test(message)
       ? "有甲狀腺癌病史、家族史或曾胰臟炎時，更需要門診讓醫師確認風險與是否適合。"
       : "";
-    const pregnancyNote = /懷孕|備孕|哺乳|餵奶|產後|月經.*晚|可能.*孕|pregnan|breastfeeding|postpartum/i.test(message)
+    const pregnancyNote = hasPregnancyOrBreastfeeding
       ? "若正在懷孕、備孕、哺乳或產後狀態，需先由醫師確認是否適合，不能直接安排施打。"
       : "";
-    const selfUseNote = /朋友|剩下|剩的|自己.*打|自行.*打|自己.*用|自行.*用|劑量|幾.*mg|多少.*mg|dose|leftover|lowest dose|myself/i.test(message)
+    const selfUseNote = asksSelfUseOrDose
       ? "不建議使用朋友剩下的藥筆，也不能在線上提供起始劑量或 mg 用法；用藥需由醫師評估與開立。"
       : "";
 

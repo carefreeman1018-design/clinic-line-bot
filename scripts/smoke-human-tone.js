@@ -156,9 +156,9 @@ const cases = [
   },
   {
     name: "mounjaro postpartum breastfeeding leftover pen blocks dose advice",
-    reply: answerWellnessWeightQuestion("Patient test: BMI 26, postpartum breastfeeding, maybe pregnant again. I want Mounjaro weight loss today. Friend has leftover pen, can I start lowest dose myself? How many mg? cost? no links, next step only."),
-    expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "BMI", "懷孕", "哺乳", "產後", "醫師確認", "朋友剩下的藥筆", "不能在線上提供起始劑量", "mg", "醫師評估與開立", "費用", "02-2511-9488"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以自行", "2.5 mg", "5 mg", "元"]
+    reply: answerWellnessWeightQuestion("我產後還在餵母奶，朋友有剩下的猛健樂藥筆，我可以先自己打一點點試試看嗎？你們可以直接告訴我最低劑量嗎？"),
+    expected: ["猛健樂門診", "產後", "哺乳", "朋友剩下的藥筆", "不能直接施打", "不建議自行使用", "不能在線上告訴你最低劑量", "mg", "醫師評估後開立", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以自行", "2.5 mg", "5 mg", "費用", "BMI", "共病", "不能保證會瘦幾公斤", "元"]
   },
   {
     name: "wellness drip beats vaccine memory follow-up",
