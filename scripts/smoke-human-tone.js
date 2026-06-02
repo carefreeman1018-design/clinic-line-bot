@@ -175,6 +175,25 @@ const cases = [
     forbidden: ["https://", "lin.ee", "5/22 到 5/25 診所有公休/休息公告。", "可查看 LINE VOOM"]
   },
   {
+    name: "schedule follow-up keeps previous wednesday and correct afternoon doctor",
+    reply: answerFixedScheduleQuestion(
+      "那如果我改下午去呢？剛剛那個日期的下午是不是泌尿科？是哪位醫師？不要貼連結。",
+      new Date("2026-06-02T08:00:00+08:00"),
+      [
+        {
+          role: "user",
+          content: "我看到 LINE VOOM 之前有寫 5/22 到 5/25 休診，那明天 6/3（三）晚上還有開嗎？如果我是泌尿科問題，可以晚上去看嗎？不要貼連結，直接告訴我時段跟科別。"
+        },
+        {
+          role: "assistant",
+          content: "5/22 到 5/25 是過去 LINE VOOM 公告。明天（週三）晚診（18:00-20:30）是陳嘉哲醫師（肛門直腸外科門診），不是一般泌尿科門診。"
+        }
+      ]
+    ),
+    expected: ["週三", "午診", "13:30-17:00", "吳致寬醫師"],
+    forbidden: ["羅詩修醫師", "陳嘉哲醫師", "肛門直腸外科", "https://", "官網介紹："]
+  },
+  {
     name: "female uti blood antibiotic same-day does not invent fever",
     reply: answerMaleUtiUrgentQuestion("我是女生，今天尿尿很痛、一直想尿，下腹也痛，尿裡好像有血。可以先吃家裡剩下的抗生素嗎？今天要看門診還是急診？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["尿痛", "疑似血尿", "醫師評估", "不能建議先吃", "抗生素", "請不要自行服藥", "02-2511-9488", "血尿", "立即就醫"],
@@ -292,6 +311,22 @@ const cases = [
       shouldEscalate: false
     }),
     expected: ["PEP", "72", "醫師"],
+    forbidden: ["官網介紹：", "https://"]
+  },
+  {
+    name: "explicit no-link wording suppresses official website link",
+    reply: await draftReply({
+      message: "那一診是哪位醫師？不要貼連結。",
+      chunks: [
+        {
+          title: "門診與醫師介紹",
+          content: "週三下午 13:30-17:00 是吳致寬醫師門診。",
+          sourceUrls: ["https://uromeeme.com/about-us/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["醫師"],
     forbidden: ["官網介紹：", "https://"]
   },
   {

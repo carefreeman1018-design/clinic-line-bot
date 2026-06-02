@@ -63,7 +63,7 @@ function deriveFixedDoctors(schedule) {
 export function answerFixedScheduleQuestion(message, now = new Date(), conversationHistory = []) {
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
 
-  const day = resolveRequestedDay(message, now);
+  const day = resolveRequestedDay(message, now) ?? resolveFollowUpDay(message, conversationHistory, now);
   const periods = resolveRequestedPeriods(message);
   const period = periods[0];
   const doctor = resolveRequestedDoctor(message);
@@ -192,6 +192,26 @@ function resolveRequestedDay(message, now) {
   if (relativeOffset !== null) return getTaipeiWeekday(addDays(now, relativeOffset));
 
   return DAY_ALIASES.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
+}
+
+function resolveFollowUpDay(message, conversationHistory, now) {
+  if (!isScheduleDayFollowUp(message)) return null;
+
+  for (const historyMessage of [...conversationHistory].slice(-8).reverse()) {
+    const content = historyMessage.content ?? "";
+    const day = resolveRequestedDay(content, now);
+    if (day) return day;
+  }
+
+  return null;
+}
+
+function isScheduleDayFollowUp(message) {
+  if (/其他|其它|別的|哪些醫師|哪些醫生|有誰|哪幾位|醫師名單|醫生名單/.test(message)) return false;
+
+  const hasFollowUpCue = /那|剛剛|剛才|前面|上一個|上面|同一天|那天|那個日期|改/.test(message);
+  const hasScheduleCue = /早上|上午|下午|午診|晚上|晚診|夜診|門診|泌尿科|醫師|醫生|時段|看診/.test(message);
+  return hasFollowUpCue && hasScheduleCue;
 }
 
 function resolveExplicitDateDay(message) {
