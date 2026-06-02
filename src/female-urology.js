@@ -4,6 +4,15 @@ export function answerFemaleUrologyQuestion(message) {
   if (!isFemaleUrologyQuestion(message)) return null;
   if (!asksSuitabilityPriceOrNextStep(message)) return null;
 
+  if (isFemaleUtiUrgentQuestion(message)) {
+    return [
+      "尿痛、尿有點紅、腰痠痛又發燒，且月經晚了不確定是否懷孕，要先當成可能泌尿道感染或孕期感染風險處理，LINE 不能診斷。",
+      "今天不建議直接坐美磁波鍛肌椅，也不要自行吃家裡剩的抗生素；女性泌尿/漏尿和美磁波費用可以之後再確認，現在要先評估是否感染、是否懷孕，並由醫師評估適合的檢查與用藥。",
+      "可能懷孕時，也需由醫師確認是否適合後續療程；今天能不能直接做療程，需等上述狀況確認後再安排。",
+      `請現在先電話 ${PHONE} 確認最快可評估時段；有發燒、血尿或腰痛時需盡快就醫，不建議只等 LINE 回覆。若高燒、腰痛加劇、血尿變多、明顯不舒服或診所無法即時安排，請直接急診/立即就醫。`
+    ].join("");
+  }
+
   const safetyNotes = buildSafetyNotes(message);
 
   return [
@@ -19,7 +28,7 @@ function isFemaleUrologyQuestion(message) {
 }
 
 function asksSuitabilityPriceOrNextStep(message) {
-  return /直接做|可以做|適合|費用|價格|價錢|多少錢|一次|療程|預約|掛號|下一步|怎麼約|怎麼預約/.test(message);
+  return /直接做|可以做|適合|費用|價格|價錢|多少錢|一次|療程|預約|掛號|下一步|怎麼約|怎麼預約|抗生素|吃藥|吃.*藥|急診|就醫/.test(message);
 }
 
 function buildSafetyNotes(message) {
@@ -42,4 +51,11 @@ function buildSafetyNotes(message) {
   }
 
   return notes.join("");
+}
+
+function isFemaleUtiUrgentQuestion(message) {
+  return (
+    /尿痛|尿尿.*痛|解尿.*痛|排尿.*痛|泌尿道感染|膀胱炎/.test(message) &&
+    /發燒|高燒|血尿|尿.*血|尿.*紅|腰痛|腰.*痛|腰.*痠|懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕|抗生素|吃藥/.test(message)
+  );
 }

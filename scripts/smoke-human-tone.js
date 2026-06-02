@@ -23,6 +23,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",
+    reply: answerFemaleUrologyQuestion("我是女生，月經晚了快一週不確定有沒有懷孕，這兩天尿尿很痛、尿有點紅，今天腰痠痛又發燒，但我本來也有漏尿，想問能不能今天直接坐美磁波鍛肌椅？可以先吃家裡剩的抗生素嗎？不要貼連結，直接講下一步。"),
+    expected: ["尿痛", "尿有點紅", "腰痠痛", "發燒", "月經晚了", "不確定是否懷孕", "泌尿道感染", "孕期感染", "LINE 不能診斷", "不建議直接坐美磁波鍛肌椅", "不要自行吃家裡剩的抗生素", "醫師評估", "是否懷孕", "檢查與用藥", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以直接坐", "今天能不能直接做，需確認上述狀況後再安排", "費用目前知識庫沒有公開明確數字"]
+  },
+  {
     name: "post vasectomy swelling fever beats torsion route",
     reply:
       answerWoundCareQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。") ||
