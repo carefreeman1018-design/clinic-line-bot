@@ -15,6 +15,10 @@ export function answerStdTreatmentQuestion(message) {
     return answerPrepQuestion(message);
   }
 
+  if (isGenitalUlcerQuestion(message)) {
+    return answerGenitalUlcerQuestion(message);
+  }
+
   if (!asksMedicationDiagnosisOrTreatment(message)) return null;
 
   if (isWartQuestion(message)) {
@@ -28,7 +32,7 @@ export function answerStdTreatmentQuestion(message) {
 }
 
 function isStdTreatmentQuestion(message) {
-  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|性病|病灶|私密處.*顆粒|肉芽/i.test(message);
+  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|皰疹|疱疹|HSV|性病|病灶|私密處.*顆粒|肉芽|陰莖.*水泡|陰莖.*潰瘍|生殖器.*水泡|生殖器.*潰瘍/i.test(message);
 }
 
 function isPrepQuestion(message) {
@@ -103,10 +107,33 @@ function answerPepQuestion(message) {
   ].join("");
 }
 
+function isGenitalUlcerQuestion(message) {
+  return (
+    /陰莖|龜頭|包皮|生殖器|私密處/.test(message) &&
+    /水泡|皰疹|疱疹|HSV|破皮|潰瘍|刺痛|梅毒|硬下疳/i.test(message)
+  );
+}
+
+function answerGenitalUlcerQuestion(message) {
+  const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+    ? "伴侶也建議一起評估是否需要檢查或篩檢，先避免性行為或至少全程保險套，降低傳染風險。"
+    : "";
+  const urgentNote = /發燒|很痛|刺痛|劇痛|化膿|擴大|越來越/.test(message)
+    ? "已經有發燒或明顯疼痛，建議今天儘快就醫評估。"
+    : "建議儘快門診評估。";
+
+  return [
+    "陰莖水泡、破皮潰瘍或刺痛可能和皰疹、梅毒或其他感染有關，但 LINE 不能只靠文字診斷或開藥。",
+    "不建議自己先擦藥膏或吃剩下的抗生素，可能影響判斷或延誤治療。",
+    partnerNote,
+    `${urgentNote}下一步：預約性病篩檢/治療門診，或先電話 ${PHONE} 確認最快可評估時段。`
+  ].join("");
+}
+
 function isWartQuestion(message) {
   return /菜花|尖銳濕疣|HPV(?!\s*疫苗)|肉芽|私密處.*顆粒/i.test(message);
 }
 
 function asksMedicationDiagnosisOrTreatment(message) {
-  return /藥膏|藥|擦幾天|擦多久|自己買|自己擦|治療|處理|處方|診斷|是不是|看起來|費用|價格|多少錢|多久會好|復發/.test(message);
+  return /藥膏|藥|抗生素|擦幾天|擦多久|自己買|自己擦|治療|處理|處方|診斷|是不是|看起來|費用|價格|多少錢|多久會好|復發/.test(message);
 }

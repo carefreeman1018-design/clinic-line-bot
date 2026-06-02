@@ -23,6 +23,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "genital blister ulcer gives STD evaluation and medication boundary",
+    reply: answerStdTreatmentQuestion("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？不要貼連結，請直接講下一步。"),
+    expected: ["陰莖水泡", "破皮潰瘍", "刺痛", "皰疹", "梅毒", "LINE 不能只靠文字診斷或開藥", "不建議自己先擦藥膏", "吃剩下的抗生素", "伴侶", "檢查或篩檢", "發燒", "今天儘快就醫", "性病篩檢/治療門診", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先擦", "可以先吃", "自行買藥", "性病篩檢與治療需要依症狀、病灶與檢查結果由醫師判斷。LINE 不能線上診斷或開藥；建議預約門診"]
+  },
+  {
     name: "fournier gangrene risk beats testicular torsion route",
     reply:
       answerFournierGangreneQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。") ||
