@@ -37,6 +37,12 @@ const cases = [
     forbidden: ["HPV", "皮蛇疫苗", "疫苗施打", "庫存", "劑數"]
   },
   {
+    name: "anal wart hemorrhoid same-night procedure keeps boundary",
+    reply: answerAnalColorectalQuestion("我肛門附近長了幾顆小肉芽，會癢也有點痛，朋友說可能是菜花但我也怕是痔瘡。今天晚上可以直接看完就電燒或做痔瘡手術嗎？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["肛門性病", "肛門直腸外科", "肛門菜花", "LINE 判斷", "當天直接電燒", "痔瘡", "手術", "不能先保證", "費用", "醫師評估", "今天晚上", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接電燒", "可以直接做", "元", "HPV 疫苗", "PEP", "72 小時"]
+  },
+  {
     name: "line voom outage notice takes priority over hpv vaccine service",
     reply:
       answerLineVoomAnnouncementQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。") ||
