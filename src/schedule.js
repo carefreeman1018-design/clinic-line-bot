@@ -93,6 +93,15 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   }
 
   if (!period) {
+    if (asksForUrologyCare(message) && asksForAlternativeClinicTime(message)) {
+      return compactLines([
+        ...contextNotes,
+        buildAvailableGeneralClinicTimesReply(day),
+        TEMPORARY_CHANGE_CONFIRMATION,
+        routeNote
+      ]);
+    }
+
     return compactLines([...contextNotes, buildFullDayReply(day, dayLabel), routeNote]);
   }
 

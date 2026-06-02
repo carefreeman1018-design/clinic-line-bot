@@ -347,6 +347,14 @@ const cases = [
     forbidden: ["今天（週二）", "今天晚上", "李齊泰醫師", "想看泌尿科請換個時段。", "晚診（18:00-20:30）：陳嘉哲醫師（肛門直腸外科門診）"]
   },
   {
+    name: "night urinary schedule routing does not trigger prostate treatment answer",
+    reply:
+      answerProstateQuestion("我下週想看頻尿和夜尿，但不要掛到肛門直腸外科，週三可以掛哪個時段？請短一點。") ||
+      answerFixedScheduleQuestion("我下週想看頻尿和夜尿，但不要掛到肛門直腸外科，週三可以掛哪個時段？請短一點。", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["週三", "可改一般門診時段", "午診", "13:30-17:00", "吳致寬醫師"],
+    forbidden: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "LINE 不能直接判斷或報價", "今天（週二）", "李齊泰醫師", "https://"]
+  },
+  {
     name: "past voom holiday does not override current friday clinic and route",
     reply: answerFixedScheduleQuestion("我看到你們之前 LINE VOOM 有 5/22-5/25 公休，那我這週五晚上想從行天宮站過去看泌尿科，還有診嗎？如果週五晚上不能看一般門診，改哪個時段比較適合？不要貼連結，順便告訴我捷運怎麼走。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["5/22 到 5/25", "過去 LINE VOOM 公告", "週五", "晚診", "18:00-20:30", "手術時段", "不是一般門診", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "行天宮站", "4 號出口", "步行約 40 秒", "3 樓"],
