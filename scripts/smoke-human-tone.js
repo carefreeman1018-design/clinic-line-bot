@@ -11,6 +11,7 @@ import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerStoneQuestion } from "../src/stone-treatment.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
+import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
@@ -129,6 +130,12 @@ const cases = [
     reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？不要貼連結，講重點。"),
     expected: ["HPV", "九價", "性行為", "劑數", "今天", "庫存", "價格", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "一定", "元"]
+  },
+  {
+    name: "mounjaro diabetes medication price same-day stays bounded",
+    reply: answerWellnessWeightQuestion("我想問猛健樂減重門診，BMI 大概 27，也有在吃糖尿病藥。今天能不能直接打？一針多少錢？副作用怎麼辦？不要貼連結，直接告訴我下一步。"),
+    expected: ["猛健樂門診", "體重管理", "不能在線上判斷", "直接安排施打", "BMI", "糖尿病藥", "副作用", "費用", "02-2511-9488", "用藥資訊"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "今天可以打", "元", "保證"]
   },
   {
     name: "pep concise answer suppresses extra link",
