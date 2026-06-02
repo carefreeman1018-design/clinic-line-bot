@@ -198,6 +198,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "直接做", "保證", "元"]
   },
   {
+    name: "female urology muscle chair pregnancy uti safety boundary",
+    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想做美磁波鍛肌椅，但這兩天尿尿有點痛，而且月經也晚了不確定有沒有懷孕。今天可以直接做療程嗎？一次費用多少？不要貼連結，直接告訴我下一步。"),
+    expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "費用", "尿痛", "先評估是否感染", "可能懷孕", "是否適合", "今天能不能直接做", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接做", "今天可以直接做", "保證", "元"]
+  },
+  {
     name: "circumcision same-day surgery price gives next step without link",
     reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？不要貼連結，直接告訴我下一步。"),
     expected: ["割包皮", "快速通關", "費用", "醫師術前評估", "02-2511-9488"],
