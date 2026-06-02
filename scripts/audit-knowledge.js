@@ -71,7 +71,7 @@ const CONTEXTUAL_SCHEDULE_CASES = [
     expectedTerms: ["陳偉傑醫師", "週一早診", "週二早診", "週四晚診", "週五早診"]
   },
   {
-    question: "那我今天下午或晚上要掛哪個時段比較適合？可以直接到現場嗎？不要貼連結，跟我說下一步就好。",
+    question: "那我今天下午或晚上要掛哪個時段比較適合？可以直接到現場嗎？我現在有點慌，先跟我說下一步就好。",
     now: new Date("2026-06-02T04:00:00+08:00"),
     conversationHistory: [
       {
@@ -90,7 +90,7 @@ const CONTEXTUAL_SCHEDULE_CASES = [
 
 const PEP_CONTEXT_NEGATIVE_CASES = [
   {
-    question: "我包皮手術後第二天，紗布上有一點血，今天要不要拆掉重新包？可以洗澡嗎？不要貼連結，請講重點。",
+    question: "我包皮手術後第二天，紗布上有一點血，今天要不要拆掉重新包？可以洗澡嗎？我在外面不方便看長文，請講重點。",
     conversationHistory: [
       {
         role: "assistant",

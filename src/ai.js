@@ -333,9 +333,9 @@ function shouldSuppressExtraLinks(message) {
   if (hasNegativeLinkIntent(message)) return true;
   if (hasExplicitOfficialLinkIntent(message)) return false;
 
-  return /講重點|重點就好|簡短|短答|不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|只要.*重點/.test(message);
+  return /講重點|重點就好|簡短|短答|不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|手機訊號.*(文字|重點)|先給文字|只要.*重點/.test(message);
 }
 
 function hasNegativeLinkIntent(message) {
-  return /不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址/.test(message);
+  return /不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|手機訊號.*(文字|重點)|先給文字/.test(message);
 }

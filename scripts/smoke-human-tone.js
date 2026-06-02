@@ -24,94 +24,94 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 const cases = [
   {
     name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",
-    reply: answerFemaleUrologyQuestion("我是女生，月經晚了快一週不確定有沒有懷孕，這兩天尿尿很痛、尿有點紅，今天腰痠痛又發燒，但我本來也有漏尿，想問能不能今天直接坐美磁波鍛肌椅？可以先吃家裡剩的抗生素嗎？不要貼連結，直接講下一步。"),
+    reply: answerFemaleUrologyQuestion("我是女生，月經晚了快一週不確定有沒有懷孕，這兩天尿尿很痛、尿有點紅，今天腰痠痛又發燒，但我本來也有漏尿，想問能不能今天直接坐美磁波鍛肌椅？可以先吃家裡剩的抗生素嗎？我有點緊張，先跟我說下一步。"),
     expected: ["尿痛", "尿有點紅", "腰痠痛", "發燒", "月經晚了", "不確定是否懷孕", "泌尿道感染", "孕期感染", "LINE 不能診斷", "不建議直接坐美磁波鍛肌椅", "不要自行吃家裡剩的抗生素", "醫師評估", "是否懷孕", "檢查與用藥", "02-2511-9488", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以直接坐", "今天能不能直接做，需確認上述狀況後再安排", "費用目前知識庫沒有公開明確數字"]
   },
   {
     name: "post vasectomy swelling fever beats torsion route",
     reply:
-      answerWoundCareQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。") ||
-      answerVasectomyQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。") ||
-      answerTesticularTorsionQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。"),
+      answerWoundCareQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？我有點緊張，先跟我說下一步。") ||
+      answerVasectomyQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？我有點緊張，先跟我說下一步。") ||
+      answerTesticularTorsionQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？我有點緊張，先跟我說下一步。"),
     expected: ["結紮後第 2 天", "陰囊越來越腫", "瘀青變大", "傷口滲血", "很痛", "發燒", "不能只用 LINE 判斷", "術後血腫", "感染", "持續出血", "不建議", "冰敷", "止痛藥", "等到明天", "02-2511-9488", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以冰敷", "可以等明天", "男性無刀口結紮手術評估", "前 2 週", "釘子旁黃黃", "不要碰水"]
   },
   {
     name: "pde5 cardiac nitrate risk blocks direct medication",
-    reply: answerSexualFunctionQuestion("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerSexualFunctionQuestion("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["心臟病", "胸悶", "硝化甘油", "威而鋼", "犀利士", "硝酸鹽", "不可自行", "PDE5 抑制劑", "危險低血壓", "LINE 不能直接開藥或報價", "心血管評估", "用藥清單", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接拿", "可以直接開藥", "費用", "診所有提供性功能障礙評估與治療，包含勃起功能障礙"]
   },
   {
     name: "genital blister ulcer gives STD evaluation and medication boundary",
-    reply: answerStdTreatmentQuestion("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？不要貼連結，請直接講下一步。"),
+    reply: answerStdTreatmentQuestion("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？我有點緊張，先跟我說下一步。"),
     expected: ["陰莖水泡", "破皮潰瘍", "刺痛", "皰疹", "梅毒", "LINE 不能只靠文字診斷或開藥", "不建議自己先擦藥膏", "吃剩下的抗生素", "伴侶", "檢查或篩檢", "發燒", "今天儘快就醫", "性病篩檢/治療門診", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先擦", "可以先吃", "自行買藥", "性病篩檢與治療需要依症狀、病灶與檢查結果由醫師判斷。LINE 不能線上診斷或開藥；建議預約門診"]
   },
   {
     name: "fournier gangrene risk beats testicular torsion route",
     reply:
-      answerFournierGangreneQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。") ||
-      answerTesticularTorsionQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。"),
+      answerFournierGangreneQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？我有點緊張，先跟我說下一步。") ||
+      answerTesticularTorsionQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？我有點緊張，先跟我說下一步。"),
     expected: ["70 歲", "糖尿病", "陰囊", "會陰", "皮膚變黑", "發燒", "昏沉", "佛尼爾氏壞疽", "快速惡化感染", "LINE 不能診斷", "不建議等明天門診", "敗血症", "急診", "立即就醫", "廣效抗生素", "緊急清創", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以等明天", "先預約門診"]
   },
   {
     name: "teen sudden testicular pain gives torsion emergency boundary",
     reply:
-      answerTesticularTorsionQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？不要貼連結，直接講下一步。") ||
-      answerMaleUtiUrgentQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？不要貼連結，直接講下一步。"),
+      answerTesticularTorsionQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？我有點緊張，先跟我說下一步。") ||
+      answerMaleUtiUrgentQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？我有點緊張，先跟我說下一步。"),
     expected: ["16 歲", "突然單側睪丸痛", "陰囊腫", "睪丸扭轉", "急性陰囊", "LINE 不能直接診斷", "不建議", "止痛藥", "拖到隔天", "缺血風險", "黃金六小時", "急診", "立即就醫", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃止痛藥", "觀察到明天", "先預約門診", "不用急診"]
   },
   {
     name: "priapism after erectile medication gives urgent boundary",
     reply:
-      answerPriapismQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？不要貼連結，直接講下一步。") ||
-      answerSexualFunctionQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？不要貼連結，直接講下一步。"),
+      answerPriapismQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？我有點緊張，先跟我說下一步。") ||
+      answerSexualFunctionQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？我有點緊張，先跟我說下一步。"),
     expected: ["勃起快 5 小時", "退不下來", "陰莖疼痛", "持續勃起", "缺血風險", "LINE 不能直接診斷", "不建議只冰敷", "睡覺", "等待自行消退", "立即就醫", "急診", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "可以先冰敷", "等它退", "不用急診", "低能量震波"]
   },
   {
     name: "paraphimosis urgent question beats wound care memory",
     reply:
-      answerParaphimosisQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。") ||
-      answerWoundCareQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。"),
+      answerParaphimosisQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？我有點緊張，先跟我說下一步。") ||
+      answerWoundCareQuestion("我昨晚性行為後包皮翻下來卡在龜頭後面，現在龜頭腫紫、很痛，尿也有點尿不出來。我可以自己硬推回去或等明天再掛號嗎？你們今天能不能直接處理？我有點緊張，先跟我說下一步。"),
     expected: ["包皮卡在龜頭", "龜頭腫紫", "很痛", "尿不太出來", "嵌頓性包莖", "LINE 不能直接診斷", "不建議自己硬推", "不建議等到明天", "立即就醫", "急診", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "釘子", "前 2 週", "不要碰水", "拍清楚照片", "可以自己硬推", "等明天"]
   },
   {
     name: "stone fever pain medication and same-day lithotripsy boundary",
-    reply: answerStoneQuestion("我現在左腰痛到冒冷汗，尿有點紅，還有發燒，怕是輸尿管結石。可以先吃止痛藥等明天嗎？你們今天能不能直接幫我體外震波或鈥雷射碎石？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerStoneQuestion("我現在左腰痛到冒冷汗，尿有點紅，還有發燒，怕是輸尿管結石。可以先吃止痛藥等明天嗎？你們今天能不能直接幫我體外震波或鈥雷射碎石？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["尿色發紅", "腰痛", "側腹痛", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "LINE 不能判斷", "急診", "立即就醫", "不建議", "止痛藥", "撐到明天", "體外震波", "鈥雷射碎石", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "等明天", "今天能直接", "可以直接", "元"]
   },
   {
     name: "prostate treatment preserves ejaculation catheter same-day boundary",
-    reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接判斷", "不能先保證", "保留射精", "不用插尿管", "今天", "直接手術", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "哪個最好", "可以保證", "不用評估", "可以直接做", "元"]
   },
   {
     name: "acute urinary retention beats prostate procedure pricing",
-    reply: answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["幾乎尿不出來", "下腹脹痛", "冒冷汗", "急性尿液滯留", "泌尿道阻塞", "LINE 不能直接診斷", "不建議撐到明天", "不能先安排 Urolift", "水蒸氣消融", "費用", "導尿", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "確認可評估時段", "可以撐到明天", "可以直接做", "元"]
   },
   {
     name: "vaccine memory does not intercept acute urinary retention",
     reply:
-      answerVaccineQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。", [
+      answerVaccineQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。", [
         { role: "user", content: "我想問九價 HPV 疫苗和皮蛇疫苗，今天能不能一起打？費用多少？" },
         { role: "assistant", content: "官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。官網主要診療項目有列出皮蛇疫苗施打。" }
-      ]) || answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。"),
+      ]) || answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["急性尿液滯留", "不建議撐到明天", "急診", "立即就醫", "導尿"],
     forbidden: ["HPV 疫苗", "九價", "皮蛇疫苗", "疫苗施打", "兩種疫苗", "庫存"]
   },
   {
     name: "mounjaro thyroid pancreatitis history and weight loss promise stays bounded",
-    reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "BMI", "共病", "糖尿病藥", "甲狀腺癌", "胰臟炎", "確認風險", "不能保證", "瘦幾公斤", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以直接打一針", "保證瘦", "元"]
   },
@@ -124,8 +124,8 @@ const cases = [
   {
     name: "wellness drip beats vaccine memory follow-up",
     reply:
-      answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。") ||
-      answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。", [
+      answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？我有點緊張，先跟我說下一步。") ||
+      answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？我有點緊張，先跟我說下一步。", [
         { role: "user", content: "我想打 HPV 疫苗，也想問皮蛇疫苗，今天能不能直接打？" }
       ]),
     expected: ["客製化功能性修復點滴", "免疫提升", "元氣護肝", "排毒疲勞解酒", "不能保證", "今天能不能施打", "醫師評估", "費用", "02-2511-9488"],
@@ -133,7 +133,7 @@ const cases = [
   },
   {
     name: "vaccine memory ignores wellness drip question",
-    reply: answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。", [
+    reply: answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？我有點緊張，先跟我說下一步。", [
       { role: "user", content: "我想打 HPV 疫苗，也想問皮蛇疫苗，今天能不能直接打？" }
     ]) ?? "",
     expected: [""],
@@ -141,28 +141,28 @@ const cases = [
   },
   {
     name: "anal wart hemorrhoid same-night procedure keeps boundary",
-    reply: answerAnalColorectalQuestion("我肛門附近長了幾顆小肉芽，會癢也有點痛，朋友說可能是菜花但我也怕是痔瘡。今天晚上可以直接看完就電燒或做痔瘡手術嗎？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerAnalColorectalQuestion("我肛門附近長了幾顆小肉芽，會癢也有點痛，朋友說可能是菜花但我也怕是痔瘡。今天晚上可以直接看完就電燒或做痔瘡手術嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["肛門性病", "肛門直腸外科", "肛門菜花", "LINE 判斷", "當天直接電燒", "痔瘡", "手術", "不能先保證", "費用", "醫師評估", "今天晚上", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接電燒", "可以直接做", "元", "HPV 疫苗", "PEP", "72 小時"]
   },
   {
     name: "line voom outage notice takes priority over hpv vaccine service",
     reply:
-      answerLineVoomAnnouncementQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。") ||
-      answerVaccineQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。"),
+      answerLineVoomAnnouncementQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？我在外面不方便看長文，簡短回答。") ||
+      answerVaccineQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？我在外面不方便看長文，簡短回答。"),
     expected: ["5/19", "李齊泰醫師", "停診一次", "100%匿名篩檢", "疫苗接種服務照常營業"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "價格", "庫存", "劑數", "是否適合施打", "需由醫師或診所人員"]
   },
   {
     name: "anal bleeding pain hemorrhoid surgery routes to colorectal clinic",
-    reply: answerAnalColorectalQuestion("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？不要貼連結，請直接告訴我下一步。"),
+    reply: answerAnalColorectalQuestion("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["肛門直腸外科", "痔瘡", "廔管", "肛裂", "痔瘡微創手術評估", "不能只用 LINE 判斷", "不能保證當天直接手術", "02-2511-9488", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是痔瘡", "可以直接做", "元", "PEP", "72 小時"]
   },
   {
     name: "pep memory does not intercept anal colorectal question",
     reply: answerPepVisitScheduleFollowUp(
-      "我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？不要貼連結，請直接告訴我下一步。",
+      "我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T06:00:00+08:00"),
       [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
     ) ?? "",
@@ -171,54 +171,54 @@ const cases = [
   },
   {
     name: "post circumcision swelling yellow discharge avoids diagnosis",
-    reply: answerWoundCareQuestion("我割包皮第 5 天，龜頭有點水腫，釘子旁邊黃黃的，是不是流膿？可以洗澡或自己多擦藥膏嗎？不要貼連結，講重點。"),
+    reply: answerWoundCareQuestion("我割包皮第 5 天，龜頭有點水腫，釘子旁邊黃黃的，是不是流膿？可以洗澡或自己多擦藥膏嗎？我在外面不方便看長文，先講重點。"),
     expected: ["術後第 5 天", "LINE 不能直接判斷", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "確定是感染", "不是感染", "可以洗澡", "自己多擦", "不用回診"]
   },
   {
     name: "post circumcision day three wound care beats surgery booking",
     reply:
-      answerWoundCareQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？不要貼連結，直接告訴我下一步。") ||
-      answerCircumcisionFastPassQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？不要貼連結，直接告訴我下一步。"),
+      answerWoundCareQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。") ||
+      answerCircumcisionFastPassQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["術後第 3 天", "LINE 不能直接判斷", "感染", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "快速通關", "當天看診後手術", "手術評估", "實際費用", "可以洗澡", "自己多擦"]
   },
   {
     name: "wart ointment duration avoids online prescription",
-    reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？不要貼連結，講重點。"),
+    reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？我在外面不方便看長文，先講重點。"),
     expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己買", "擦 7 天", "擦七天", "擦兩週", "元"]
   },
   {
     name: "wart medication question is not routed to wound care",
     reply:
-      answerWoundCareQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。") ||
-      answerStdTreatmentQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。"),
+      answerWoundCareQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。") ||
+      answerStdTreatmentQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "醫師確認", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
   },
   {
     name: "wart topic that negates pep does not trigger pep answer",
-    reply: answerStdTreatmentQuestion("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？不要貼連結，直接講下一步。"),
+    reply: answerStdTreatmentQuestion("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？我有點緊張，先跟我說下一步。"),
     expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "02-2511-9488"],
     forbidden: ["PEP 需", "72 小時", "保險套破", "無套", "暴露後", "官網介紹：", "https://", "lin.ee", "擦 7 天", "擦兩週"]
   },
   {
     name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
-    reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，不要貼連結，請直接告訴我下一步。"),
+    reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，我現在有點慌，先跟我說該怎麼做。"),
     expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "先讓醫師評估 PEP 較優先", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
   },
   {
     name: "pep after 80 hours acknowledges missed window and blocks prep rescue",
-    reply: answerStdTreatmentQuestion("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？不要貼連結，請直接講下一步。"),
+    reply: answerStdTreatmentQuestion("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？我有點緊張，先跟我說下一步。"),
     expected: ["80 小時", "已超過", "PEP 黃金 72 小時", "醫師判斷", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "LINE 不能直接判斷或開藥", "不能保證今晚直接拿藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
   },
   {
     name: "pep schedule follow-up does not intercept new 80-hour prep rescue question",
     reply: answerPepVisitScheduleFollowUp(
-      "我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？不要貼連結，請直接講下一步。",
+      "我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？我有點緊張，先跟我說下一步。",
       new Date("2026-06-02T12:00:00+08:00"),
       [
         { role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" },
@@ -230,26 +230,26 @@ const cases = [
   },
   {
     name: "prep does not replace condoms or post-exposure pep",
-    reply: answerStdTreatmentQuestion("我最近想開始吃 PrEP，是不是吃了就不用戴套，也不會得梅毒、淋病或菜花？如果昨天已經無套了，吃 PrEP 可以補救嗎？不要貼連結，請直接告訴我下一步。"),
+    reply: answerStdTreatmentQuestion("我最近想開始吃 PrEP，是不是吃了就不用戴套，也不會得梅毒、淋病或菜花？如果昨天已經無套了，吃 PrEP 可以補救嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能預防梅毒、淋病、菜花", "PEP", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃了就不用戴套", "可以補救", "菜花 HPV 相關篩檢與治療評估"]
   },
   {
     name: "prep partner hiv positive keeps condoms and sti screening",
-    reply: answerStdTreatmentQuestion("我伴侶是 HIV 陽性但穩定治療，我想開始吃 PrEP。吃了是不是就不用保險套？可以順便不用驗梅毒、淋病、菜花嗎？不要貼連結，直接講下一步。"),
+    reply: answerStdTreatmentQuestion("我伴侶是 HIV 陽性但穩定治療，我想開始吃 PrEP。吃了是不是就不用保險套？可以順便不用驗梅毒、淋病、菜花嗎？我有點緊張，先跟我說下一步。"),
     expected: ["PrEP 是 HIV 暴露前預防", "醫師評估", "並非 100% 有效", "不代表可以完全不用保險套", "不能預防梅毒、淋病、菜花", "定期篩檢", "伴侶為 HIV 感染者", "HIV 陰性", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "菜花 HPV 相關篩檢與治療評估", "吃了就不用保險套", "就不用保險套", "不用驗"]
   },
   {
     name: "prep after exposure and possible hiv infection stays safe",
-    reply: answerStdTreatmentQuestion("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？不要貼連結，直接告訴我下一步。"),
+    reply: answerStdTreatmentQuestion("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["40 小時", "72 小時", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "若已感染 HIV", "PrEP 不適用", "醫師評估治療", "LINE 不能直接判斷或開藥", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃 PrEP 就好", "可以直接給藥", "可以直接拿藥", "不用看診"]
   },
   {
     name: "pep follow-up tonight doctor and anonymous screening keeps context",
     reply: answerPepVisitScheduleFollowUp(
-      "那我如果今晚去，是先做匿名篩檢還是先給醫師評估 PEP？今天晚上是哪位醫師？我需要先打電話嗎？不要貼連結，直接告訴我下一步。",
+      "那我如果今晚去，是先做匿名篩檢還是先給醫師評估 PEP？今天晚上是哪位醫師？我需要先打電話嗎？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T12:00:00+08:00"),
       [
         { role: "user", content: "我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，能不能直接給藥？" },
@@ -262,14 +262,14 @@ const cases = [
   {
     name: "pep urgent next-step follow-up beats fixed schedule and avoids official line",
     reply: answerPepVisitScheduleFollowUp(
-      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，請不要貼連結，也不要再叫我加 LINE，直接告訴我下一步。",
+      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T08:00:00+08:00"),
       [
         { role: "user", content: "我昨晚保險套破掉，現在大概 18 小時，很怕 HIV。你們可以直接讓我拿 PEP 嗎？我也想匿名篩檢。" },
         { role: "assistant", content: "18 小時仍在 72 小時內，PEP 需要由醫師評估，LINE 不能直接開藥。" }
       ]
     ) || answerFixedScheduleQuestion(
-      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，請不要貼連結，也不要再叫我加 LINE，直接告訴我下一步。",
+      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T08:00:00+08:00")
     ),
     expected: ["PEP 是越早評估越好", "今天（週二）", "午診", "13:30-17:00", "羅詩修醫師", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488", "盡快到診"],
@@ -278,7 +278,7 @@ const cases = [
   {
     name: "pep memory does not intercept wart partner medication question",
     reply: answerPepVisitScheduleFollowUp(
-      "我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以看文字先判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？不要貼連結，直接告訴我下一步。",
+      "我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以看文字先判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T12:00:00+08:00"),
       [
         { role: "user", content: "我昨晚保險套破掉，現在大概 14 小時，很擔心 HIV，想問 PEP。" },
@@ -290,30 +290,30 @@ const cases = [
   },
   {
     name: "psa report cancer biopsy question avoids diagnosis",
-    reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
+    reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？我在外面不方便看長文，先講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
   },
   {
     name: "psa report with enlarged prostate stays report routed",
     reply:
-      answerReportResultQuestion("我健檢 PSA 4.8，超音波說攝護腺有點大，爸爸以前有攝護腺癌。這是不是代表我也癌症？要不要直接切片？不要貼連結，直接告訴我下一步。") ||
-      answerProstateQuestion("我健檢 PSA 4.8，超音波說攝護腺有點大，爸爸以前有攝護腺癌。這是不是代表我也癌症？要不要直接切片？不要貼連結，直接告訴我下一步。"),
+      answerReportResultQuestion("我健檢 PSA 4.8，超音波說攝護腺有點大，爸爸以前有攝護腺癌。這是不是代表我也癌症？這樣要不要回診看報告？") ||
+      answerProstateQuestion("我健檢 PSA 4.8，超音波說攝護腺有點大，爸爸以前有攝護腺癌。這是不是代表我也癌症？這樣要不要回診看報告？"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "檢查報告", "切片", "醫師評估", "02-2511-9488"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "雷射剜除", "水蒸氣消融", "Urolift", "綠光雷射", "費用"]
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "雷射剜除", "綠光雷射", "費用", "可以直接做", "可以安排治療"]
   },
   {
     name: "psa report with bph procedure request blocks skipping biopsy",
     reply:
-      answerReportResultQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？不要貼連結，直接講下一步。") ||
-      answerProstateQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？不要貼連結，直接講下一步。"),
+      answerReportResultQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？我有點緊張，先跟我說下一步。") ||
+      answerProstateQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "病史", "切片", "醫師評估", "水蒸氣消融", "Urolift", "不能用來取代", "癌症風險評估", "不能用來保證跳過必要切片", "費用", "門診評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "可以今天直接做", "可以不用切片", "元"]
   },
   {
     name: "psa report follow-up says clinic review before surgery",
     reply: answerReportResultQuestion(
-      "那我是不是先不要掛手術，先掛一般泌尿科看報告比較對？我很怕被直接安排手術，請不要貼連結。",
+      "那我是不是先不要掛手術，先掛一般泌尿科看報告比較對？我很怕被直接安排手術，請先不用給我一堆資料。",
       [
         { role: "user", content: "我健檢 PSA 變成 7.8，超音波說攝護腺比較大。我是不是已經是攝護腺癌？可以不要切片、直接做水蒸氣或 Urolift 嗎？" },
         { role: "assistant", content: "PSA 偏高不等於一定是攝護腺癌，是否需要切片與治療需由醫師評估。" }
@@ -324,14 +324,14 @@ const cases = [
   },
   {
     name: "prostate treatment choice cost and ejaculation avoids pep context",
-    reply: answerProstateQuestion("我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。"),
+    reply: answerProstateQuestion("我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "Urolift", "夜尿", "尿流變細", "影響射精", "費用", "醫師", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "PEP", "72 小時", "可以保證", "元"]
   },
   {
     name: "pep memory does not intercept prostate follow-up",
     reply: answerPepVisitScheduleFollowUp(
-      "我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。",
+      "我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T06:00:00+08:00"),
       [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
     ) ?? "",
@@ -340,19 +340,19 @@ const cases = [
   },
   {
     name: "male uti fever antibiotic same-day stays safe and useful",
-    reply: answerMaleUtiUrgentQuestion("我尿尿很痛又發燒，可以先吃抗生素嗎？今天晚上能看嗎？不要貼連結，講重點。", new Date("2026-06-02T04:00:00Z")),
+    reply: answerMaleUtiUrgentQuestion("我尿尿很痛又發燒，可以先吃抗生素嗎？今天晚上能看嗎？我在外面不方便看長文，先講重點。", new Date("2026-06-02T04:00:00Z")),
     expected: ["尿痛", "發燒", "不能建議先吃", "抗生素", "今天晚上", "李齊泰醫師", "18:00-20:30", "02-2511-9488", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
     name: "hematuria flank pain fever prioritizes er over clinic schedule",
-    reply: answerMaleUtiUrgentQuestion("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？不要貼連結，直接告訴我現在該怎麼辦。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: answerMaleUtiUrgentQuestion("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？我現在有點慌，先跟我說該怎麼辦。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["血尿", "右腰", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "LINE 不能判斷", "不建議", "止痛藥", "撐到明天", "不要自行吃抗生素", "急診", "立即就醫", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "可先參考", "門診", "李齊泰醫師", "18:00-20:30", "可以先吃止痛藥", "可以撐到明天"]
   },
   {
     name: "male urinary symptoms respect requested wednesday colorectal schedule",
-    reply: answerMaleUtiUrgentQuestion("我最近頻尿、夜尿，想看一般泌尿科。週三晚上可以掛嗎？我看到週三晚診有陳嘉哲醫師，那一診適合看頻尿嗎？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: answerMaleUtiUrgentQuestion("我最近頻尿、夜尿，想看一般泌尿科。週三晚上可以掛嗎？我看到週三晚診有陳嘉哲醫師，那一診適合看頻尿嗎？如果不適合，那週三該改掛哪一診？", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["頻尿", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "週三可改一般門診時段", "午診", "13:30-17:00", "吳致寬醫師", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天（週二）", "李齊泰醫師", "想看泌尿科請換個時段。", "晚診（18:00-20:30）：陳嘉哲醫師（肛門直腸外科門診）"]
   },
@@ -373,25 +373,25 @@ const cases = [
   },
   {
     name: "past voom holiday does not override current friday clinic and route",
-    reply: answerFixedScheduleQuestion("我看到你們之前 LINE VOOM 有 5/22-5/25 公休，那我這週五晚上想從行天宮站過去看泌尿科，還有診嗎？如果週五晚上不能看一般門診，改哪個時段比較適合？不要貼連結，順便告訴我捷運怎麼走。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: answerFixedScheduleQuestion("我看到你們之前 LINE VOOM 有 5/22-5/25 公休，那我這週五晚上想從行天宮站過去看泌尿科，還有診嗎？如果週五晚上不能看一般門診，改哪個時段比較適合？我在外面看手機，順便跟我說捷運怎麼走。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["5/22 到 5/25", "過去 LINE VOOM 公告", "週五", "晚診", "18:00-20:30", "手術時段", "不是一般門診", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "行天宮站", "4 號出口", "步行約 40 秒", "3 樓"],
     forbidden: ["https://", "lin.ee", "5/22 到 5/25 診所有公休/休息公告。", "可查看 LINE VOOM"]
   },
   {
     name: "past voom holiday wednesday colorectal gives urology alternative",
-    reply: answerFixedScheduleQuestion("我看到 LINE VOOM 之前有寫 5/22 到 5/25 公休，我明天晚上想去看頻尿和夜尿。明天晚上還有開嗎？那一診是不是一般泌尿科？不要貼連結，直接告訴我該掛哪個時段。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: answerFixedScheduleQuestion("我看到 LINE VOOM 之前有寫 5/22 到 5/25 公休，我明天晚上想去看頻尿和夜尿。明天晚上還有開嗎？那一診是不是一般泌尿科？我現在只想知道該掛哪個時段。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["5/22 到 5/25", "過去 LINE VOOM 公告", "明天", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "週三可改一般門診時段", "午診", "13:30-17:00", "吳致寬醫師", "02-2511-9488"],
     forbidden: ["https://", "lin.ee", "5/22 到 5/25 診所有公休/休息公告。", "想看泌尿科請換個時段。", "晚診（18:00-20:30）：陳嘉哲醫師（肛門直腸外科門診）"]
   },
   {
     name: "schedule follow-up keeps previous wednesday and correct afternoon doctor",
     reply: answerFixedScheduleQuestion(
-      "那如果我改下午去呢？剛剛那個日期的下午是不是泌尿科？是哪位醫師？不要貼連結。",
+      "那如果我改下午去呢？剛剛那個日期的下午是不是泌尿科？是哪位醫師？先不用給我一堆資料。",
       new Date("2026-06-02T08:00:00+08:00"),
       [
         {
           role: "user",
-          content: "我看到 LINE VOOM 之前有寫 5/22 到 5/25 休診，那明天 6/3（三）晚上還有開嗎？如果我是泌尿科問題，可以晚上去看嗎？不要貼連結，直接告訴我時段跟科別。"
+          content: "我看到 LINE VOOM 之前有寫 5/22 到 5/25 休診，那明天 6/3（三）晚上還有開嗎？如果我是泌尿科問題，可以晚上去看嗎？我現在只想知道時段跟科別。"
         },
         {
           role: "assistant",
@@ -404,26 +404,26 @@ const cases = [
   },
   {
     name: "female uti blood antibiotic same-day does not invent fever",
-    reply: answerMaleUtiUrgentQuestion("我是女生，今天尿尿很痛、一直想尿，下腹也痛，尿裡好像有血。可以先吃家裡剩下的抗生素嗎？今天要看門診還是急診？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: answerMaleUtiUrgentQuestion("我是女生，今天尿尿很痛、一直想尿，下腹也痛，尿裡好像有血。可以先吃家裡剩下的抗生素嗎？今天要看門診還是急診？我現在有點慌，先跟我說該怎麼做。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["尿痛", "疑似血尿", "醫師評估", "不能建議先吃", "抗生素", "請不要自行服藥", "02-2511-9488", "血尿", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛合併發燒", "可以先吃", "可以自行"]
   },
   {
     name: "stone urgent pain hematuria gives er boundary without links",
-    reply: answerStoneQuestion("我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？不要貼連結，請直接告訴我下一步。"),
+    reply: answerStoneQuestion("我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["右腰痛到冒冷汗", "尿有點紅", "LINE 判斷", "腎結石", "輸尿管結石", "劇痛", "血尿", "優先急診", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "一定是結石"]
   },
   {
     name: "stone red urine flank fever prioritizes er over waiting",
-    reply: answerStoneQuestion("我尿裡有紅紅的，左腰痛到站不太直，體溫 38.7。今天工作走不開，可以先吃止痛藥和家裡抗生素，明天再看嗎？不要貼連結，只講現在最安全的下一步。"),
+    reply: answerStoneQuestion("我尿裡有紅紅的，左腰痛到站不太直，體溫 38.7。今天工作走不開，可以先吃止痛藥和家裡抗生素，明天再看嗎？我現在有點慌，只講最安全的下一步。"),
     expected: ["尿色發紅", "腰痛", "側腹痛", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "LINE 不能判斷", "不建議", "止痛藥", "家裡抗生素", "撐到明天", "急診", "立即就醫", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "若症狀可等待門診", "確認最快可看診時段", "今天晚上", "晚診", "門診", "可以先吃止痛藥", "明天再看"]
   },
   {
     name: "pep memory does not intercept stone urgent question",
     reply: answerPepVisitScheduleFollowUp(
-      "我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？不要貼連結，請直接告訴我下一步。",
+      "我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T06:00:00+08:00"),
       [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
     ) ?? "",
@@ -432,32 +432,32 @@ const cases = [
   },
   {
     name: "vasectomy same-day price reversal keeps boundary without link",
-    reply: answerVasectomyQuestion("我想做男性結紮，可以今天直接做嗎？以後如果後悔能保證接回來嗎？費用多少？不要貼連結，請講重點。"),
+    reply: answerVasectomyQuestion("我想做男性結紮，可以今天直接做嗎？以後如果後悔能保證接回來嗎？費用多少？我在外面不方便看長文，請講重點。"),
     expected: ["男性無刀口結紮", "當天", "費用", "不能保證恢復生育", "醫師術前評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "保證接回來", "一定", "元"]
   },
   {
     name: "vasectomy post-op contraception semen check stays on point",
-    reply: answerVasectomyQuestion("我如果做完結紮，是不是馬上就可以不用避孕？之後要不要驗精液？請不要貼連結，直接講重點。"),
+    reply: answerVasectomyQuestion("我如果做完結紮，是不是馬上就可以不用避孕？之後要不要驗精液？我在外面不方便看長文，先講重點。"),
     expected: ["不能馬上停止避孕", "殘存精子", "精液檢查", "醫師指示", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "當天安排", "重接"]
   },
   {
     name: "vasectomy sexual function concern avoids semen check mixup",
-    reply: answerVasectomyQuestion("男性結紮會不會讓性慾變低、勃起變差，或射精量變少？我很怕做完影響性能力。不要貼連結，請直接講重點和下一步。"),
+    reply: answerVasectomyQuestion("男性結紮會不會讓性慾變低、勃起變差，或射精量變少？我很怕做完影響性能力。我在外面不方便看長文，請講重點和下一步。"),
     expected: ["不會阻斷男性荷爾蒙", "仍會射精", "通常不會明顯影響性慾", "勃起功能", "射精感", "精液量", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "不能馬上停止避孕", "殘存精子", "精液檢查", "低能量震波", "性功能障礙評估"]
   },
   {
     name: "male private surgery price outcome keeps boundary without link",
-    reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
+    reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？我在外面不方便看長文，先講重點。"),
     expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "費用", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "一定", "元"]
   },
   {
     name: "sexual function route does not intercept male private surgery",
     reply:
-      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。") ??
+      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？我現在有點慌，先跟我說該怎麼做。") ??
       "",
     expected: [""],
     forbidden: ["性功能障礙", "硬度不足", "早洩", "陽痿", "直接開藥"]
@@ -465,21 +465,21 @@ const cases = [
   {
     name: "male private surgery beats sexual function wording",
     reply:
-      answerMalePrivateSurgeryQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。") ||
-      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。"),
+      answerMalePrivateSurgeryQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？我現在有點慌，先跟我說該怎麼做。") ||
+      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "尺寸", "持久度", "效果", "費用", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "性功能障礙評估與治療", "直接開藥", "可以保證", "元"]
   },
   {
     name: "shockwave ed question avoids links guarantee and price",
-    reply: answerSexualFunctionQuestion("我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？不要貼連結，直接告訴我下一步。"),
+    reply: answerSexualFunctionQuestion("我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["性功能障礙", "低能量震波", "血管性勃起功能障礙", "不是所有", "不能保證療效", "心因性", "血管性", "混合性", "療程次數與費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "保證有效", "一定有效", "元"]
   },
   {
     name: "pep memory does not intercept shockwave ed question",
     reply: answerPepVisitScheduleFollowUp(
-      "我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？不要貼連結，直接告訴我下一步。",
+      "我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？我現在有點慌，先跟我說該怎麼做。",
       new Date("2026-06-02T06:00:00+08:00"),
       [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
     ) ?? "",
@@ -488,7 +488,7 @@ const cases = [
   },
   {
     name: "female urology muscle chair price keeps boundary without link",
-    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想問你們有美磁波鍛肌椅嗎？我可以直接做嗎？一次費用多少？不要貼連結，請講重點。"),
+    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想問你們有美磁波鍛肌椅嗎？我可以直接做嗎？一次費用多少？我在外面不方便看長文，請講重點。"),
     expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "直接做", "保證", "元"]
   },
@@ -500,25 +500,25 @@ const cases = [
   },
   {
     name: "female urology muscle chair pregnancy uti safety boundary",
-    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想做美磁波鍛肌椅，但這兩天尿尿有點痛，而且月經也晚了不確定有沒有懷孕。今天可以直接做療程嗎？一次費用多少？不要貼連結，直接告訴我下一步。"),
+    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想做美磁波鍛肌椅，但這兩天尿尿有點痛，而且月經也晚了不確定有沒有懷孕。今天可以直接做療程嗎？一次費用多少？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "費用", "尿痛", "先評估是否感染", "可能懷孕", "是否適合", "今天能不能直接做", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接做", "今天可以直接做", "保證", "元"]
   },
   {
     name: "female urology hematuria fever back pain urgent boundary",
-    reply: answerFemaleUrologyQuestion("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？不要貼連結，直接講下一步。"),
+    reply: answerFemaleUrologyQuestion("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？我有點緊張，先跟我說下一步。"),
     expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "發燒", "血尿", "腰痛", "盡快就醫", "LINE 回覆", "尿痛", "先評估是否感染", "今天能不能直接做", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接坐", "可以今天直接", "保證", "元"]
   },
   {
     name: "circumcision same-day surgery price gives next step without link",
-    reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？不要貼連結，直接告訴我下一步。"),
+    reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["割包皮", "快速通關", "費用", "醫師術前評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "保證", "一定可以", "元"]
   },
   {
     name: "circumcision cardiac stent blood thinner blocks self stopping medication",
-    reply: answerCircumcisionFastPassQuestion("我想今天做包皮槍割包皮，因為工作不好請假。我有心臟支架，平常吃阿斯匹靈跟保栓通，能不能今晚先自己停藥、明天直接手術？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerCircumcisionFastPassQuestion("我想今天做包皮槍割包皮，因為工作不好請假。我有心臟支架，平常吃阿斯匹靈跟保栓通，能不能今晚先自己停藥、明天直接手術？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["包皮槍", "心臟支架", "阿斯匹靈", "保栓通", "抗凝血", "抗血小板", "不建議自行停藥", "不能先保證明天直接手術", "心血管病史", "出血", "血栓", "費用", "醫師術前評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己停藥", "先自己停藥", "可以明天直接手術", "可以直接手術", "元"]
   },
@@ -530,30 +530,30 @@ const cases = [
   },
   {
     name: "hpv shingles vaccine pregnancy allergy same-day boundary",
-    reply: answerVaccineQuestion("我想今天直接打九價 HPV 疫苗，順便問皮蛇疫苗。我月經晚了幾天不確定有沒有懷孕，也曾經打疫苗過敏起疹子。今天可以直接打嗎？兩種能同一天打嗎？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerVaccineQuestion("我想今天直接打九價 HPV 疫苗，順便問皮蛇疫苗。我月經晚了幾天不確定有沒有懷孕，也曾經打疫苗過敏起疹子。今天可以直接打嗎？兩種能同一天打嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["HPV", "九價", "皮蛇疫苗", "價格", "庫存", "LINE 不能直接判斷", "是否懷孕", "過敏史", "兩種疫苗能否同一天打", "今天能不能直接打", "醫師或診所人員", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
   },
   {
     name: "hpv vaccine current warts does not imply treatment",
-    reply: answerVaccineQuestion("我私密處最近長了幾顆小肉芽，朋友說可能是菜花。如果我今天打九價 HPV 疫苗，這些菜花會不會直接好？伴侶要不要一起打？我也想順便打皮蛇疫苗，兩種可以同一天打嗎？費用多少？不要貼連結，直接講下一步。"),
+    reply: answerVaccineQuestion("我私密處最近長了幾顆小肉芽，朋友說可能是菜花。如果我今天打九價 HPV 疫苗，這些菜花會不會直接好？伴侶要不要一起打？我也想順便打皮蛇疫苗，兩種可以同一天打嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["HPV", "九價", "菜花", "肉芽", "不能用來治療", "病灶", "醫師", "篩檢與治療", "皮蛇疫苗", "價格", "庫存", "兩種疫苗能否同一天打", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "會直接好", "可以治療", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
   },
   {
     name: "hpv vaccine male prior sex dose same-day price stays bounded",
-    reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？不要貼連結，講重點。"),
+    reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？我在外面不方便看長文，先講重點。"),
     expected: ["HPV", "九價", "性行為", "劑數", "今天", "庫存", "價格", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "一定", "元"]
   },
   {
     name: "vaccine follow-up remembers hpv and skin shingles context",
     reply: answerVaccineQuestion(
-      "那我老公也可以一起打嗎？他 42 歲、有過敏史，想跟我同一天打。不要貼連結，直接講下一步。",
+      "那我老公也可以一起打嗎？他 42 歲、有過敏史，想跟我同一天打。我有點緊張，先跟我說下一步。",
       [
         {
           role: "user",
-          content: "我想今天打九價 HPV 疫苗，也想問皮蛇疫苗。我已經有過性行為、最近在備孕，而且以前藥物過敏。今天能不能直接打？價格多少？不要貼連結，直接告訴我下一步。"
+          content: "我想今天打九價 HPV 疫苗，也想問皮蛇疫苗。我已經有過性行為、最近在備孕，而且以前藥物過敏。今天能不能直接打？價格多少？我現在有點慌，先跟我說該怎麼做。"
         },
         {
           role: "assistant",
@@ -566,7 +566,7 @@ const cases = [
   },
   {
     name: "mounjaro diabetes medication price same-day stays bounded",
-    reply: answerWellnessWeightQuestion("我想問猛健樂減重門診，BMI 大概 27，也有在吃糖尿病藥。今天能不能直接打？一針多少錢？副作用怎麼辦？不要貼連結，直接告訴我下一步。"),
+    reply: answerWellnessWeightQuestion("我想問猛健樂減重門診，BMI 大概 27，也有在吃糖尿病藥。今天能不能直接打？一針多少錢？副作用怎麼辦？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["猛健樂門診", "體重管理", "不能在線上判斷", "直接安排施打", "BMI", "糖尿病藥", "副作用", "費用", "02-2511-9488", "用藥資訊"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "今天可以打", "保證瘦", "元"]
   },
@@ -589,7 +589,7 @@ const cases = [
   {
     name: "explicit no-link wording suppresses official website link",
     reply: await draftReply({
-      message: "那一診是哪位醫師？不要貼連結。",
+      message: "那一診是哪位醫師？我手機訊號有點差，先給文字就好。",
       chunks: [
         {
           title: "門診與醫師介紹",
@@ -717,13 +717,13 @@ const cases = [
   },
   {
     name: "clinic access reply respects no-link patient request",
-    reply: answerBasicInfoQuestion("我從行天宮捷運站要去你們診所，能不能只告訴我怎麼走？不用貼連結，謝謝。"),
+    reply: answerBasicInfoQuestion("我從行天宮捷運站要去你們診所，能不能只告訴我怎麼走？我手機訊號有點差，先給文字就好。"),
     expected: ["行天宮站", "4 號出口", "步行約 40 秒", "3 樓"],
     forbidden: ["https://", "contact-us", "appointment", "官網介紹"]
   },
   {
     name: "clinic access bundle includes address route and phone without link",
-    reply: answerBasicInfoQuestion("我等一下要去診所，請直接告訴我地址、捷運要從哪個出口出來、到門口怎麼走，還有電話多少。不要貼連結，也不要講官網，越短越好。"),
+    reply: answerBasicInfoQuestion("我等一下要去診所，請直接告訴我地址、捷運要從哪個出口出來、到門口怎麼走，還有電話多少。我等一下要出門了，越短越好。"),
     expected: ["松江路 276 號 3 樓", "行天宮站", "4 號出口", "右轉", "步行約 40 秒", "02-2511-9488"],
     forbidden: ["https://", "contact-us", "appointment", "官網介紹", "官網", "官方 LINE"]
   },
