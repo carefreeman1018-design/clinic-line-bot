@@ -370,7 +370,7 @@ function asksForUrologyCare(message) {
 }
 
 function asksForAlternativeClinicTime(message) {
-  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|該掛|掛哪|改哪|換哪|比較適合|有診|可以看|下一步/.test(message);
+  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|該掛|掛哪|改哪|換哪|比較適合|有診|可以看|可以掛|能掛|適合看|不適合|一般泌尿|不是一般泌尿|那診不是|下一步/.test(message);
 }
 
 function buildAvailableClinicTimesReply(day) {

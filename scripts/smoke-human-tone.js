@@ -370,6 +370,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天（週二）", "李齊泰醫師", "想看泌尿科請換個時段。", "晚診（18:00-20:30）：陳嘉哲醫師（肛門直腸外科門診）"]
   },
   {
+    name: "male urinary wednesday night question gives alternative without explicit ask",
+    reply: answerMaleUtiUrgentQuestion("我頻尿、夜尿，週三晚上可以掛泌尿科嗎？還是那診不是一般泌尿？", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["頻尿", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "週三可改一般門診時段", "午診", "13:30-17:00", "吳致寬醫師", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "今天（週二）", "李齊泰醫師", "想看泌尿科請換個時段。", "晚診（18:00-20:30）：陳嘉哲醫師（肛門直腸外科門診）"]
+  },
+  {
     name: "urinary follow-up with wednesday alternative does not fall back to today",
     reply: answerMaleUtiUrgentQuestion("如果我是頻尿夜尿，週三晚上不適合，那週三該改掛哪一診？", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["頻尿", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "週三可改一般門診時段", "午診", "13:30-17:00", "吳致寬醫師", "02-2511-9488"],
