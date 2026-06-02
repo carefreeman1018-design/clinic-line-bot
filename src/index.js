@@ -199,7 +199,7 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
-  const vaccineReply = answerVaccineQuestion(message);
+  const vaccineReply = answerVaccineQuestion(message, conversationHistory);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
   const woundCareReply = answerWoundCareQuestion(message);

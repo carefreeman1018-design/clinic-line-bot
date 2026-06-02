@@ -292,6 +292,24 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "一定", "元"]
   },
   {
+    name: "vaccine follow-up remembers hpv and skin shingles context",
+    reply: answerVaccineQuestion(
+      "那我老公也可以一起打嗎？他 42 歲、有過敏史，想跟我同一天打。不要貼連結，直接講下一步。",
+      [
+        {
+          role: "user",
+          content: "我想今天打九價 HPV 疫苗，也想問皮蛇疫苗。我已經有過性行為、最近在備孕，而且以前藥物過敏。今天能不能直接打？價格多少？不要貼連結，直接告訴我下一步。"
+        },
+        {
+          role: "assistant",
+          content: "官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。官網主要診療項目有列出皮蛇疫苗施打。是否適合施打需由醫師或診所人員評估。"
+        }
+      ]
+    ),
+    expected: ["HPV", "九價", "皮蛇疫苗", "價格", "庫存", "過敏", "今天能不能直接打", "醫師或診所人員", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以一起打", "可以直接打", "保證", "元"]
+  },
+  {
     name: "mounjaro diabetes medication price same-day stays bounded",
     reply: answerWellnessWeightQuestion("我想問猛健樂減重門診，BMI 大概 27，也有在吃糖尿病藥。今天能不能直接打？一針多少錢？副作用怎麼辦？不要貼連結，直接告訴我下一步。"),
     expected: ["猛健樂門診", "體重管理", "不能在線上判斷", "直接安排施打", "BMI", "糖尿病藥", "副作用", "費用", "02-2511-9488", "用藥資訊"],
