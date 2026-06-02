@@ -65,6 +65,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以等明天", "先預約門診"]
   },
   {
+    name: "fournier warning does not invent age or diabetes",
+    reply: answerFournierGangreneQuestion("我陰囊跟會陰這兩天腫起來很痛，皮膚有點變黑，今天還發燒。這可以明天再去掛號嗎？還是先去急診？"),
+    expected: ["陰囊", "會陰", "皮膚變黑", "發燒", "佛尼爾氏壞疽", "快速惡化感染", "LINE 不能診斷", "不建議等明天門診", "敗血症", "急診", "立即就醫", "廣效抗生素", "緊急清創", "02-2511-9488"],
+    forbidden: ["70 歲", "糖尿病", "官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以等明天", "先預約門診"]
+  },
+  {
     name: "teen sudden testicular pain gives torsion emergency boundary",
     reply:
       answerTesticularTorsionQuestion("我兒子 16 歲，剛剛運動後突然左邊睪丸痛到走不了，陰囊也有點腫，沒有明顯外傷。可以先吃止痛藥觀察到明天嗎？你們今天能不能直接檢查或處理？我有點緊張，先跟我說下一步。") ||
