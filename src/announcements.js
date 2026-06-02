@@ -2,7 +2,7 @@ import fs from "node:fs";
 
 const LINE_VOOM_ANNOUNCEMENTS_PATH = new URL("../data/line-voom-announcements.md", import.meta.url);
 const DOCTOR_NAMES = ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師", "蔡曜州醫師"];
-const ANNOUNCEMENT_INTENT_PATTERN = /LINE\s*VOOM|VOOM|公告|停診|休診|公休|休假|連假|正常看診|照常看診|有診|看診|營業/i;
+const ANNOUNCEMENT_INTENT_PATTERN = /LINE\s*VOOM|VOOM|公告|停診|休診|公休|休假|連假|正常看診|照常看診|有診|看診|門診|營業/i;
 const CONFIRMATION_TEXT = "實際可掛號狀態仍請以官方 LINE、線上掛號或電話 02-2511-9488 確認。";
 
 export function answerLineVoomAnnouncementQuestion(message) {
