@@ -413,6 +413,26 @@ const FORBIDDEN_REPLY_TERMS = [
   ...STALE_CLAIM_TERMS
 ];
 
+const ALLOWED_ENGLISH_TERMS = [
+  "LINE",
+  "VOOM",
+  "UroMe",
+  "ID",
+  "HPV",
+  "HIV",
+  "AIDS",
+  "PrEP",
+  "PEP",
+  "PSA",
+  "Mounjaro",
+  "Tirzepatide",
+  "Plavix",
+  "Urolift",
+  "Rezum",
+  "LI-ESWT",
+  "FURS"
+];
+
 async function main() {
   const rounds = Number(process.argv[2] || DEFAULT_ROUNDS);
   const clinicInfo = await fs.readFile("data/clinic-info.md", "utf8");
@@ -456,6 +476,13 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
   for (const term of STALE_CLAIM_TERMS) {
     if (clinicInfo.includes(term)) {
       issues.push(formatIssue(round, `知識庫仍包含過時或未確認宣稱：${term}`));
+    }
+  }
+
+  for (const question of buildGeneratedQuestionList()) {
+    const languageIssue = validateTraditionalChineseTestQuestion(question);
+    if (languageIssue) {
+      issues.push(formatIssue(round, `測試題語言不合格：${languageIssue}：${question}`));
     }
   }
 
@@ -667,6 +694,7 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
       doctorInfoQuestions: DOCTOR_INFO_CASES.length,
       lineOverrideQuestions: LINE_OVERRIDE_QUESTIONS.length,
       expandedQuestionCases: caseResults.length,
+      generatedQuestionLanguageChecks: buildGeneratedQuestionList().length,
       generatedReplyChecks: buildGeneratedQuestionList().length
     },
     issues
@@ -697,6 +725,25 @@ function buildGeneratedQuestionList() {
     ...LINE_RETRIEVAL_CASES.map(({ question }) => question),
     ...ESCALATION_CASES
   ];
+}
+
+function validateTraditionalChineseTestQuestion(question) {
+  const normalized = question.trim();
+  const hanMatches = normalized.match(/[\u3400-\u9fff]/g) ?? [];
+  const withoutAllowedEnglish = ALLOWED_ENGLISH_TERMS.reduce(
+    (text, term) => text.replace(new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), ""),
+    normalized
+  );
+  const remainingLatinMatches = withoutAllowedEnglish.match(/[A-Za-z]/g) ?? [];
+  const remainingEnglishWords = withoutAllowedEnglish.match(/[A-Za-z]{3,}/g) ?? [];
+
+  if (hanMatches.length === 0) return "沒有中文字，可能是英文題";
+  if (hanMatches.length < 2 && remainingLatinMatches.length > 0) return "中文字太少且混有英文";
+  if (remainingLatinMatches.length > hanMatches.length * 0.25) return "未允許英文比例過高";
+  if (remainingEnglishWords.length > 0) return `包含未允許的英文詞 ${remainingEnglishWords.join(", ")}`;
+  if (/[？?]?$/.test(normalized) === false) return "不像問句";
+
+  return null;
 }
 
 function checkRetrievalCase({ round, type, chunks, question, source, sources, expectedTerms, issues }) {
