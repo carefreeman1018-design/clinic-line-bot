@@ -254,11 +254,11 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const analColorectalReply = answerAnalColorectalQuestion(message);
   if (analColorectalReply) return { reply: analColorectalReply, relevantChunks: [] };
 
-  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
-  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
-
   const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
   if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
+
+  const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
+  if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
 
   const stdTreatmentReply = answerStdTreatmentQuestion(message);
   if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };

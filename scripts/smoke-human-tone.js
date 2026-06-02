@@ -206,14 +206,14 @@ const cases = [
   {
     name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
     reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，不要貼連結，請直接告訴我下一步。"),
-    expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
+    expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "先讓醫師評估 PEP 較優先", "02-2511-9488", "儘速就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
   },
   {
     name: "pep after 80 hours acknowledges missed window and blocks prep rescue",
     reply: answerStdTreatmentQuestion("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？不要貼連結，請直接講下一步。"),
     expected: ["80 小時", "已超過", "PEP 黃金 72 小時", "醫師判斷", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "LINE 不能直接判斷或開藥", "不能保證今晚直接拿藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
+    forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
   },
   {
     name: "pep schedule follow-up does not intercept new 80-hour prep rescue question",
@@ -258,6 +258,22 @@ const cases = [
     ),
     expected: ["PEP 是越早評估越好", "匿名篩檢", "先讓醫師評估 PEP 較優先", "今天（週二）", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "PrEP 是暴露前預防", "午診"]
+  },
+  {
+    name: "pep urgent next-step follow-up beats fixed schedule and avoids official line",
+    reply: answerPepVisitScheduleFollowUp(
+      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，請不要貼連結，也不要再叫我加 LINE，直接告訴我下一步。",
+      new Date("2026-06-02T08:00:00+08:00"),
+      [
+        { role: "user", content: "我昨晚保險套破掉，現在大概 18 小時，很怕 HIV。你們可以直接讓我拿 PEP 嗎？我也想匿名篩檢。" },
+        { role: "assistant", content: "18 小時仍在 72 小時內，PEP 需要由醫師評估，LINE 不能直接開藥。" }
+      ]
+    ) || answerFixedScheduleQuestion(
+      "那我現在是先掛今天哪個時段，還是直接去急診？我人在台北，請不要貼連結，也不要再叫我加 LINE，直接告訴我下一步。",
+      new Date("2026-06-02T08:00:00+08:00")
+    ),
+    expected: ["PEP 是越早評估越好", "今天（週二）", "午診", "13:30-17:00", "羅詩修醫師", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488", "盡快到診"],
+    forbidden: ["https://", "lin.ee", "官方 LINE", "LINE VOOM", "早診（09:30-12:30）：陳偉傑醫師"]
   },
   {
     name: "pep memory does not intercept wart partner medication question",

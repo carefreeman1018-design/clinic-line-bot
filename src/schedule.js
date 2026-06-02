@@ -185,7 +185,7 @@ export function answerPepVisitScheduleFollowUp(message, now = new Date(), conver
 }
 
 function hasPepVisitFollowUpIntent(message) {
-  return /下午|晚上|晚診|夜診|時段|掛|門診|看診|預約|現場|直接到|到診|下一步|怎麼去/.test(message);
+  return /今天|下午|晚上|晚診|夜診|時段|掛|門診|看診|預約|現場|直接到|到診|急診|下一步|怎麼去/.test(message);
 }
 
 function hasNewPepRiskOrMedicationQuestion(message) {

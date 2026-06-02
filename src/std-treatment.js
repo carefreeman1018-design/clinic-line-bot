@@ -97,7 +97,7 @@ function answerPepQuestion(message) {
     : "";
 
   const anonymousScreening = /匿名|篩檢|驗性病|性病/.test(message)
-    ? "匿名篩檢可一起詢問，官網說明可透過官方 LINE 預約，到診所後由護理人員安排篩檢。"
+    ? "匿名篩檢可一起詢問，到診後由護理人員安排篩檢；若仍在 PEP 時效內，先讓醫師評估 PEP 較優先。"
     : "PEP 不能預防其他性病，是否需要篩檢也請一起讓醫師評估。";
 
   return [
