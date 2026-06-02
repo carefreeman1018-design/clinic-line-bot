@@ -24,6 +24,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己買", "擦 7 天", "擦七天", "擦兩週", "元"]
   },
   {
+    name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
+    reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，不要貼連結，請直接告訴我下一步。"),
+    expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
+  },
+  {
     name: "psa report cancer biopsy question avoids diagnosis",
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
