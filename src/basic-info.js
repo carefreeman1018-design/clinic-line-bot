@@ -1,5 +1,4 @@
 const HOME_URL = "https://uromeeme.com/";
-const CONTACT_URL = "https://uromeeme.com/contact-us/";
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const LINE_ADD_FRIEND_URL = "https://lin.ee/qDUYijn";
 
@@ -97,9 +96,7 @@ function asksClinicAccess(message) {
 function buildClinicAccessReply() {
   return [
     "津久診所地址是 104091 台北市中山區松江路 276 號 3 樓。",
-    "捷運可搭到行天宮站 4 號出口，出站後右轉，步行約 40 秒可看到津久診所招牌，搭電梯上 3 樓。",
-    `交通與路線可參考官網「聯絡我們」頁面：${CONTACT_URL}`,
-    `若要預約看診，可使用線上掛號：${APPOINTMENT_URL}`
+    "捷運可搭到行天宮站 4 號出口，出站後右轉，步行約 40 秒可看到津久診所招牌，搭電梯上 3 樓。"
   ].join("\n");
 }
 

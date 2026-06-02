@@ -116,6 +116,12 @@ const cases = [
     forbidden: ["lin.ee", "加官方 LINE", "contact-us"]
   },
   {
+    name: "clinic access reply respects no-link patient request",
+    reply: answerBasicInfoQuestion("我從行天宮捷運站要去你們診所，能不能只告訴我怎麼走？不用貼連結，謝謝。"),
+    expected: ["行天宮站", "4 號出口", "步行約 40 秒", "3 樓"],
+    forbidden: ["https://", "contact-us", "appointment", "官網介紹"]
+  },
+  {
     name: "test code alone does not inherit old article link",
     reply: await draftReply({
       message: "H27-01",
