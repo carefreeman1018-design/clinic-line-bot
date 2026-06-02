@@ -11,6 +11,10 @@ export function answerTesticularTorsionQuestion(message) {
 }
 
 function isTesticularTorsionQuestion(message) {
+  if (/糖尿病|70\s*歲|七十歲|老人|長照|會陰|皮膚.*黑|變黑|發黑|黑色|腐臭|昏沉|意識|敗血|佛尼爾|Fournier/i.test(message)) {
+    return false;
+  }
+
   return (
     /睪丸|陰囊|蛋蛋|蛋疼/.test(message) &&
     /突然|剛剛|急|劇痛|很痛|痛到|走不了|腫|腫脹|運動後|青少年|16\s*歲|十六歲|扭轉/.test(message)

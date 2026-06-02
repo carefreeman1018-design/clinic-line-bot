@@ -3,6 +3,7 @@ import { answerAnalColorectalQuestion } from "../src/anal-colorectal.js";
 import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
+import { answerFournierGangreneQuestion } from "../src/fournier-gangrene.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerParaphimosisQuestion } from "../src/paraphimosis.js";
@@ -21,6 +22,14 @@ import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "fournier gangrene risk beats testicular torsion route",
+    reply:
+      answerFournierGangreneQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。") ||
+      answerTesticularTorsionQuestion("我爸 70 歲有糖尿病，今天陰囊和會陰部突然紅腫很痛，有一塊皮膚變黑，還發燒、整個人有點昏沉。這可以等明天門診嗎？你們今天能不能直接處理？不要貼連結，直接講下一步。"),
+    expected: ["70 歲", "糖尿病", "陰囊", "會陰", "皮膚變黑", "發燒", "昏沉", "佛尼爾氏壞疽", "快速惡化感染", "LINE 不能診斷", "不建議等明天門診", "敗血症", "急診", "立即就醫", "廣效抗生素", "緊急清創", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以等明天", "先預約門診"]
+  },
   {
     name: "teen sudden testicular pain gives torsion emergency boundary",
     reply:

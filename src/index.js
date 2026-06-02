@@ -20,6 +20,7 @@ import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vec
 import { answerVaccineQuestion } from "./vaccines.js";
 import { answerCircumcisionFastPassQuestion } from "./surgery.js";
 import { answerFemaleUrologyQuestion } from "./female-urology.js";
+import { answerFournierGangreneQuestion } from "./fournier-gangrene.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
@@ -213,6 +214,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const priapismReply = answerPriapismQuestion(message);
   if (priapismReply) return { reply: priapismReply, relevantChunks: [] };
+
+  const fournierGangreneReply = answerFournierGangreneQuestion(message);
+  if (fournierGangreneReply) return { reply: fournierGangreneReply, relevantChunks: [] };
 
   const testicularTorsionReply = answerTesticularTorsionQuestion(message);
   if (testicularTorsionReply) return { reply: testicularTorsionReply, relevantChunks: [] };
