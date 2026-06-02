@@ -9,6 +9,10 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
 
   if (isHpvVaccineQuestion(message) || followUpContext?.includesHpv) {
     parts.push("官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。");
+    if (hasHpvExposureOrInfectionConcern(message)) {
+      parts.push("HPV 疫苗可降低部分型別感染與菜花風險，但不是保證不會感染或長菜花；若已感染 HPV，疫苗不能處理既有感染或讓病毒消失。");
+      parts.push(`若要評估篩檢或施打，建議電話 ${PHONE} 或由診所人員確認。`);
+    }
     if (hasCurrentHpvWartConcern(message)) {
       parts.push("HPV 疫苗主要是預防方向，不能用來治療已經出現的菜花或肉芽病灶；目前有疑似菜花時，需先由醫師看病灶並評估篩檢與治療。");
     }
@@ -52,11 +56,23 @@ function asksPriceOrStock(message) {
 }
 
 function asksPersonalSuitability(message) {
-  return /過敏|懷孕|備孕|慢性病|免疫|吃藥|用藥|藥物|適合|能不能|可不可以|可以直接打|直接打|馬上打|今天.*打|副作用|禁忌|性行為|有用|有效|幾劑|幾針|劑數|間隔|時程/.test(message);
+  return /過敏|懷孕|備孕|慢性病|免疫|吃藥|用藥|藥物|適合|能不能|可不可以|是不是|不用擔心|陽性|感染|可以直接打|直接打|馬上打|今天.*打|副作用|禁忌|性行為|有用|有效|幾劑|幾針|劑數|間隔|時程/.test(message);
 }
 
 function hasCurrentHpvWartConcern(message) {
-  return /菜花|尖銳濕疣|肉芽|疣|病灶|小顆粒|顆粒|突起|私密處.*長|生殖器.*長|陰莖.*長|陰部.*長|肛門.*長|會不會.*好|治療|治好|直接好/.test(message);
+  if (/沒有長東西|沒.*長東西|沒有.*肉芽|沒.*肉芽|沒有.*病灶|沒.*病灶/.test(message)) {
+    return false;
+  }
+
+  if (/尖銳濕疣|肉芽|疣|病灶|小顆粒|顆粒|突起|私密處.*長|生殖器.*長|陰莖.*長|陰部.*長|肛門.*長/.test(message)) {
+    return true;
+  }
+
+  return /菜花/.test(message) && /會不會.*好|治好|直接好|藥膏|電燒|冷凍|雷射|病灶|長出來|長東西/.test(message);
+}
+
+function hasHpvExposureOrInfectionConcern(message) {
+  return /HPV.*陽性|陽性.*HPV|已經感染|已感染|感染.*HPV|HPV.*感染|伴侶|女朋友|男朋友|另一半|性伴侶|不用擔心|保證|預防菜花|得到菜花|菜花.*風險|沒有長東西/.test(message);
 }
 
 function resolveVaccineFollowUpContext(message, conversationHistory) {

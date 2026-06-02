@@ -598,6 +598,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "會直接好", "可以治療", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
   },
   {
+    name: "hpv vaccine partner positive does not promise wart prevention or treatment",
+    reply: answerVaccineQuestion("我女朋友檢查說 HPV 陽性，我自己沒有長東西。那我是不是打 HPV 疫苗就不用擔心菜花？如果已經感染，疫苗能治療嗎？"),
+    expected: ["HPV", "九價", "降低", "菜花風險", "不是保證", "不會感染", "長菜花", "已感染 HPV", "不能處理既有感染", "醫師或診所人員", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "不用擔心", "保證完全", "可以治療", "能治療", "一定不會", "目前有疑似菜花"]
+  },
+  {
     name: "hpv vaccine male prior sex dose same-day price stays bounded",
     reply: answerVaccineQuestion("我是男生，已經有過性行為，現在打九價 HPV 還有用嗎？要打幾劑？今天能直接打嗎？費用多少？我在外面不方便看長文，先講重點。"),
     expected: ["HPV", "九價", "性行為", "劑數", "今天", "庫存", "價格", "02-2511-9488"],
