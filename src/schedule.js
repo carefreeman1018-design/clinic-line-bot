@@ -143,7 +143,7 @@ function hasPepVisitFollowUpIntent(message) {
 }
 
 function hasCompetingMedicalTopic(message) {
-  return /包皮|手術後|術後|紗布|傷口|換藥|洗澡|釘子|水腫|流血|滲血|流膿|發燒|龜頭|攝護腺|前列腺|夜尿|尿流變細|水蒸氣消融|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除|腎結石|輸尿管結石|尿路結石|腎絞痛|腰痛|血尿|尿.*紅|體外震波|軟式輸尿管鏡|鈥雷射|碎石|肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|肛門.*痛|肛門性病|肛門菜花|腫塊|化膿/.test(message);
+  return /包皮|手術後|術後|紗布|傷口|換藥|洗澡|釘子|水腫|流血|滲血|流膿|發燒|龜頭|攝護腺|前列腺|夜尿|尿流變細|水蒸氣消融|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除|腎結石|輸尿管結石|尿路結石|腎絞痛|腰痛|血尿|尿.*紅|體外震波|軟式輸尿管鏡|鈥雷射|碎石|肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|肛門.*痛|肛門性病|肛門菜花|腫塊|化膿|性功能障礙|勃起|陽痿|不舉|硬度|容易軟|軟掉|早洩|低能量震波|線性震波/.test(message);
 }
 
 function hasRecentPepContext(conversationHistory) {

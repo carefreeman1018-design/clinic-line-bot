@@ -15,6 +15,7 @@ import { loadKnowledge, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
+import { answerSexualFunctionQuestion } from "./sexual-function.js";
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 import { answerVaccineQuestion } from "./vaccines.js";
 import { answerCircumcisionFastPassQuestion } from "./surgery.js";
@@ -206,6 +207,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const femaleUrologyReply = answerFemaleUrologyQuestion(message);
   if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
+
+  const sexualFunctionReply = answerSexualFunctionQuestion(message);
+  if (sexualFunctionReply) return { reply: sexualFunctionReply, relevantChunks: [] };
 
   const malePrivateReply = answerMalePrivateSurgeryQuestion(message);
   if (malePrivateReply) return { reply: malePrivateReply, relevantChunks: [] };

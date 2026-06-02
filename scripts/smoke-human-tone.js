@@ -8,6 +8,7 @@ import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerProstateQuestion } from "../src/prostate.js";
 import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerPepVisitScheduleFollowUp } from "../src/schedule.js";
+import { answerSexualFunctionQuestion } from "../src/sexual-function.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerStoneQuestion } from "../src/stone-treatment.js";
@@ -132,6 +133,22 @@ const cases = [
     reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
     expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "費用", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "一定", "元"]
+  },
+  {
+    name: "shockwave ed question avoids links guarantee and price",
+    reply: answerSexualFunctionQuestion("我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？不要貼連結，直接告訴我下一步。"),
+    expected: ["性功能障礙", "低能量震波", "血管性勃起功能障礙", "不是所有", "不能保證療效", "心因性", "血管性", "混合性", "療程次數與費用", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "保證有效", "一定有效", "元"]
+  },
+  {
+    name: "pep memory does not intercept shockwave ed question",
+    reply: answerPepVisitScheduleFollowUp(
+      "我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？不要貼連結，直接告訴我下一步。",
+      new Date("2026-06-02T06:00:00+08:00"),
+      [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "午診", "晚診"]
   },
   {
     name: "female urology muscle chair price keeps boundary without link",
