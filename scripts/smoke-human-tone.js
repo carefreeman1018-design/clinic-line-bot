@@ -634,6 +634,17 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己停藥", "先自己停藥", "可以明天直接手術", "可以直接手術", "元"]
   },
   {
+    name: "urinary schedule question after circumcision context does not inherit surgery doctors",
+    reply: await buildTestReply("我週三晚上想去看頻尿跟夜尿，週三晚上的診是一般泌尿科嗎？如果不是，週三還有哪個時段比較適合？", [
+      { role: "user", content: "我割包皮第 5 天，釘子旁邊有點黃黃的，水腫也還沒退。" },
+      { role: "assistant", content: "術後第 5 天水腫、出血或釘子旁黃黃的狀況，LINE 不能直接判斷是否為感染或流膿。" },
+      { role: "user", content: "我想做割包皮手術，有推薦的醫生嗎？" },
+      { role: "assistant", content: "割包皮/包皮槍可先掛泌尿科或男性門診評估。" }
+    ]),
+    expected: ["週三", "晚診", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "週三可改一般門診時段", "午診", "吳致寬醫師", "02-2511-9488"],
+    forbidden: ["包皮手術相關專長", "包皮槍", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "可以。今天", "LINE 不能判斷是否感染", "抗生素", "急診", "立即就醫", "官方 LINE", "LINE VOOM", "官網介紹：", "https://", "lin.ee"]
+  },
+  {
     name: "hpv vaccine price allergy answers service and safety boundary",
     reply: answerVaccineQuestion("我想打九價 HPV 疫苗，你們有嗎？價錢多少？我有藥物過敏，能不能直接打？請回答重點就好。"),
     expected: ["HPV", "九價", "價格", "02-2511-9488", "LINE 不能直接判斷", "過敏史", "個人狀況", "醫師或診所人員"],

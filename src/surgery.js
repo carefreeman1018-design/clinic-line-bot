@@ -11,6 +11,7 @@ export function answerCircumcisionFastPassQuestion(message, conversationHistory 
   const hasDirectCircumcisionQuestion = isCircumcisionQuestion(message);
   const hasRecentCircumcisionContext = hasRecentCircumcisionDoctorContext(conversationHistory);
   if (!hasDirectCircumcisionQuestion && !hasRecentCircumcisionContext) return null;
+  if (!hasDirectCircumcisionQuestion && hasCompetingNonCircumcisionTopic(message)) return null;
 
   if (asksToCheckCircumcisionDoctorSchedule(message)) {
     return answerCircumcisionDoctorSchedule(now);
@@ -86,6 +87,10 @@ function asksCircumcisionDoctorRecommendation(message) {
 
 function asksToCheckCircumcisionDoctorSchedule(message) {
   return /^(好|好的|可以|麻煩|幫我|好 幫|好，幫|ok|OK)|幫我查|查一下|查時段|查門診|今天.*時段|明天.*時段|哪天.*時段|什麼時段|門診時段|看診時段|早午晚|早上.*下午.*晚上|早診.*午診.*晚診|分別.*找誰/.test(message.trim());
+}
+
+function hasCompetingNonCircumcisionTopic(message) {
+  return /頻尿|夜尿|尿急|尿痛|排尿|小便|尿尿|泌尿道感染|膀胱炎|攝護腺|前列腺|尿流|尿不出|腎結石|輸尿管結石|血尿|腰痛|肛門|痔瘡|廔管|肛裂|性功能|勃起|威而鋼|犀利士|HPV|菜花|性病|猛健樂|點滴|疫苗/.test(message);
 }
 
 function hasRecentCircumcisionDoctorContext(conversationHistory) {

@@ -6,6 +6,11 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!isUtiQuestion(message)) return null;
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
+  if (isScheduleOnlyUrologyQuestion(message)) {
+    const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);
+    if (requestedScheduleReply) return cleanScheduleReply(requestedScheduleReply, message);
+  }
+
   if (hasUpperUrinaryEmergency(message)) {
     return [
       "血尿合併右腰/側腹劇痛和發燒，需要警覺腎臟或輸尿管感染、結石合併感染等急症風險，LINE 不能判斷原因。",
@@ -57,6 +62,20 @@ function hasUpperUrinaryEmergency(message) {
   const hasFever = /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
 
   return hasBloodUrine && hasFlankOrWaistPain && hasFever;
+}
+
+function isScheduleOnlyUrologyQuestion(message) {
+  return (
+    hasExplicitScheduleRequest(message) &&
+    !/尿痛|尿尿.*痛|小便.*痛|排尿.*痛|發燒|高燒|血尿|尿.*血|尿.*紅|尿不出|排不出尿|抗生素|吃藥|藥|很痛|劇痛|痛到/.test(message)
+  );
+}
+
+function cleanScheduleReply(reply, message) {
+  const symptomPrefix = /頻尿|夜尿/.test(message) ? "頻尿/夜尿想看一般泌尿科的話，" : "";
+  return symptomPrefix + reply
+    .replace(/臨時異動請以 LINE VOOM \/ 官方 LINE、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。")
+    .replace(/可查看 LINE VOOM \/ 官方 LINE、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。");
 }
 
 function buildRequestedScheduleReply(message, now) {
