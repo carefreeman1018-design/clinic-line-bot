@@ -12,7 +12,7 @@ import { answerBasicInfoQuestion } from "./basic-info.js";
 import { answerDoctorInfoQuestion } from "./doctors.js";
 import { loadKnowledge, shouldEscalate } from "./knowledge.js";
 import { replyText, verifyLineSignature } from "./line.js";
-import { answerFixedScheduleQuestion } from "./schedule.js";
+import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 import { answerVaccineQuestion } from "./vaccines.js";
@@ -201,6 +201,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
   if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
+
+  const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
+  if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };

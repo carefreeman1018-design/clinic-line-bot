@@ -4,7 +4,7 @@ import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerDoctorInfoQuestion } from "../src/doctors.js";
 import { loadKnowledge, retrieveRelevantChunks, shouldEscalate as shouldEscalateMessage } from "../src/knowledge.js";
-import { answerFixedScheduleQuestion } from "../src/schedule.js";
+import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "../src/schedule.js";
 
 const DEFAULT_ROUNDS = 3;
 
@@ -69,6 +69,22 @@ const CONTEXTUAL_SCHEDULE_CASES = [
       }
     ],
     expectedTerms: ["陳偉傑醫師", "週一早診", "週二早診", "週四晚診", "週五早診"]
+  },
+  {
+    question: "那我今天下午或晚上要掛哪個時段比較適合？可以直接到現場嗎？不要貼連結，跟我說下一步就好。",
+    now: new Date("2026-06-02T04:00:00+08:00"),
+    conversationHistory: [
+      {
+        role: "user",
+        content: "我昨晚無套性行為後很焦慮，現在大概過了 30 小時。你們可以做 PEP 嗎？我能不能直接去拿藥？"
+      },
+      {
+        role: "assistant",
+        content: "PEP 需在暴露後72小時內盡快開始，但不能直接拿藥，必須先由醫師評估後開立。"
+      }
+    ],
+    expectedTerms: ["PEP", "越早評估", "今天（週二）", "羅詩修醫師", "李齊泰醫師", "不能直接", "02-2511-9488"],
+    forbiddenTerms: ["https://", "官網介紹"]
   }
 ];
 
@@ -463,10 +479,14 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     }
   }
 
-  for (const { question, conversationHistory, expectedTerms, forbiddenTerms = [] } of CONTEXTUAL_SCHEDULE_CASES) {
-    const reply = answerFixedScheduleQuestion(
+  for (const { question, conversationHistory, expectedTerms, forbiddenTerms = [], now } of CONTEXTUAL_SCHEDULE_CASES) {
+    const reply = answerPepVisitScheduleFollowUp(
       question,
-      new Date("2026-06-01T00:00:00+08:00"),
+      now ?? new Date("2026-06-01T00:00:00+08:00"),
+      conversationHistory
+    ) || answerFixedScheduleQuestion(
+      question,
+      now ?? new Date("2026-06-01T00:00:00+08:00"),
       conversationHistory
     );
     caseResults.push(

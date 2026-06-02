@@ -64,7 +64,8 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   if (answerLineVoomAnnouncementQuestion(message)) return null;
 
   const day = resolveRequestedDay(message, now);
-  const period = PERIOD_ALIASES.find(([, pattern]) => pattern.test(message))?.[0];
+  const periods = resolveRequestedPeriods(message);
+  const period = periods[0];
   const doctor = resolveRequestedDoctor(message);
   const misspelledDoctor = resolveMisspelledDoctor(message);
   const doctorListReply = buildDoctorListReply(message, conversationHistory);
@@ -87,6 +88,10 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 
   if (!period) {
     return buildFullDayReply(day, dayLabel);
+  }
+
+  if (periods.length > 1) {
+    return buildSelectedPeriodsReply(day, dayLabel, periods);
   }
 
   const clinic = FIXED_SCHEDULE[day][period];
@@ -113,6 +118,35 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   }
 
   return `${dayLabel}${period}（${time}）是${clinic}門診。${TEMPORARY_CHANGE_CONFIRMATION}`;
+}
+
+export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
+  if (!hasRecentPepContext(conversationHistory)) return null;
+  if (!/今天|今日|下午|晚上|晚診|夜診|時段|掛|現場|直接到|下一步|怎麼辦|怎麼去/.test(message)) return null;
+
+  const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
+  const dayLabel = buildDayLabel(message, day);
+  const periods = resolveRequestedPeriods(message);
+  const requestedPeriods = periods.length > 0 ? periods : ["午診", "晚診"];
+  const scheduleText = buildPeriodSummary(day, requestedPeriods);
+
+  return [
+    "PEP 是越早評估越好，不能直接線上判斷或保證拿藥。",
+    `${dayLabel}可先參考：${scheduleText}。`,
+    "下一步建議先電話 02-2511-9488 確認當天可評估時段，或盡快到診由醫師評估。"
+  ].join("");
+}
+
+function hasRecentPepContext(conversationHistory) {
+  return [...conversationHistory]
+    .slice(-8)
+    .some((historyMessage) => /PEP|暴露後|72\s*小時|無套性行為|直接拿藥|預防性投藥/.test(historyMessage.content ?? ""));
+}
+
+function resolveRequestedPeriods(message) {
+  return PERIOD_ALIASES
+    .filter(([, pattern]) => pattern.test(message))
+    .map(([period]) => period);
 }
 
 function resolveRequestedDay(message, now) {
@@ -226,6 +260,26 @@ function buildFullDayReply(day, dayLabel) {
     ...lines,
     TEMPORARY_CHANGE_CONFIRMATION
   ].join("\n");
+}
+
+function buildSelectedPeriodsReply(day, dayLabel, periods) {
+  return [
+    `${dayLabel}固定門診：`,
+    ...periods.map((period) => buildPeriodLine(day, period)),
+    TEMPORARY_CHANGE_CONFIRMATION
+  ].join("\n");
+}
+
+function buildPeriodSummary(day, periods) {
+  return periods.map((period) => buildPeriodLine(day, period)).join("；");
+}
+
+function buildPeriodLine(day, period) {
+  const clinic = FIXED_SCHEDULE[day]?.[period] ?? "休診";
+  const time = periodToTime(period);
+  if (clinic === "手術") return `${period}（${time}）手術時段，不是一般門診`;
+  if (clinic === "休診") return `${period}（${time}）休診`;
+  return `${period}（${time}）${clinic}`;
 }
 
 function asksForAlternativeClinicTime(message) {
