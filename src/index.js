@@ -15,6 +15,7 @@ import { replyText, verifyLineSignature } from "./line.js";
 import { answerFixedScheduleQuestion } from "./schedule.js";
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
+import { answerVaccineQuestion } from "./vaccines.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -181,6 +182,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
       relevantChunks: []
     };
   }
+
+  const vaccineReply = answerVaccineQuestion(message);
+  if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

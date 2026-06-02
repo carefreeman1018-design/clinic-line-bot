@@ -1,7 +1,14 @@
 import { draftReply } from "../src/ai.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
+import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "hpv vaccine price allergy answers service and safety boundary",
+    reply: answerVaccineQuestion("我想打九價 HPV 疫苗，你們有嗎？價錢多少？我有藥物過敏，能不能直接打？請回答重點就好。"),
+    expected: ["HPV", "九價", "價格", "02-2511-9488", "過敏", "不能直接判斷"],
+    forbidden: ["傷口", "發燒", "尿不出來", "大量出血", "https://", "lin.ee", "官網介紹："]
+  },
   {
     name: "medical escalation",
     reply: await draftReply({
