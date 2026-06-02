@@ -554,6 +554,12 @@ const cases = [
     forbidden: ["目前知識庫沒有指定", "沒有指定「推薦醫師」名單", "官網介紹：", "https://", "lin.ee", "一定最好"]
   },
   {
+    name: "circumcision recommendation full route stays local and link-free",
+    reply: await buildTestReply("我想做割包皮手術，有推薦的醫生嗎？"),
+    expected: ["陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "包皮槍", "包皮環切", "術前評估", "02-2511-9488"],
+    forbidden: ["目前知識庫沒有指定", "沒有指定「推薦醫師」名單", "官網介紹：", "https://", "lin.ee", "一定最好"]
+  },
+  {
     name: "circumcision doctor follow-up checks today slots",
     reply: answerCircumcisionFastPassQuestion(
       "好 幫我查",
@@ -565,6 +571,22 @@ const cases = [
     ),
     expected: ["今天（週二）", "早診", "陳偉傑醫師", "午診", "羅詩修醫師", "晚診", "李齊泰醫師", "02-2511-9488", "術前評估"],
     forbidden: ["目前知識庫沒有指定", "推薦醫師」名單", "官網介紹：", "https://", "lin.ee", "官方 LINE"]
+  },
+  {
+    name: "circumcision recommendation fallback does not add link",
+    reply: await draftReply({
+      message: "我想做割包皮手術，有推薦的醫生嗎？",
+      chunks: [
+        {
+          title: "割包皮與雙主治包皮槍 5.0",
+          content: "若使用者問「割包皮有推薦醫師嗎」「包皮槍要看哪位醫生」「可以先掛哪位醫師」，不要回答「目前知識庫沒有指定推薦醫師名單」。可以回答：割包皮/包皮槍可先掛泌尿科或男性門診評估。官網雙主治包皮槍流程提到陳偉傑醫師、羅詩修醫師；醫師專長資料也列李齊泰醫師有包皮槍包皮環切手術、吳致寬醫師有精雕包皮環切手術。",
+          sourceUrls: ["https://uromeeme.com/treatment1/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師"],
+    forbidden: ["目前知識庫沒有指定", "推薦醫師」名單", "官網介紹：", "https://", "lin.ee"]
   },
   {
     name: "circumcision direct schedule wording checks today slots",

@@ -4,6 +4,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const MAX_REPLY_CHARS = Number(process.env.MAX_REPLY_CHARS || 360);
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
+const PHONE = "02-2511-9488";
 const OFFICIAL_TOPIC_URLS = [
   { pattern: /PEP|事後預防|暴露後|72\s*小時|愛滋.*事後/i, url: "https://uromeeme.com/pep/" },
   { pattern: /PrEP|事前預防|暴露前|愛滋.*事前/i, url: "https://uromeeme.com/prep/" },
@@ -190,6 +191,10 @@ function extractOfficialWebsiteUrls(chunks, message) {
 }
 
 function normalizeReplyForLineContext(reply, message) {
+  if (isCircumcisionDoctorRecommendationQuery(message) && hasBadCircumcisionDoctorRecommendationReply(reply)) {
+    return buildCircumcisionDoctorRecommendationReply();
+  }
+
   if (isOfficialLineRequested(message)) return reply;
 
   return reply
@@ -331,6 +336,7 @@ function hasExplicitOfficialLinkIntent(message) {
 
 function shouldSuppressExtraLinks(message) {
   if (hasNegativeLinkIntent(message)) return true;
+  if (isDoctorRecommendationQuery(message)) return true;
   if (hasExplicitOfficialLinkIntent(message)) return false;
 
   return /講重點|重點就好|簡短|短答|不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|手機訊號.*(文字|重點)|先給文字|只要.*重點/.test(message);
@@ -338,4 +344,25 @@ function shouldSuppressExtraLinks(message) {
 
 function hasNegativeLinkIntent(message) {
   return /不用.*連結|不要.*連結|不要貼|不用貼|先不要.*網址|手機訊號.*(文字|重點)|先給文字/.test(message);
+}
+
+function isDoctorRecommendationQuery(message) {
+  return /推薦.*(醫師|醫生|醫師|醫)|(?:醫師|醫生).*(推薦|哪位|哪個|誰)|掛哪位|看哪位|找哪位/.test(message);
+}
+
+function isCircumcisionDoctorRecommendationQuery(message) {
+  return /割包皮|包皮槍|包皮環切|包莖|包皮過長/.test(message) && isDoctorRecommendationQuery(message);
+}
+
+function hasBadCircumcisionDoctorRecommendationReply(reply) {
+  return /目前知識庫沒有指定|推薦醫師」名單|沒有指定「推薦醫師」|不要回答/.test(reply);
+}
+
+function buildCircumcisionDoctorRecommendationReply() {
+  return [
+    "割包皮/包皮槍可先掛泌尿科或男性門診評估。",
+    "官網雙主治包皮槍流程提到陳偉傑醫師、羅詩修醫師；醫師專長資料也列李齊泰醫師有包皮槍包皮環切手術、吳致寬醫師有精雕包皮環切手術。",
+    "哪位最適合仍要看可掛時段與術前評估，不在線上直接指定唯一人選。",
+    `如果要查時段，可先電話 ${PHONE} 確認，或直接告訴我想查今天、明天還是哪一天。`
+  ].join("");
 }
