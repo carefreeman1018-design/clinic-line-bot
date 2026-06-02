@@ -5,10 +5,17 @@ import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerReportResultQuestion } from "../src/report-results.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
+import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "wart ointment duration avoids online prescription",
+    reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？不要貼連結，講重點。"),
+    expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己買", "擦 7 天", "擦七天", "擦兩週", "元"]
+  },
   {
     name: "psa report cancer biopsy question avoids diagnosis",
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
