@@ -32,12 +32,20 @@ function isPepQuestion(message) {
 }
 
 function answerPepQuestion(message) {
-  const prefix = /60\s*小時|六十\s*小時/.test(message)
-    ? "60 小時仍在官網提醒的 72 小時內，"
+  const hoursMatch = message.match(/(\d{1,2})\s*小時/);
+  const hours = hoursMatch ? Number(hoursMatch[1]) : null;
+  const prefix = hours !== null && hours <= 72
+    ? `${hours} 小時仍在官網提醒的 72 小時內，`
+    : /四十\s*小時|六十\s*小時/.test(message)
+      ? `${/四十\s*小時/.test(message) ? "40" : "60"} 小時仍在官網提醒的 72 小時內，`
     : "PEP 需把握風險行為後 72 小時內，";
 
   const prepClarification = /PrEP/i.test(message)
     ? "PrEP 是暴露前預防，不是已發生暴露後的補救；PrEP 也不能預防梅毒、淋病、菜花等其他性病。"
+    : "";
+
+  const hivInfectionBoundary = /已經感染|感染\s*HIV|HIV\s*感染|HIV.*陽性|陽性.*HIV|確診.*HIV/i.test(message)
+    ? "若已感染 HIV，PrEP 不適用，需先檢測並由醫師評估治療。"
     : "";
 
   const anonymousScreening = /匿名|篩檢|驗性病|性病/.test(message)
@@ -46,6 +54,7 @@ function answerPepQuestion(message) {
 
   return [
     prepClarification,
+    hivInfectionBoundary,
     `${prefix}請今天盡快聯絡診所或到門診/急診由醫師評估；LINE 不能直接判斷或開藥。`,
     anonymousScreening,
     `下一步：先電話 ${PHONE} 確認最快可評估時段；若診所無法即時安排，請儘速就醫。`

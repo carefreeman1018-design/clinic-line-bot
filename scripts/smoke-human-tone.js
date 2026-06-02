@@ -67,6 +67,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃了就不用戴套", "可以補救", "菜花 HPV 相關篩檢與治療評估"]
   },
   {
+    name: "prep after exposure and possible hiv infection stays safe",
+    reply: answerStdTreatmentQuestion("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？不要貼連結，直接告訴我下一步。"),
+    expected: ["40 小時", "72 小時", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "若已感染 HIV", "PrEP 不適用", "醫師評估治療", "LINE 不能直接判斷或開藥", "02-2511-9488", "儘速就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "吃 PrEP 就好", "可以直接給藥", "可以直接拿藥", "不用看診"]
+  },
+  {
     name: "psa report cancer biopsy question avoids diagnosis",
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
