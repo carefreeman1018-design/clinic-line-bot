@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { syncLineVoomAnnouncements } from "../scripts/sync-line-voom.js";
 import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
+import { answerAnalColorectalQuestion } from "./anal-colorectal.js";
 import { draftReply } from "./ai.js";
 import {
   isConversationMemoryConfigured,
@@ -220,6 +221,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const wellnessWeightReply = answerWellnessWeightQuestion(message);
   if (wellnessWeightReply) return { reply: wellnessWeightReply, relevantChunks: [] };
+
+  const analColorectalReply = answerAnalColorectalQuestion(message);
+  if (analColorectalReply) return { reply: analColorectalReply, relevantChunks: [] };
 
   const reportResultReply = answerReportResultQuestion(message);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };

@@ -1,4 +1,5 @@
 import { draftReply } from "../src/ai.js";
+import { answerAnalColorectalQuestion } from "../src/anal-colorectal.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
@@ -15,6 +16,22 @@ import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "anal bleeding pain hemorrhoid surgery routes to colorectal clinic",
+    reply: answerAnalColorectalQuestion("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？不要貼連結，請直接告訴我下一步。"),
+    expected: ["肛門直腸外科", "痔瘡", "廔管", "肛裂", "痔瘡微創手術評估", "不能只用 LINE 判斷", "不能保證當天直接手術", "02-2511-9488", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是痔瘡", "可以直接做", "元", "PEP", "72 小時"]
+  },
+  {
+    name: "pep memory does not intercept anal colorectal question",
+    reply: answerPepVisitScheduleFollowUp(
+      "我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？不要貼連結，請直接告訴我下一步。",
+      new Date("2026-06-02T06:00:00+08:00"),
+      [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "午診", "晚診"]
+  },
   {
     name: "post circumcision swelling yellow discharge avoids diagnosis",
     reply: answerWoundCareQuestion("我割包皮第 5 天，龜頭有點水腫，釘子旁邊黃黃的，是不是流膿？可以洗澡或自己多擦藥膏嗎？不要貼連結，講重點。"),
