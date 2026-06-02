@@ -94,6 +94,22 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "哪個最好", "可以保證", "不用評估", "可以直接做", "元"]
   },
   {
+    name: "acute urinary retention beats prostate procedure pricing",
+    reply: answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["幾乎尿不出來", "下腹脹痛", "冒冷汗", "急性尿液滯留", "泌尿道阻塞", "LINE 不能直接診斷", "不建議撐到明天", "不能先安排 Urolift", "水蒸氣消融", "費用", "導尿", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "確認可評估時段", "可以撐到明天", "可以直接做", "元"]
+  },
+  {
+    name: "vaccine memory does not intercept acute urinary retention",
+    reply:
+      answerVaccineQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。", [
+        { role: "user", content: "我想問九價 HPV 疫苗和皮蛇疫苗，今天能不能一起打？費用多少？" },
+        { role: "assistant", content: "官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。官網主要診療項目有列出皮蛇疫苗施打。" }
+      ]) || answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["急性尿液滯留", "不建議撐到明天", "急診", "立即就醫", "導尿"],
+    forbidden: ["HPV 疫苗", "九價", "皮蛇疫苗", "疫苗施打", "兩種疫苗", "庫存"]
+  },
+  {
     name: "mounjaro thyroid pancreatitis history and weight loss promise stays bounded",
     reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？不要貼連結，直接講下一步。"),
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "BMI", "共病", "糖尿病藥", "甲狀腺癌", "胰臟炎", "確認風險", "不能保證", "瘦幾公斤", "費用", "02-2511-9488"],

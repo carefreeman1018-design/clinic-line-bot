@@ -74,8 +74,13 @@ function resolveVaccineFollowUpContext(message, conversationHistory) {
 
 function isVaccineFollowUpQuestion(message) {
   if (/點滴|護肝|解酒|疲勞|修復|營養素|保健點滴|免疫提升.*點滴|功能性修復/.test(message)) return false;
+  if (hasNonVaccineClinicalTopic(message)) return false;
 
   const hasFollowUpCue = /那|一起|同一天|同時|也可以|也能|老公|先生|太太|伴侶|家人|他|她/.test(message);
   const hasVaccineActionCue = /打|施打|接種|過敏|懷孕|備孕|幾歲|年齡|費用|價格|庫存|預約/.test(message);
   return hasFollowUpCue && hasVaccineActionCue;
+}
+
+function hasNonVaccineClinicalTopic(message) {
+  return /攝護腺|前列腺|夜尿|尿流|尿不出來|排不出尿|尿滯留|下腹|冒冷汗|Urolift|水蒸氣消融|Rezum|Rezūm|雷射剜除|綠光雷射|腎結石|輸尿管結石|血尿|腰痛|睪丸|包皮|龜頭|陰莖|痔瘡|肛門|猛健樂|點滴|震波|結紮|割包皮/.test(message);
 }
