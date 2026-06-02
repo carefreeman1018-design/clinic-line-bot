@@ -11,6 +11,10 @@ export function answerTesticularTorsionQuestion(message) {
 }
 
 function isTesticularTorsionQuestion(message) {
+  if (/結紮|輸精管|術後|做完.*手術|傷口|滲血|出血|瘀青|血腫/.test(message)) {
+    return false;
+  }
+
   if (/糖尿病|70\s*歲|七十歲|老人|長照|會陰|皮膚.*黑|變黑|發黑|黑色|腐臭|昏沉|意識|敗血|佛尼爾|Fournier/i.test(message)) {
     return false;
   }

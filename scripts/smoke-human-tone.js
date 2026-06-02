@@ -23,6 +23,14 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "post vasectomy swelling fever beats torsion route",
+    reply:
+      answerVasectomyQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。") ||
+      answerTesticularTorsionQuestion("我做完男性結紮第 2 天，陰囊越來越腫，瘀青範圍變大，傷口還有一點滲血，現在很痛又有點發燒。可以冰敷吃止痛藥等明天嗎？還是要現在回診或急診？不要貼連結，直接講下一步。"),
+    expected: ["結紮後第 2 天", "陰囊越來越腫", "瘀青變大", "傷口滲血", "很痛", "發燒", "不能只用 LINE 判斷", "術後血腫", "感染", "持續出血", "不建議", "冰敷", "止痛藥", "等到明天", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "16 歲", "睪丸扭轉", "黃金六小時", "可以冰敷", "可以等明天", "男性無刀口結紮手術評估"]
+  },
+  {
     name: "pde5 cardiac nitrate risk blocks direct medication",
     reply: answerSexualFunctionQuestion("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？不要貼連結，直接講下一步。"),
     expected: ["心臟病", "胸悶", "硝化甘油", "威而鋼", "犀利士", "硝酸鹽", "不可自行", "PDE5 抑制劑", "危險低血壓", "LINE 不能直接開藥或報價", "心血管評估", "用藥清單", "02-2511-9488"],
