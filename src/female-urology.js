@@ -13,6 +13,13 @@ export function answerFemaleUrologyQuestion(message) {
     ].join("");
   }
 
+  if (asksUrologyOrGynecologyRoute(message)) {
+    return [
+      "女性漏尿和頻尿可以先掛泌尿科門診評估。",
+      "診所會評估是否需要轉介婦產科或其他專科；建議先預約泌尿科門診，由醫師檢查後判斷下一步。"
+    ].join("");
+  }
+
   const safetyNotes = buildSafetyNotes(message);
 
   return [
@@ -28,7 +35,11 @@ function isFemaleUrologyQuestion(message) {
 }
 
 function asksSuitabilityPriceOrNextStep(message) {
-  return /直接做|可以做|適合|費用|價格|價錢|多少錢|一次|療程|預約|掛號|下一步|怎麼約|怎麼預約|抗生素|吃藥|吃.*藥|急診|就醫/.test(message);
+  return /直接做|可以做|可以看|適合|費用|價格|價錢|多少錢|一次|療程|預約|掛號|掛哪|看哪|泌尿科|婦產科|下一步|怎麼約|怎麼預約|抗生素|吃藥|吃.*藥|急診|就醫/.test(message);
+}
+
+function asksUrologyOrGynecologyRoute(message) {
+  return /泌尿科|婦產科|可以看|看哪|掛哪/.test(message);
 }
 
 function buildSafetyNotes(message) {
