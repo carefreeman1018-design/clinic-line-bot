@@ -129,6 +129,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "當天安排", "重接"]
   },
   {
+    name: "vasectomy sexual function concern avoids semen check mixup",
+    reply: answerVasectomyQuestion("男性結紮會不會讓性慾變低、勃起變差，或射精量變少？我很怕做完影響性能力。不要貼連結，請直接講重點和下一步。"),
+    expected: ["不會阻斷男性荷爾蒙", "仍會射精", "通常不會明顯影響性慾", "勃起功能", "射精感", "精液量", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "不能馬上停止避孕", "殘存精子", "精液檢查", "低能量震波", "性功能障礙評估"]
+  },
+  {
     name: "male private surgery price outcome keeps boundary without link",
     reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
     expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "費用", "醫師評估", "02-2511-9488"],
