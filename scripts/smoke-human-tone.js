@@ -21,6 +21,13 @@ import { answerVaccineQuestion } from "../src/vaccines.js";
 import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
+async function buildTestReply(message, conversationHistory = []) {
+  process.env.NODE_ENV = "test";
+  const { buildReplyAndMatches } = await import("../src/index.js");
+  const { reply } = await buildReplyAndMatches(message, [], conversationHistory);
+  return reply;
+}
+
 const cases = [
   {
     name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",
@@ -208,6 +215,12 @@ const cases = [
     reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，我現在有點慌，先跟我說該怎麼做。"),
     expected: ["60 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "先讓醫師評估 PEP 較優先", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
+  },
+  {
+    name: "pep first question beats same-day schedule routing",
+    reply: await buildTestReply("我昨晚跟朋友無套，現在大概過了 20 小時，很怕 HIV。津久今天可以處理 PEP 嗎？我是第一次遇到，不知道現在該先掛號還是直接去。"),
+    expected: ["20 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "PEP 不能預防其他性病", "02-2511-9488", "儘速就醫"],
+    forbidden: ["今天（週二）固定門診", "早診", "午診", "晚診", "LINE VOOM", "官方 LINE", "https://", "lin.ee"]
   },
   {
     name: "pep after 80 hours acknowledges missed window and blocks prep rescue",

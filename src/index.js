@@ -189,7 +189,7 @@ function isAdminUser(userId) {
   return Boolean(userId && adminUserIds.has(userId));
 }
 
-async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
+export async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const simpleReply = buildSimpleReply(message);
   if (simpleReply) return { reply: simpleReply, relevantChunks: [] };
 
@@ -254,14 +254,14 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const analColorectalReply = answerAnalColorectalQuestion(message);
   if (analColorectalReply) return { reply: analColorectalReply, relevantChunks: [] };
 
+  const stdTreatmentReply = answerStdTreatmentQuestion(message);
+  if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };
+
   const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
   if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
-
-  const stdTreatmentReply = answerStdTreatmentQuestion(message);
-  if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {
@@ -363,10 +363,12 @@ async function safeReplyText(replyToken, message) {
   }
 }
 
-app.listen(port, () => {
-  console.log(`Clinic LINE bot listening on port ${port}`);
-  scheduleDailyLineVoomSync();
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`Clinic LINE bot listening on port ${port}`);
+    scheduleDailyLineVoomSync();
+  });
+}
 
 function scheduleDailyLineVoomSync() {
   if (!voomSyncEnabled) {
