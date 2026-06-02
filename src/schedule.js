@@ -130,9 +130,13 @@ export function answerPepVisitScheduleFollowUp(message, now = new Date(), conver
   const periods = resolveRequestedPeriods(message);
   const requestedPeriods = periods.length > 0 ? periods : ["午診", "晚診"];
   const scheduleText = buildPeriodSummary(day, requestedPeriods);
+  const anonymousScreeningNote = /匿名|篩檢|驗性病|性病/.test(message)
+    ? "匿名篩檢可一起詢問，但若還在 PEP 時效內，先讓醫師評估 PEP 較優先。"
+    : "";
 
   return [
     "PEP 是越早評估越好，不能直接線上判斷或保證拿藥。",
+    anonymousScreeningNote,
     `${dayLabel}可先參考：${scheduleText}。`,
     "下一步建議先電話 02-2511-9488 確認當天可評估時段，或盡快到診由醫師評估。"
   ].join("");

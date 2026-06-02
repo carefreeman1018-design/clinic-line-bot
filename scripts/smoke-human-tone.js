@@ -73,6 +73,19 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃 PrEP 就好", "可以直接給藥", "可以直接拿藥", "不用看診"]
   },
   {
+    name: "pep follow-up tonight doctor and anonymous screening keeps context",
+    reply: answerPepVisitScheduleFollowUp(
+      "那我如果今晚去，是先做匿名篩檢還是先給醫師評估 PEP？今天晚上是哪位醫師？我需要先打電話嗎？不要貼連結，直接告訴我下一步。",
+      new Date("2026-06-02T12:00:00+08:00"),
+      [
+        { role: "user", content: "我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，能不能直接給藥？" },
+        { role: "assistant", content: "40 小時仍在 72 小時內，PEP 需要由醫師評估，LINE 不能直接開藥。" }
+      ]
+    ),
+    expected: ["PEP 是越早評估越好", "匿名篩檢", "先讓醫師評估 PEP 較優先", "今天（週二）", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "PrEP 是暴露前預防", "午診"]
+  },
+  {
     name: "psa report cancer biopsy question avoids diagnosis",
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],

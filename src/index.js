@@ -235,6 +235,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const reportResultReply = answerReportResultQuestion(message);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
 
+  const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
+  if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
+
   const stdTreatmentReply = answerStdTreatmentQuestion(message);
   if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };
 
@@ -253,9 +256,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
   if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
-
-  const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
-  if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
 
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
