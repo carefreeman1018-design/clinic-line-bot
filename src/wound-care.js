@@ -2,6 +2,7 @@ const PHONE = "02-2511-9488";
 
 export function answerWoundCareQuestion(message) {
   if (!isWoundCareQuestion(message)) return null;
+  if (/結紮|輸精管/.test(message)) return null;
 
   if (hasPossibleWoundAbnormality(message)) {
     const surgeryDay = resolveSurgeryDay(message);
