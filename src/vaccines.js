@@ -24,7 +24,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
   }
 
   if (asksPersonalSuitability(message)) {
-    parts.push("是否適合施打、已發生性行為後是否仍適合、過敏史、劑數/間隔與今天能不能直接打，需由醫師或診所人員依個人狀況與庫存評估。");
+    parts.push("LINE 不能直接判斷是否適合施打；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");
   } else if (!asksPriceOrStock(message)) {
     parts.push(`是否適合、庫存與費用，建議電話 ${PHONE} 或由診所人員確認。`);
   }
