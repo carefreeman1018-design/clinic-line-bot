@@ -19,6 +19,24 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "wellness drip beats vaccine memory follow-up",
+    reply:
+      answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。") ||
+      answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。", [
+        { role: "user", content: "我想打 HPV 疫苗，也想問皮蛇疫苗，今天能不能直接打？" }
+      ]),
+    expected: ["客製化功能性修復點滴", "免疫提升", "元氣護肝", "排毒疲勞解酒", "不能保證", "今天能不能施打", "醫師評估", "費用", "02-2511-9488"],
+    forbidden: ["HPV", "皮蛇疫苗", "庫存", "劑數", "可以保證", "保證恢復", "https://", "lin.ee"]
+  },
+  {
+    name: "vaccine memory ignores wellness drip question",
+    reply: answerVaccineQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。", [
+      { role: "user", content: "我想打 HPV 疫苗，也想問皮蛇疫苗，今天能不能直接打？" }
+    ]) ?? "",
+    expected: [""],
+    forbidden: ["HPV", "皮蛇疫苗", "疫苗施打", "庫存", "劑數"]
+  },
+  {
     name: "line voom outage notice takes priority over hpv vaccine service",
     reply:
       answerLineVoomAnnouncementQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。") ||

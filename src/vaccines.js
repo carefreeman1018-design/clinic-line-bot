@@ -66,6 +66,8 @@ function resolveVaccineFollowUpContext(message, conversationHistory) {
 }
 
 function isVaccineFollowUpQuestion(message) {
+  if (/點滴|護肝|解酒|疲勞|修復|營養素|保健點滴|免疫提升.*點滴|功能性修復/.test(message)) return false;
+
   const hasFollowUpCue = /那|一起|同一天|同時|也可以|也能|老公|先生|太太|伴侶|家人|他|她/.test(message);
   const hasVaccineActionCue = /打|施打|接種|過敏|懷孕|備孕|幾歲|年齡|費用|價格|庫存|預約/.test(message);
   return hasFollowUpCue && hasVaccineActionCue;

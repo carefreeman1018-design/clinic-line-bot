@@ -13,7 +13,9 @@ export function answerWellnessWeightQuestion(message) {
 
   return [
     "診所有提供客製化功能性修復點滴。",
-    `是否適合需由醫師評估健康狀況與需求；可先電話 ${PHONE} 確認可諮詢時段。`
+    "官網列出的方向包含免疫提升防護、元氣護肝保健、排毒疲勞解酒與術後修復。",
+    "不能保證打完一定恢復精神；是否適合、配方、風險與今天能不能施打，都需要醫師評估並由專業醫療人員操作。",
+    `費用需依評估後確認。下一步：先電話 ${PHONE} 確認可諮詢時段。`
   ].join("");
 }
 
@@ -22,5 +24,5 @@ function isWellnessWeightQuestion(message) {
 }
 
 function isMounjaroQuestion(message) {
-  return /猛健樂|Mounjaro|Tirzepatide|減重|體重管理|瘦瘦筆|BMI|糖尿病|一針|打針|直接打|副作用/i.test(message);
+  return /猛健樂|Mounjaro|Tirzepatide|減重|體重管理|瘦瘦筆|BMI/i.test(message);
 }

@@ -199,6 +199,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
+  const wellnessWeightReply = answerWellnessWeightQuestion(message);
+  if (wellnessWeightReply) return { reply: wellnessWeightReply, relevantChunks: [] };
+
   const vaccineReply = answerVaccineQuestion(message, conversationHistory);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
@@ -231,9 +234,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const stoneReply = answerStoneQuestion(message);
   if (stoneReply) return { reply: stoneReply, relevantChunks: [] };
-
-  const wellnessWeightReply = answerWellnessWeightQuestion(message);
-  if (wellnessWeightReply) return { reply: wellnessWeightReply, relevantChunks: [] };
 
   const analColorectalReply = answerAnalColorectalQuestion(message);
   if (analColorectalReply) return { reply: analColorectalReply, relevantChunks: [] };
