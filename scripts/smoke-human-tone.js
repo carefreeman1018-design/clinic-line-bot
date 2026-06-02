@@ -14,6 +14,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "保證接回來", "一定", "元"]
   },
   {
+    name: "vasectomy post-op contraception semen check stays on point",
+    reply: answerVasectomyQuestion("我如果做完結紮，是不是馬上就可以不用避孕？之後要不要驗精液？請不要貼連結，直接講重點。"),
+    expected: ["不能馬上停止避孕", "殘存精子", "精液檢查", "醫師指示", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "當天安排", "重接"]
+  },
+  {
     name: "male private surgery price outcome keeps boundary without link",
     reply: answerMalePrivateSurgeryQuestion("我想問陰莖增大或龜頭減敏，你們有做嗎？可以保證變大或比較持久嗎？費用多少？不要貼連結，講重點。"),
     expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "費用", "醫師評估", "02-2511-9488"],
