@@ -202,6 +202,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const vaccineReply = answerVaccineQuestion(message);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
+  const woundCareReply = answerWoundCareQuestion(message);
+  if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
+
   const surgeryReply = answerCircumcisionFastPassQuestion(message);
   if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };
 
@@ -240,9 +243,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const stdTreatmentReply = answerStdTreatmentQuestion(message);
   if (stdTreatmentReply) return { reply: stdTreatmentReply, relevantChunks: [] };
-
-  const woundCareReply = answerWoundCareQuestion(message);
-  if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

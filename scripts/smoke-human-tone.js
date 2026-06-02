@@ -49,6 +49,14 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "確定是感染", "不是感染", "可以洗澡", "自己多擦", "不用回診"]
   },
   {
+    name: "post circumcision day three wound care beats surgery booking",
+    reply:
+      answerWoundCareQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？不要貼連結，直接告訴我下一步。") ||
+      answerCircumcisionFastPassQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？不要貼連結，直接告訴我下一步。"),
+    expected: ["術後第 3 天", "LINE 不能直接判斷", "感染", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "快速通關", "當天看診後手術", "手術評估", "實際費用", "可以洗澡", "自己多擦"]
+  },
+  {
     name: "wart ointment duration avoids online prescription",
     reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？不要貼連結，講重點。"),
     expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
