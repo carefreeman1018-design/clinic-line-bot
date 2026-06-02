@@ -19,6 +19,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "mounjaro thyroid pancreatitis history and weight loss promise stays bounded",
+    reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "BMI", "共病", "糖尿病藥", "甲狀腺癌", "胰臟炎", "確認風險", "不能保證", "瘦幾公斤", "費用", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以直接打一針", "保證瘦", "元"]
+  },
+  {
     name: "wellness drip beats vaccine memory follow-up",
     reply:
       answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？不要貼連結，直接講下一步。") ||
@@ -353,7 +359,7 @@ const cases = [
     name: "mounjaro diabetes medication price same-day stays bounded",
     reply: answerWellnessWeightQuestion("我想問猛健樂減重門診，BMI 大概 27，也有在吃糖尿病藥。今天能不能直接打？一針多少錢？副作用怎麼辦？不要貼連結，直接告訴我下一步。"),
     expected: ["猛健樂門診", "體重管理", "不能在線上判斷", "直接安排施打", "BMI", "糖尿病藥", "副作用", "費用", "02-2511-9488", "用藥資訊"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "今天可以打", "元", "保證"]
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接打", "今天可以打", "保證瘦", "元"]
   },
   {
     name: "pep concise answer suppresses extra link",
