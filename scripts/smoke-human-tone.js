@@ -67,6 +67,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
+    name: "female uti blood antibiotic same-day does not invent fever",
+    reply: answerMaleUtiUrgentQuestion("我是女生，今天尿尿很痛、一直想尿，下腹也痛，尿裡好像有血。可以先吃家裡剩下的抗生素嗎？今天要看門診還是急診？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["尿痛", "疑似血尿", "醫師評估", "不能建議先吃", "抗生素", "請不要自行服藥", "02-2511-9488", "血尿", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛合併發燒", "可以先吃", "可以自行"]
+  },
+  {
     name: "stone urgent pain hematuria gives er boundary without links",
     reply: answerStoneQuestion("我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？不要貼連結，請直接告訴我下一步。"),
     expected: ["右腰痛到冒冷汗", "尿有點紅", "LINE 判斷", "腎結石", "輸尿管結石", "劇痛", "血尿", "優先急診", "02-2511-9488"],

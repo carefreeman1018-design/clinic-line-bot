@@ -7,7 +7,7 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
   const parts = [
-    "尿痛合併發燒需要盡快由醫師評估。",
+    buildSymptomSummary(message),
     "LINE 不能判斷是否感染、也不能建議先吃哪種抗生素；請不要自行服藥或停藥。"
   ];
 
@@ -21,6 +21,18 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   parts.push("若高燒、劇痛、尿不出來、血尿或明顯很不舒服，請直接急診/立即就醫。");
 
   return parts.join("");
+}
+
+function buildSymptomSummary(message) {
+  if (/發燒|高燒/.test(message)) {
+    return "尿痛合併發燒需要盡快由醫師評估。";
+  }
+
+  if (/血尿|尿.*血|尿.*紅/.test(message)) {
+    return "尿痛合併疑似血尿需要盡快由醫師評估。";
+  }
+
+  return "尿痛、頻尿或急尿可能有不同原因，需要由醫師評估。";
 }
 
 function isUtiQuestion(message) {
