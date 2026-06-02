@@ -33,6 +33,22 @@ const STOP_TERMS = new Set([
   "hey"
 ]);
 
+const GENERIC_TERM_PATTERNS = [
+  /津久/,
+  /診所/,
+  /你們/,
+  /可以/,
+  /有沒/,
+  /沒有/,
+  /提供/,
+  /諮詢/,
+  /請問/,
+  /客服/,
+  /官方/,
+  /哪裡/,
+  /怎麼預約/
+];
+
 const MEDICAL_ESCALATION_PATTERNS = [
   /血尿|尿血|發燒|劇痛|很痛|疼痛|痛痛|不舒服|排不出尿|尿不出來|傷口|感染|腫起來|化膿/,
   /報告|檢查結果|癌|腫瘤|攝護腺指數|PSA|超音波|切片/,
@@ -115,7 +131,13 @@ function tokenize(text) {
   const dateTerms = normalized.match(/\b\d{1,2}\/\d{1,2}\b/g) ?? [];
   const latinTerms = normalized.match(/[a-z0-9]+/g) ?? [];
   const cjkTerms = extractCjkTerms(normalized);
-  return [...dateTerms, ...latinTerms, ...cjkTerms].filter((term) => term.length > 0 && !STOP_TERMS.has(term));
+  return [...dateTerms, ...latinTerms, ...cjkTerms].filter(isUsefulQueryTerm);
+}
+
+function isUsefulQueryTerm(term) {
+  if (term.length === 0) return false;
+  if (STOP_TERMS.has(term)) return false;
+  return !GENERIC_TERM_PATTERNS.some((pattern) => pattern.test(term));
 }
 
 function extractCjkTerms(text) {

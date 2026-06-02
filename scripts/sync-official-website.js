@@ -116,6 +116,7 @@ async function fetchAll(resource, params = {}) {
 }
 
 function normalizePage(page) {
+  const content = page.content?.rendered ?? "";
   return {
     type: "page",
     title: cleanText(page.title?.rendered),
@@ -123,12 +124,14 @@ function normalizePage(page) {
     link: normalizeUrl(page.link),
     slug: decodeSlug(page.slug),
     excerpt: cleanText(page.excerpt?.rendered),
-    headings: extractHeadings(page.content?.rendered),
-    keywords: extractKeywords([page.title?.rendered, page.excerpt?.rendered, page.content?.rendered].join(" "))
+    headings: extractHeadings(content),
+    contentHighlights: extractContentHighlights(content),
+    keywords: extractKeywords([page.title?.rendered, page.excerpt?.rendered, content].join(" "))
   };
 }
 
 function normalizePost(post, categoryById) {
+  const content = post.content?.rendered ?? "";
   const categories = (post.categories ?? [])
     .map((id) => categoryById.get(id)?.name)
     .filter(Boolean);
@@ -141,8 +144,9 @@ function normalizePost(post, categoryById) {
     slug: decodeSlug(post.slug),
     categories,
     excerpt: cleanText(post.excerpt?.rendered),
-    headings: extractHeadings(post.content?.rendered),
-    keywords: extractKeywords([post.title?.rendered, post.excerpt?.rendered, post.content?.rendered].join(" "))
+    headings: extractHeadings(content),
+    contentHighlights: extractContentHighlights(content),
+    keywords: extractKeywords([post.title?.rendered, post.excerpt?.rendered, content].join(" "))
   };
 }
 
@@ -217,6 +221,7 @@ function renderPageEntry(page) {
     `- 網址代稱：${page.slug}`,
     page.excerpt ? `- 官網摘要：${page.excerpt}` : null,
     page.headings.length ? `- 頁面段落：${page.headings.join("、")}` : null,
+    page.contentHighlights.length ? renderHighlights("頁面內容重點", page.contentHighlights) : null,
     page.keywords.length ? `- 相關關鍵字：${page.keywords.join("、")}` : null,
     ""
   ]
@@ -233,6 +238,7 @@ function renderPostEntry(post) {
     `- 分類：${post.categories.join("、") || "未分類"}`,
     post.excerpt ? `- 官網摘要：${post.excerpt}` : null,
     post.headings.length ? `- 文章段落：${post.headings.join("、")}` : null,
+    post.contentHighlights.length ? renderHighlights("文章內容重點", post.contentHighlights) : null,
     post.keywords.length ? `- 相關關鍵字：${post.keywords.join("、")}` : null
   ]
     .filter(Boolean)
@@ -260,6 +266,52 @@ function extractHeadings(html = "") {
         .filter((heading) => heading && !isBoilerplate(heading))
     )
   ].slice(0, 18);
+}
+
+function extractContentHighlights(html = "") {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ");
+
+  const paragraphs = decodeHtmlEntities(text)
+    .split(/\n+/)
+    .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+    .filter(isUsefulHighlight);
+
+  const highlights = [];
+  const seen = new Set();
+
+  for (const paragraph of paragraphs) {
+    const normalized = paragraph.toLowerCase();
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+
+    highlights.push(truncateHighlight(paragraph));
+    if (highlights.length >= 12) break;
+  }
+
+  return highlights;
+}
+
+function isUsefulHighlight(text) {
+  if (text.length < 24) return false;
+  if (text.length > 900) return false;
+  if (isBoilerplate(text)) return false;
+  if (/^(上一篇|下一篇|分享此文|相關文章|延伸閱讀|參考資料|read more)$/i.test(text)) return false;
+  if (/^(line|facebook|instagram|youtube)$/i.test(text)) return false;
+  if (/^\d+$/.test(text)) return false;
+  return true;
+}
+
+function truncateHighlight(text) {
+  return text.length > 360 ? `${text.slice(0, 357)}...` : text;
+}
+
+function renderHighlights(label, highlights) {
+  return [`- ${label}：`, ...highlights.map((highlight) => `  - ${highlight}`)].join("\n");
 }
 
 function extractKeywords(text) {
