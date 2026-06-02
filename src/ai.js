@@ -15,8 +15,8 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
   }
 
   if (!client) {
-    const bestChunk = chunks[0];
-    return appendOfficialLinks(summarizeChunk(bestChunk.content), chunks);
+    const bestChunk = chunks.find((chunk) => /建議回覆/.test(chunk.content)) ?? chunks[0];
+    return appendOfficialLinks(summarizeChunk(bestChunk.content), chunks, message);
   }
 
   const context = chunks
@@ -65,7 +65,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
   });
 
   const reply = response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
-  return appendOfficialLinks(reply, chunks);
+  return appendOfficialLinks(reply, chunks, message);
 }
 
 function summarizeChunk(content) {
@@ -88,17 +88,125 @@ function getTaipeiToday() {
   }).format(new Date());
 }
 
-function appendOfficialLinks(reply, chunks) {
-  const urls = extractOfficialWebsiteUrls(chunks);
+function appendOfficialLinks(reply, chunks, message) {
+  const urls = extractOfficialWebsiteUrls(chunks, message);
   if (urls.length === 0) return reply;
 
   const label = urls.length === 1 ? "官網介紹：" : "官網介紹：";
   return `${reply}\n\n${label}\n${urls.join("\n")}`;
 }
 
-function extractOfficialWebsiteUrls(chunks) {
-  const urls = chunks.flatMap((chunk) => chunk.sourceUrls ?? []);
-  return [...new Set(urls)]
-    .filter((url) => /^https:\/\/(www\.)?uromeeme\.com\//.test(url))
-    .slice(0, 2);
+function extractOfficialWebsiteUrls(chunks, message) {
+  const candidates = new Map();
+
+  for (const chunk of chunks) {
+    for (const url of chunk.sourceUrls ?? []) {
+      if (!isOfficialWebsiteUrl(url)) continue;
+
+      const existing = candidates.get(url);
+      const score = scoreOfficialUrl(url, chunk, message);
+      if (!existing || score > existing.score) {
+        candidates.set(url, { url, score });
+      }
+    }
+  }
+
+  const scoredUrls = [...candidates.values()].sort((a, b) => b.score - a.score);
+  const strongUrls = scoredUrls.filter((candidate) => candidate.score >= 6);
+  const fallbackUrls = scoredUrls.filter((candidate) => candidate.score > 0);
+
+  return (strongUrls.length > 0 ? strongUrls : fallbackUrls)
+    .slice(0, strongUrls.length > 0 ? 2 : 1)
+    .map((candidate) => candidate.url);
+}
+
+function isOfficialWebsiteUrl(url) {
+  return /^https:\/\/(www\.)?uromeeme\.com\//.test(url);
+}
+
+function scoreOfficialUrl(url, chunk, message) {
+  if (isServiceTopicQuery(message) && isBroadOfficialUrl(url) && !isBroadUrlRequested(message)) {
+    return 0;
+  }
+
+  const urlText = decodeURIComponent(url).toLowerCase();
+  const chunkText = `${chunk.title}\n${chunk.content}`.toLowerCase();
+  const queryTerms = extractLinkTerms(message);
+  const chunkTerms = extractLinkTerms(chunkText);
+  const urlTerms = extractLinkTerms(urlText);
+  const urlLabel = buildUrlLabel(url);
+
+  let score = 0;
+
+  for (const term of queryTerms) {
+    if (chunkText.includes(term)) score += 3;
+    if (urlText.includes(term) || urlLabel.includes(term)) score += 5;
+  }
+
+  for (const term of chunkTerms) {
+    if (urlText.includes(term) || urlLabel.includes(term)) score += 2;
+  }
+
+  for (const term of urlTerms) {
+    if (chunkText.includes(term)) score += 1;
+  }
+
+  if (/\/about-us\/?$/.test(url)) score += /醫師|醫生|專長|肛門直腸|大腸直腸|陳嘉哲/.test(message) ? 3 : -2;
+  if (/\/about_uromeeme_tsuku\/?$/.test(url)) score += /特色|團隊|一站式|大腸直腸/.test(message) ? 3 : -3;
+  if (/^https:\/\/(www\.)?uromeeme\.com\/?$/.test(url)) score += /首頁|官網|網站/.test(message) ? 3 : -4;
+  if (isServiceTopicQuery(message) && isBroadOfficialUrl(url)) score -= 6;
+
+  return score;
+}
+
+function extractLinkTerms(text) {
+  const normalized = text.toLowerCase();
+  const terms = [
+    ...(normalized.match(/[a-z0-9]+/g) ?? []),
+    ...(normalized.match(/[\u4e00-\u9fff]{2,}/g) ?? []).flatMap(expandCjkLinkTerms)
+  ];
+
+  return [...new Set(terms)].filter(isUsefulLinkTerm);
+}
+
+function expandCjkLinkTerms(sequence) {
+  const terms = [sequence];
+  for (let index = 0; index < sequence.length; index += 1) {
+    for (const length of [2, 3, 4]) {
+      const term = sequence.slice(index, index + length);
+      if (term.length === length) terms.push(term);
+    }
+  }
+  return terms;
+}
+
+function isUsefulLinkTerm(term) {
+  if (term.length < 2) return false;
+  return !/^(https?|www|com|官網|介紹|診所|津久|提供|服務|可以|有沒有|想問|請問|相關|治療|手術)$/.test(term);
+}
+
+function buildUrlLabel(url) {
+  if (/\/about-us\/?$/.test(url)) return "醫師介紹 陳嘉哲 肛門直腸 大腸直腸";
+  if (/\/about_uromeeme_tsuku\/?$/.test(url)) return "品牌介紹 診所特色 一站式";
+  if (/^https:\/\/(www\.)?uromeeme\.com\/?$/.test(url)) return "首頁 治療項目";
+  return "";
+}
+
+function isServiceTopicQuery(message) {
+  return /痔瘡|痔|廔管|肛裂|肛門性病|肛門菜花|肛門疾病|肛門問題|大腸直腸/.test(message);
+}
+
+function isBroadOfficialUrl(url) {
+  return (
+    /^https:\/\/(www\.)?uromeeme\.com\/?$/.test(url) ||
+    /\/contact-us\/?$/.test(url) ||
+    /\/about-us\/?$/.test(url) ||
+    /\/about_uromeeme_tsuku\/?$/.test(url) ||
+    /\/%e8%a8%ba%e6%89%80%e7%89%b9%e8%89%b2\/?$/i.test(url) ||
+    /\/診所特色\/?$/.test(decodeURIComponent(url))
+  );
+}
+
+function isBroadUrlRequested(message) {
+  return /醫師|醫生|專長|陳嘉哲|官網|官方網站|首頁|品牌|特色|團隊|一站式|預約|掛號|交通|地址/.test(message);
 }
