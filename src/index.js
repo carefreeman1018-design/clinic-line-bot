@@ -195,6 +195,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
     };
   }
 
+  const announcementReply = answerLineVoomAnnouncementQuestion(message);
+  if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
+
   const vaccineReply = answerVaccineQuestion(message);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
@@ -243,9 +246,6 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const basicInfoReply = answerBasicInfoQuestion(message);
   if (basicInfoReply) return { reply: basicInfoReply, relevantChunks: [] };
-
-  const announcementReply = answerLineVoomAnnouncementQuestion(message);
-  if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
   const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
   if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };

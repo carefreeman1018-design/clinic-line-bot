@@ -1,5 +1,6 @@
 import { draftReply } from "../src/ai.js";
 import { answerAnalColorectalQuestion } from "../src/anal-colorectal.js";
+import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
@@ -16,6 +17,14 @@ import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
+  {
+    name: "line voom outage notice takes priority over hpv vaccine service",
+    reply:
+      answerLineVoomAnnouncementQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。") ||
+      answerVaccineQuestion("我看到 LINE VOOM 說 2026/5/19 晚上李齊泰醫師停診。那天如果我只是要做匿名篩檢或打 HPV 疫苗，還可以去嗎？不要貼連結，簡短回答。"),
+    expected: ["5/19", "李齊泰醫師", "停診一次", "100%匿名篩檢", "疫苗接種服務照常營業"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "價格", "庫存", "劑數", "是否適合施打", "需由醫師或診所人員"]
+  },
   {
     name: "anal bleeding pain hemorrhoid surgery routes to colorectal clinic",
     reply: answerAnalColorectalQuestion("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？不要貼連結，請直接告訴我下一步。"),
