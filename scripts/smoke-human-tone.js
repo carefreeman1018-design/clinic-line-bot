@@ -240,6 +240,22 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "一定", "元"]
   },
   {
+    name: "sexual function route does not intercept male private surgery",
+    reply:
+      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。") ??
+      "",
+    expected: [""],
+    forbidden: ["性功能障礙", "硬度不足", "早洩", "陽痿", "直接開藥"]
+  },
+  {
+    name: "male private surgery beats sexual function wording",
+    reply:
+      answerMalePrivateSurgeryQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。") ||
+      answerSexualFunctionQuestion("我想問陰莖增大跟龜頭減敏，想要變大一點也比較持久。你們可以保證效果嗎？今天能不能直接做？費用多少？不要貼連結，直接告訴我下一步。"),
+    expected: ["男性私密", "陰莖增大", "龜頭減敏", "不能保證", "尺寸", "持久度", "效果", "費用", "醫師評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "性功能障礙評估與治療", "直接開藥", "可以保證", "元"]
+  },
+  {
     name: "shockwave ed question avoids links guarantee and price",
     reply: answerSexualFunctionQuestion("我最近硬度不太穩，做到一半容易軟掉，聽說低能量震波可以改善。你們有做嗎？可以保證有效嗎？要做幾次、費用多少？不要貼連結，直接告訴我下一步。"),
     expected: ["性功能障礙", "低能量震波", "血管性勃起功能障礙", "不是所有", "不能保證療效", "心因性", "血管性", "混合性", "療程次數與費用", "02-2511-9488"],

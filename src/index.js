@@ -211,11 +211,11 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
   const femaleUrologyReply = answerFemaleUrologyQuestion(message);
   if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
 
-  const sexualFunctionReply = answerSexualFunctionQuestion(message);
-  if (sexualFunctionReply) return { reply: sexualFunctionReply, relevantChunks: [] };
-
   const malePrivateReply = answerMalePrivateSurgeryQuestion(message);
   if (malePrivateReply) return { reply: malePrivateReply, relevantChunks: [] };
+
+  const sexualFunctionReply = answerSexualFunctionQuestion(message);
+  if (sexualFunctionReply) return { reply: sexualFunctionReply, relevantChunks: [] };
 
   const vasectomyReply = answerVasectomyQuestion(message);
   if (vasectomyReply) return { reply: vasectomyReply, relevantChunks: [] };

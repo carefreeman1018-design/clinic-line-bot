@@ -20,6 +20,7 @@ export function answerSexualFunctionQuestion(message) {
 }
 
 function isSexualFunctionQuestion(message) {
+  if (/男性私密|私密處微創|陰莖增大|龜頭減敏|龜頭.*敏感|GG\s*增大/.test(message)) return false;
   return /性功能障礙|勃起功能|勃起障礙|陽痿|不舉|硬度|容易軟|軟掉|早洩|遲射|持久|低能量震波|線性震波|震波治療|LI-ESWT|Piezowave/i.test(message);
 }
 
