@@ -224,7 +224,7 @@ export async function buildReplyAndMatches(message, chunks, conversationHistory 
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
 
-  const surgeryReply = answerCircumcisionFastPassQuestion(message);
+  const surgeryReply = answerCircumcisionFastPassQuestion(message, conversationHistory);
   if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };
 
   const femaleUrologyReply = answerFemaleUrologyQuestion(message);
