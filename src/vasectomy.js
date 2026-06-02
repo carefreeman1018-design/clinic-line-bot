@@ -1,6 +1,13 @@
-const PHONE = "02-2511-9488";
+import fs from "node:fs";
 
-export function answerVasectomyQuestion(message) {
+const PHONE = "02-2511-9488";
+const FIXED_SCHEDULE_CONFIG = loadFixedScheduleConfig();
+const FIXED_SCHEDULE = FIXED_SCHEDULE_CONFIG.schedule;
+const PERIOD_TIMES = FIXED_SCHEDULE_CONFIG.periodTimes;
+const VASECTOMY_DOCTORS = new Set(["陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師"]);
+const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+
+export function answerVasectomyQuestion(message, now = new Date()) {
   if (!isVasectomyQuestion(message)) return null;
 
   if (isPostVasectomyUrgentQuestion(message)) {
@@ -12,6 +19,10 @@ export function answerVasectomyQuestion(message) {
   }
 
   if (!asksSchedulePriceReversalOrSafety(message)) return null;
+
+  if (asksVasectomyConsultSchedule(message)) {
+    return buildVasectomyConsultScheduleReply(message, now);
+  }
 
   if (asksSexualFunctionImpact(message)) {
     return [
@@ -37,12 +48,104 @@ export function answerVasectomyQuestion(message) {
   ].join("");
 }
 
+function loadFixedScheduleConfig() {
+  const raw = fs.readFileSync(new URL("../data/fixed-schedule.json", import.meta.url), "utf8");
+  return JSON.parse(raw);
+}
+
 function isVasectomyQuestion(message) {
   return /男性結紮|無刀口結紮|雷射結紮|輸精管結紮|避孕手術|結紮/.test(message);
 }
 
 function asksSchedulePriceReversalOrSafety(message) {
   return /今天|當天|直接做|看完就手術|快速通關|費用|價格|價錢|多少錢|保證|接回來|恢復|復原|可逆|後悔|避孕|無套|精液|驗精|殘存精子|性慾|勃起|性能力|射精|射精量|荷爾蒙|預約|掛號|下一步|怎麼約|怎麼預約|術後|做完|傷口|陰囊|瘀青|發燒|滲血|出血|血腫|很痛|急診|回診/.test(message);
+}
+
+function asksVasectomyConsultSchedule(message) {
+  return /諮詢|哪位|醫師|醫生|早上|上午|下午|晚上|早診|午診|晚診|時段|掛|看哪/.test(message) &&
+    /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|下午|晚上/.test(message);
+}
+
+function buildVasectomyConsultScheduleReply(message, now) {
+  const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
+  const dayLabel = buildDayLabel(message, day);
+  const lines = buildVasectomyConsultLines(day);
+
+  if (lines.length === 0) {
+    return `${dayLabel}固定門診沒有列到無刀口結紮相關醫師的一般門診。到診前可電話 ${PHONE} 確認可諮詢時段。`;
+  }
+
+  return [
+    `${dayLabel}可先諮詢結紮的固定門診：`,
+    ...lines,
+    `能否當天評估或安排仍需醫師確認；到診前請電話 ${PHONE} 確認名額與時段。`
+  ].join("\n");
+}
+
+function buildVasectomyConsultLines(day) {
+  const schedule = FIXED_SCHEDULE[day];
+  if (!schedule) return [];
+
+  return ["早診", "午診", "晚診"]
+    .map((period) => {
+      const doctor = normalizeDoctorName(schedule[period]);
+      if (!doctor || !VASECTOMY_DOCTORS.has(doctor)) return null;
+      return `${period}（${PERIOD_TIMES[period]}）：${doctor}`;
+    })
+    .filter(Boolean);
+}
+
+function normalizeDoctorName(clinic) {
+  if (!clinic || clinic === "手術" || clinic === "休診") return null;
+  return clinic.replace(/（.+?）/g, "");
+}
+
+function resolveRequestedDay(message, now) {
+  if (/後天/.test(message)) return getTaipeiWeekday(addDays(now, 2));
+  if (/明天|明日/.test(message)) return getTaipeiWeekday(addDays(now, 1));
+  if (/今天|今日/.test(message)) return getTaipeiWeekday(now);
+
+  const aliases = [
+    ["週日", /週日|星期日|星期天|禮拜日|禮拜天|周日/],
+    ["週一", /週一|星期一|禮拜一|周一/],
+    ["週二", /週二|星期二|禮拜二|周二/],
+    ["週三", /週三|星期三|禮拜三|周三/],
+    ["週四", /週四|星期四|禮拜四|周四/],
+    ["週五", /週五|星期五|禮拜五|周五/],
+    ["週六", /週六|星期六|禮拜六|周六/]
+  ];
+
+  return aliases.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
+}
+
+function buildDayLabel(message, day) {
+  if (/今天|今日/.test(message)) return `今天（${day}）`;
+  if (/明天|明日/.test(message)) return `明天（${day}）`;
+  if (/後天/.test(message)) return `後天（${day}）`;
+  return day;
+}
+
+function getTaipeiWeekday(date) {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    weekday: "short"
+  }).format(date);
+  const weekdayIndexByName = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6
+  };
+  return WEEKDAYS[weekdayIndexByName[weekday]];
+}
+
+function addDays(date, days) {
+  const copy = new Date(date);
+  copy.setUTCDate(copy.getUTCDate() + days);
+  return copy;
 }
 
 function asksPostVasectomyContraception(message) {

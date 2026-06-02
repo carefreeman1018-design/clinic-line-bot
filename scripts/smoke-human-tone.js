@@ -468,6 +468,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "當天安排", "重接"]
   },
   {
+    name: "vasectomy consult follow-up lists today suitable doctors",
+    reply: answerVasectomyQuestion("那如果我想先諮詢結紮，今天可以看哪位醫師？要掛早上、下午還是晚上比較適合？", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["今天（週二）", "可先諮詢結紮", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "晚診", "18:00-20:30", "李齊泰醫師", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "只能當天安排", "手術方式與費用", "不能保證恢復生育", "留下姓名"]
+  },
+  {
     name: "vasectomy sexual function concern avoids semen check mixup",
     reply: answerVasectomyQuestion("男性結紮會不會讓性慾變低、勃起變差，或射精量變少？我很怕做完影響性能力。我在外面不方便看長文，請講重點和下一步。"),
     expected: ["不會阻斷男性荷爾蒙", "仍會射精", "通常不會明顯影響性慾", "勃起功能", "射精感", "精液量", "醫師評估", "02-2511-9488"],
