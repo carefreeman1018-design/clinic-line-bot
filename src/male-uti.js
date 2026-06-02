@@ -79,7 +79,7 @@ function buildRequestedScheduleReply(message, now) {
 function hasExplicitScheduleRequest(message) {
   const hasDay = /今天|今日|明天|明日|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]/.test(message);
   const hasPeriod = /早上|上午|早診|下午|午診|晚上|晚診|夜診|09:30|9:30|13:30|1:30|18:00|6:00/.test(message);
-  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|預約|可以掛|能掛|適合看/.test(message);
+  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|掛哪|改掛|該掛|預約|可以掛|能掛|適合看|哪一診|哪診/.test(message);
 
   return hasDay && hasPeriod && hasScheduleIntent;
 }

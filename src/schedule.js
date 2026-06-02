@@ -41,7 +41,7 @@ const DOCTOR_MISSPELLINGS = [
   }
 ];
 
-const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|預約/;
+const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約/;
 const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
 
 function loadFixedScheduleConfig() {
@@ -134,7 +134,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     ]);
   }
 
-  if (/泌尿科/.test(message) && clinic.includes("肛門直腸外科")) {
+  if (asksForUrologyCare(message) && clinic.includes("肛門直腸外科")) {
     const prefix = /不要掛|不適合|對嗎|可以掛|能掛/.test(message) ? "對，" : "";
     if (asksForAlternativeClinicTime(message)) {
       return compactLines([
@@ -354,6 +354,10 @@ function buildPeriodLine(day, period) {
   if (clinic === "手術") return `${period}（${time}）手術時段，不是一般門診`;
   if (clinic === "休診") return `${period}（${time}）休診`;
   return `${period}（${time}）${clinic}`;
+}
+
+function asksForUrologyCare(message) {
+  return /泌尿科|頻尿|夜尿|尿痛|尿道炎|膀胱炎|排尿|小便|尿尿|尿急|尿流/.test(message);
 }
 
 function asksForAlternativeClinicTime(message) {
