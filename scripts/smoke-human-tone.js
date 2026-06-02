@@ -23,6 +23,12 @@ import { answerWoundCareQuestion } from "../src/wound-care.js";
 
 const cases = [
   {
+    name: "pde5 cardiac nitrate risk blocks direct medication",
+    reply: answerSexualFunctionQuestion("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？不要貼連結，直接講下一步。"),
+    expected: ["心臟病", "胸悶", "硝化甘油", "威而鋼", "犀利士", "硝酸鹽", "不可自行", "PDE5 抑制劑", "危險低血壓", "LINE 不能直接開藥或報價", "心血管評估", "用藥清單", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接拿", "可以直接開藥", "費用", "診所有提供性功能障礙評估與治療，包含勃起功能障礙"]
+  },
+  {
     name: "genital blister ulcer gives STD evaluation and medication boundary",
     reply: answerStdTreatmentQuestion("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？不要貼連結，請直接講下一步。"),
     expected: ["陰莖水泡", "破皮潰瘍", "刺痛", "皰疹", "梅毒", "LINE 不能只靠文字診斷或開藥", "不建議自己先擦藥膏", "吃剩下的抗生素", "伴侶", "檢查或篩檢", "發燒", "今天儘快就醫", "性病篩檢/治療門診", "02-2511-9488"],
