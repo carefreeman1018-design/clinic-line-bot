@@ -143,7 +143,7 @@ function hasPepVisitFollowUpIntent(message) {
 }
 
 function hasCompetingMedicalTopic(message) {
-  return /包皮|手術後|術後|紗布|傷口|換藥|洗澡|釘子|水腫|流血|滲血|流膿|發燒|龜頭/.test(message);
+  return /包皮|手術後|術後|紗布|傷口|換藥|洗澡|釘子|水腫|流血|滲血|流膿|發燒|龜頭|攝護腺|前列腺|夜尿|尿流變細|水蒸氣消融|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除/.test(message);
 }
 
 function hasRecentPepContext(conversationHistory) {

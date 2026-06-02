@@ -21,6 +21,7 @@ import { answerFemaleUrologyQuestion } from "./female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
+import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
 import { answerWoundCareQuestion } from "./wound-care.js";
@@ -208,6 +209,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const maleUtiUrgentReply = answerMaleUtiUrgentQuestion(message);
   if (maleUtiUrgentReply) return { reply: maleUtiUrgentReply, relevantChunks: [] };
+
+  const prostateReply = answerProstateQuestion(message);
+  if (prostateReply) return { reply: prostateReply, relevantChunks: [] };
 
   const reportResultReply = answerReportResultQuestion(message);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };

@@ -3,7 +3,9 @@ import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
+import { answerProstateQuestion } from "../src/prostate.js";
 import { answerReportResultQuestion } from "../src/report-results.js";
+import { answerPepVisitScheduleFollowUp } from "../src/schedule.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
@@ -40,6 +42,22 @@ const cases = [
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？不要貼連結，講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
+  },
+  {
+    name: "prostate treatment choice cost and ejaculation avoids pep context",
+    reply: answerProstateQuestion("我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。"),
+    expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "Urolift", "夜尿", "尿流變細", "影響射精", "費用", "醫師", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "PEP", "72 小時", "可以保證", "元"]
+  },
+  {
+    name: "pep memory does not intercept prostate follow-up",
+    reply: answerPepVisitScheduleFollowUp(
+      "我爸爸夜尿很多、尿流變細，聽說你們有水蒸氣消融或 Urolift。哪個比較適合？會不會影響射精？費用多少？不要貼連結，請直接告訴我下一步。",
+      new Date("2026-06-02T06:00:00+08:00"),
+      [{ role: "user", content: "我昨天無套，現在 60 小時，想問 PEP 能不能直接拿藥" }]
+    ) ?? "",
+    expected: [""],
+    forbidden: ["PEP", "72 小時", "羅詩修醫師", "李齊泰醫師", "午診", "晚診"]
   },
   {
     name: "male uti fever antibiotic same-day stays safe and useful",
