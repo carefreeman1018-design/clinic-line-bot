@@ -122,7 +122,8 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 
 export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
   if (!hasRecentPepContext(conversationHistory)) return null;
-  if (!/今天|今日|下午|晚上|晚診|夜診|時段|掛|現場|直接到|下一步|怎麼辦|怎麼去/.test(message)) return null;
+  if (hasCompetingMedicalTopic(message)) return null;
+  if (!hasPepVisitFollowUpIntent(message)) return null;
 
   const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
   const dayLabel = buildDayLabel(message, day);
@@ -135,6 +136,14 @@ export function answerPepVisitScheduleFollowUp(message, now = new Date(), conver
     `${dayLabel}可先參考：${scheduleText}。`,
     "下一步建議先電話 02-2511-9488 確認當天可評估時段，或盡快到診由醫師評估。"
   ].join("");
+}
+
+function hasPepVisitFollowUpIntent(message) {
+  return /下午|晚上|晚診|夜診|時段|掛|門診|看診|預約|現場|直接到|到診|下一步|怎麼去/.test(message);
+}
+
+function hasCompetingMedicalTopic(message) {
+  return /包皮|手術後|術後|紗布|傷口|換藥|洗澡|釘子|水腫|流血|滲血|流膿|發燒|龜頭/.test(message);
 }
 
 function hasRecentPepContext(conversationHistory) {

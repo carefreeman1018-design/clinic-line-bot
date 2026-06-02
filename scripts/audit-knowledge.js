@@ -88,6 +88,19 @@ const CONTEXTUAL_SCHEDULE_CASES = [
   }
 ];
 
+const PEP_CONTEXT_NEGATIVE_CASES = [
+  {
+    question: "我包皮手術後第二天，紗布上有一點血，今天要不要拆掉重新包？可以洗澡嗎？不要貼連結，請講重點。",
+    conversationHistory: [
+      {
+        role: "assistant",
+        content: "PEP 需在暴露後72小時內盡快開始，但不能直接拿藥，必須先由醫師評估後開立。"
+      }
+    ],
+    forbiddenTerms: ["PEP", "羅詩修醫師", "李齊泰醫師", "午診", "晚診"]
+  }
+];
+
 const DOCTOR_INFO_CASES = [
   {
     question: "這位醫生的專業是什麼",
@@ -500,6 +513,24 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
         issues
       })
     );
+  }
+
+  for (const { question, conversationHistory, forbiddenTerms } of PEP_CONTEXT_NEGATIVE_CASES) {
+    const reply = answerPepVisitScheduleFollowUp(question, new Date("2026-06-02T04:00:00+08:00"), conversationHistory);
+    caseResults.push({
+      type: "pep-context-negative",
+      question,
+      ok: !reply
+    });
+
+    if (reply) {
+      issues.push(formatIssue(round, `PEP 脈絡不應攔截新主題：${question}`));
+      for (const term of forbiddenTerms) {
+        if (reply.includes(term)) {
+          issues.push(formatIssue(round, `PEP 新主題誤答包含「${term}」：${question}`));
+        }
+      }
+    }
   }
 
   for (const { question, conversationHistory, expectedTerms, forbiddenTerms = [] } of DOCTOR_INFO_CASES) {
