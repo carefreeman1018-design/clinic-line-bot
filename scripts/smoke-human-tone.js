@@ -317,6 +317,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
+    name: "hematuria flank pain fever prioritizes er over clinic schedule",
+    reply: answerMaleUtiUrgentQuestion("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？不要貼連結，直接告訴我現在該怎麼辦。", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["血尿", "右腰", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "LINE 不能判斷", "不建議", "止痛藥", "撐到明天", "不要自行吃抗生素", "急診", "立即就醫", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "可先參考", "門診", "李齊泰醫師", "18:00-20:30", "可以先吃止痛藥", "可以撐到明天"]
+  },
+  {
     name: "male urinary symptoms respect requested wednesday colorectal schedule",
     reply: answerMaleUtiUrgentQuestion("我最近頻尿、夜尿，想看一般泌尿科。週三晚上可以掛嗎？我看到週三晚診有陳嘉哲醫師，那一診適合看頻尿嗎？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["頻尿", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "換個時段", "02-2511-9488"],

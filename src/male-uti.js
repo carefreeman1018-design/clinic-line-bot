@@ -6,6 +6,14 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!isUtiQuestion(message)) return null;
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
+  if (hasUpperUrinaryEmergency(message)) {
+    return [
+      "血尿合併右腰/側腹劇痛和發燒，需要警覺腎臟或輸尿管感染、結石合併感染等急症風險，LINE 不能判斷原因。",
+      "不建議只吃止痛藥撐到明天，也不要自行吃抗生素。",
+      `請現在直接急診/立即就醫；若要同步確認診所能否協助，可電話 ${PHONE}，但不要因此延誤處理。`
+    ].join("");
+  }
+
   const parts = [
     buildSymptomSummary(message),
     "LINE 不能判斷是否感染、也不能建議先吃哪種抗生素；請不要自行服藥或停藥。"
@@ -41,6 +49,14 @@ function isUtiQuestion(message) {
 
 function hasUrgentOrMedicationConcern(message) {
   return /發燒|很痛|劇痛|血尿|尿不出來|排不出尿|抗生素|吃藥|藥|今天|晚上|夜診|晚診|現在|急/.test(message);
+}
+
+function hasUpperUrinaryEmergency(message) {
+  const hasBloodUrine = /血尿|尿.*血|尿.*紅/.test(message);
+  const hasFlankOrWaistPain = /腰.*痛|側腹.*痛|腰腹.*痛|右腰|左腰|腎絞痛|痛到|劇痛|很痛/.test(message);
+  const hasFever = /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
+
+  return hasBloodUrine && hasFlankOrWaistPain && hasFever;
 }
 
 function buildRequestedScheduleReply(message, now) {
