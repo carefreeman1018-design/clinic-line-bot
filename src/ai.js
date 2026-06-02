@@ -133,6 +133,7 @@ function extractOfficialWebsiteUrls(chunks, message) {
 
   const canonicalTopicUrl = findCanonicalOfficialTopicUrl(message);
   if (canonicalTopicUrl) return [canonicalTopicUrl];
+  if (isServiceTopicQuery(message)) return [];
   if (!hasUsefulLinkIntent(message)) return [];
 
   const candidates = new Map();

@@ -130,6 +130,27 @@ const cases = [
     }),
     expected: ["割包皮"],
     forbidden: ["官網介紹：", "health-education"]
+  },
+  {
+    name: "anal service does not borrow unrelated service link",
+    reply: await draftReply({
+      message: "痔瘡可以看嗎",
+      chunks: [
+        {
+          title: "痔瘡、廔管、肛裂與肛門性病",
+          content: "診所有肛門直腸外科，官網列出痔瘡、廔管、肛裂等肛門疾病診斷與治療。",
+          sourceUrls: ["https://uromeeme.com/", "https://uromeeme.com/about-us/"]
+        },
+        {
+          title: "女性泌尿與鍛肌椅",
+          content: "美磁波鍛肌椅可用於骨盆底肌訓練。",
+          sourceUrls: ["https://uromeeme.com/%E9%AB%98%E5%AF%86%E5%BA%A6%E7%A3%81%E6%B3%A2%E6%B2%BB%E7%99%82%E9%8D%9B%E8%82%8C%E6%A4%85/"]
+        }
+      ],
+      shouldEscalate: false
+    }),
+    expected: ["痔瘡"],
+    forbidden: ["官網介紹：", "鍛肌椅", "%E9%AB%98%E5%AF%86%E5%BA%A6"]
   }
 ];
 
