@@ -12,12 +12,12 @@ export function answerCircumcisionFastPassQuestion(message, conversationHistory 
   const hasRecentCircumcisionContext = hasRecentCircumcisionDoctorContext(conversationHistory);
   if (!hasDirectCircumcisionQuestion && !hasRecentCircumcisionContext) return null;
 
-  if (asksCircumcisionDoctorRecommendation(message)) {
-    return answerCircumcisionDoctorRecommendation();
+  if (asksToCheckCircumcisionDoctorSchedule(message)) {
+    return answerCircumcisionDoctorSchedule(now);
   }
 
-  if (!hasDirectCircumcisionQuestion && asksToCheckCircumcisionDoctorSchedule(message)) {
-    return answerCircumcisionDoctorSchedule(now);
+  if (asksCircumcisionDoctorRecommendation(message)) {
+    return answerCircumcisionDoctorRecommendation();
   }
 
   if (!hasDirectCircumcisionQuestion) return null;
@@ -84,7 +84,7 @@ function asksCircumcisionDoctorRecommendation(message) {
 }
 
 function asksToCheckCircumcisionDoctorSchedule(message) {
-  return /^(好|好的|可以|麻煩|幫我|好 幫|好，幫|ok|OK)|幫我查|查一下|查時段|查門診/.test(message.trim());
+  return /^(好|好的|可以|麻煩|幫我|好 幫|好，幫|ok|OK)|幫我查|查一下|查時段|查門診|今天.*時段|明天.*時段|哪天.*時段|什麼時段|門診時段|看診時段/.test(message.trim());
 }
 
 function hasRecentCircumcisionDoctorContext(conversationHistory) {

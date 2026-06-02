@@ -549,6 +549,19 @@ const cases = [
     forbidden: ["目前知識庫沒有指定", "推薦醫師」名單", "官網介紹：", "https://", "lin.ee", "官方 LINE"]
   },
   {
+    name: "circumcision direct schedule wording checks today slots",
+    reply: answerCircumcisionFastPassQuestion(
+      "那今天如果要先諮詢包皮槍，這幾位醫師分別是什麼時段？",
+      [
+        { role: "user", content: "如果我是想做包皮槍，津久有哪幾位醫師可以先諮詢？" },
+        { role: "assistant", content: "官網雙主治包皮槍流程提到陳偉傑醫師、羅詩修醫師；醫師專長資料也列李齊泰醫師、吳致寬醫師有包皮手術相關專長。" }
+      ],
+      new Date("2026-06-02T22:00:00+08:00")
+    ),
+    expected: ["今天（週二）", "早診", "陳偉傑醫師", "午診", "羅詩修醫師", "晚診", "李齊泰醫師", "02-2511-9488", "術前評估"],
+    forbidden: ["目前知識庫沒有指定", "推薦醫師」名單", "官網介紹：", "https://", "lin.ee", "官方 LINE"]
+  },
+  {
     name: "circumcision cardiac stent blood thinner blocks self stopping medication",
     reply: answerCircumcisionFastPassQuestion("我想今天做包皮槍割包皮，因為工作不好請假。我有心臟支架，平常吃阿斯匹靈跟保栓通，能不能今晚先自己停藥、明天直接手術？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["包皮槍", "心臟支架", "阿斯匹靈", "保栓通", "抗凝血", "抗血小板", "不建議自行停藥", "不能先保證明天直接手術", "心血管病史", "出血", "血栓", "費用", "醫師術前評估", "02-2511-9488"],
