@@ -1,4 +1,5 @@
 const HOME_URL = "https://uromeeme.com/";
+const CONTACT_URL = "https://uromeeme.com/contact-us/";
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const LINE_ADD_FRIEND_URL = "https://lin.ee/qDUYijn";
 
@@ -17,6 +18,22 @@ export function answerBasicInfoQuestion(message) {
     return "診所地址郵遞區號是 104091，地址是台北市中山區松江路 276 號 3 樓。";
   }
 
+  if (/停車|開車|車位|停車場/.test(normalized)) {
+    return [
+      "開車可參考官網列出的附近停車場：",
+      "台灣聯通停車場－將捷二場（停車塔）：台北市中山區松江路 336 號。",
+      "聯邦佳佳大樓停車場（地下平面停車場）：台北市中山區松江路 235 巷 22 號。"
+    ].join("\n");
+  }
+
+  if (asksBasicInfoBundle(normalized)) {
+    return buildBasicInfoBundleReply(normalized);
+  }
+
+  if (asksClinicAccess(normalized)) {
+    return buildClinicAccessReply();
+  }
+
   if (asksMrtAccess(normalized)) {
     return "捷運可搭到行天宮站 4 號出口，官網寫出站後右轉，步行約 40 秒可看到津久診所招牌，搭電梯上 3 樓。";
   }
@@ -32,10 +49,6 @@ export function answerBasicInfoQuestion(message) {
 
   if (/英文識別|英文名稱|英文名|UroMe|urome/i.test(normalized) && /診所|官方|寫|識別|名稱|是不是/.test(normalized)) {
     return "UroMe 是津久診所的英文識別。";
-  }
-
-  if (asksBasicInfoBundle(normalized)) {
-    return buildBasicInfoBundleReply(normalized);
   }
 
   if (/官方\s*LINE|LINE\s*ID|line\s*id|@455twnga|加好友|lin\.ee/i.test(normalized)) {
@@ -70,19 +83,24 @@ export function answerBasicInfoQuestion(message) {
     return "津久診所地址是 104091 台北市中山區松江路 276 號 3 樓。";
   }
 
-  if (/停車|開車|車位|停車場/.test(normalized)) {
-    return [
-      "開車可參考官網列出的附近停車場：",
-      "台灣聯通停車場－將捷二場（停車塔）：台北市中山區松江路 336 號。",
-      "聯邦佳佳大樓停車場（地下平面停車場）：台北市中山區松江路 235 巷 22 號。"
-    ].join("\n");
-  }
-
   return null;
 }
 
 function asksMrtAccess(message) {
   return /行天宮|捷運|MRT|4\s*號出口|四號出口|步行|走路|交通/.test(message) && /多久|幾分|怎麼去|出口|步行|走路|交通/.test(message);
+}
+
+function asksClinicAccess(message) {
+  return /診所|津久|你們|現場|門診/.test(message) && /如何去|怎麼去|怎麼走|怎麼到|交通|路線|地址|位置|在哪|到診/.test(message);
+}
+
+function buildClinicAccessReply() {
+  return [
+    "津久診所地址是 104091 台北市中山區松江路 276 號 3 樓。",
+    "捷運可搭到行天宮站 4 號出口，出站後右轉，步行約 40 秒可看到津久診所招牌，搭電梯上 3 樓。",
+    `交通與路線可參考官網「聯絡我們」頁面：${CONTACT_URL}`,
+    `若要預約看診，可使用線上掛號：${APPOINTMENT_URL}`
+  ].join("\n");
 }
 
 function asksWebsiteDistinction(message) {
