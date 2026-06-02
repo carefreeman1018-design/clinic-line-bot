@@ -30,12 +30,12 @@ export function answerProstateQuestion(message) {
 function isScheduleRoutingQuestion(message) {
   const hasDay = /週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|今天|明天|後天/.test(message);
   const asksSchedule = /掛|門診|看診|時段|哪一診|哪診|哪個時段|哪一個時段|可以看/.test(message);
-  const asksTreatment = /攝護腺肥大|前列腺肥大|水蒸氣|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除|手術|治療|費用|價格|多少錢|保留射精|插尿管/i.test(message);
+  const asksTreatment = /攝護腺肥大|前列腺肥大|水蒸氣|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除|手術|治療|費用|價格|多少錢|保留射精|插尿管|尿不出來|排不出尿|幾乎尿不出|尿不太出|急性尿液滯留|尿滯留|膀胱脹|下腹脹|冒冷汗/i.test(message);
   return hasDay && asksSchedule && !asksTreatment;
 }
 
 function isProstateQuestion(message) {
-  return /攝護腺|前列腺|夜尿|尿流變細|排尿困難|尿不順|水蒸氣消融|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除/i.test(message);
+  return /攝護腺|前列腺|夜尿|尿流變細|排尿困難|尿不順|尿不出來|排不出尿|幾乎尿不出|尿不太出|急性尿液滯留|尿滯留|膀胱脹|下腹脹|水蒸氣消融|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除/i.test(message);
 }
 
 function asksTreatmentChoiceCostOrOutcome(message) {

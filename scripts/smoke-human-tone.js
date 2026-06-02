@@ -127,6 +127,18 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "確認可評估時段", "可以撐到明天", "可以直接做", "元"]
   },
   {
+    name: "urinary retention follow-up beats fixed schedule",
+    reply: await buildTestReply(
+      "那如果他今天幾乎尿不出來，下腹脹到很痛，還一直冒冷汗，這樣可以明天再去門診嗎？",
+      [
+        { role: "user", content: "我爸最近晚上一直起來尿，尿也變細，想了解攝護腺肥大。" },
+        { role: "assistant", content: "攝護腺肥大治療需由醫師依攝護腺大小與症狀評估。" }
+      ]
+    ),
+    expected: ["幾乎尿不出來", "下腹脹痛", "冒冷汗", "急性尿液滯留", "泌尿道阻塞", "LINE 不能直接診斷", "不建議撐到明天", "導尿", "急診", "立即就醫"],
+    forbidden: ["固定門診", "早診", "午診", "晚診", "羅詩修醫師", "陳偉傑醫師", "先預約泌尿科門診", "明天再去門診", "可以明天", "https://", "官網介紹："]
+  },
+  {
     name: "vaccine memory does not intercept acute urinary retention",
     reply:
       answerVaccineQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。", [
