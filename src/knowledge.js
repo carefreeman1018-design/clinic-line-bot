@@ -85,7 +85,7 @@ export function retrieveRelevantChunks(chunks, query, limit = 4) {
       score: scoreChunk(chunk, queryTerms)
     }))
     .filter((chunk) => chunk.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => adjustedScore(b) - adjustedScore(a) || b.score - a.score)
     .slice(0, limit);
 }
 
@@ -124,6 +124,14 @@ function scoreChunk(chunk, queryTerms) {
     if (haystackSet.has(term)) return score + 1;
     return score;
   }, 0);
+}
+
+function adjustedScore(chunk) {
+  return chunk.score - sourcePenalty(chunk.source);
+}
+
+function sourcePenalty(source) {
+  return source.includes("index.md") ? 5 : 0;
 }
 
 function tokenize(text) {
