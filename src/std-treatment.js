@@ -11,6 +11,10 @@ export function answerStdTreatmentQuestion(message) {
     return answerPepQuestion(message);
   }
 
+  if (isPrepQuestion(message)) {
+    return answerPrepQuestion(message);
+  }
+
   if (!asksMedicationDiagnosisOrTreatment(message)) return null;
 
   if (isWartQuestion(message)) {
@@ -24,7 +28,12 @@ export function answerStdTreatmentQuestion(message) {
 }
 
 function isStdTreatmentQuestion(message) {
-  return /PEP|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|性病|病灶|私密處.*顆粒|肉芽/i.test(message);
+  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|性病|病灶|私密處.*顆粒|肉芽/i.test(message);
+}
+
+function isPrepQuestion(message) {
+  if (/PEP|暴露後|保險套破/.test(message)) return false;
+  return /PrEP|暴露前|伴侶.*HIV|HIV.*伴侶|愛滋.*伴侶|伴侶.*愛滋/i.test(message);
 }
 
 function isPepQuestion(message) {
@@ -48,6 +57,19 @@ function answerWartQuestion(message) {
     "菜花需要看病灶與檢查結果，LINE 不能診斷，也不能直接回答藥膏要擦幾天或建議自行買藥。",
     partnerNote,
     `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
+  ].join("");
+}
+
+function answerPrepQuestion(message) {
+  const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+    ? "伴侶為 HIV 感染者時可以諮詢 PrEP，但仍需先確認自己 HIV 陰性並由醫師評估。"
+    : "";
+
+  return [
+    "PrEP 是 HIV 暴露前預防，需經醫師評估後使用，並非 100% 有效。",
+    "吃 PrEP 也不代表可以完全不用保險套；PrEP 不能預防梅毒、淋病、菜花等其他性病，仍建議搭配保險套並定期篩檢。",
+    partnerNote,
+    `下一步：預約 PrEP 諮詢或先電話 ${PHONE} 確認可評估時段。`
   ].join("");
 }
 

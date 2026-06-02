@@ -89,6 +89,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃了就不用戴套", "可以補救", "菜花 HPV 相關篩檢與治療評估"]
   },
   {
+    name: "prep partner hiv positive keeps condoms and sti screening",
+    reply: answerStdTreatmentQuestion("我伴侶是 HIV 陽性但穩定治療，我想開始吃 PrEP。吃了是不是就不用保險套？可以順便不用驗梅毒、淋病、菜花嗎？不要貼連結，直接講下一步。"),
+    expected: ["PrEP 是 HIV 暴露前預防", "醫師評估", "並非 100% 有效", "不代表可以完全不用保險套", "不能預防梅毒、淋病、菜花", "定期篩檢", "伴侶為 HIV 感染者", "HIV 陰性", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "菜花 HPV 相關篩檢與治療評估", "吃了就不用保險套", "就不用保險套", "不用驗"]
+  },
+  {
     name: "prep after exposure and possible hiv infection stays safe",
     reply: answerStdTreatmentQuestion("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？不要貼連結，直接告訴我下一步。"),
     expected: ["40 小時", "72 小時", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "若已感染 HIV", "PrEP 不適用", "醫師評估治療", "LINE 不能直接判斷或開藥", "02-2511-9488", "儘速就醫"],
