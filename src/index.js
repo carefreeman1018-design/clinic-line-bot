@@ -17,6 +17,7 @@ import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./setti
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 import { answerVaccineQuestion } from "./vaccines.js";
 import { answerCircumcisionFastPassQuestion } from "./surgery.js";
+import { answerFemaleUrologyQuestion } from "./female-urology.js";
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -189,6 +190,9 @@ async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
 
   const surgeryReply = answerCircumcisionFastPassQuestion(message);
   if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };
+
+  const femaleUrologyReply = answerFemaleUrologyQuestion(message);
+  if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
 
   if (shouldEscalate(message)) {
     return {

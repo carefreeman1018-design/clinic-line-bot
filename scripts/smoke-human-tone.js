@@ -1,9 +1,16 @@
 import { draftReply } from "../src/ai.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
+import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 
 const cases = [
+  {
+    name: "female urology muscle chair price keeps boundary without link",
+    reply: answerFemaleUrologyQuestion("我咳嗽會漏尿，想問你們有美磁波鍛肌椅嗎？我可以直接做嗎？一次費用多少？不要貼連結，請講重點。"),
+    expected: ["女性泌尿", "漏尿", "美磁波鍛肌椅", "醫師評估", "費用", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "直接做", "保證", "元"]
+  },
   {
     name: "circumcision same-day surgery price gives next step without link",
     reply: answerCircumcisionFastPassQuestion("我想割包皮，今天能不能看完就手術？費用大概多少？不要貼連結，直接告訴我下一步。"),
