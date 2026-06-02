@@ -1,7 +1,7 @@
 import { supabase } from "./supabase.js";
 
 const CONVERSATION_TABLE = process.env.SUPABASE_CONVERSATION_TABLE || "line_conversation_messages";
-const MAX_IN_MEMORY_MESSAGES_PER_USER = 40;
+const MAX_CONVERSATION_MESSAGES_PER_USER = Number(process.env.MAX_CONVERSATION_MESSAGES_PER_USER || 40);
 const inMemoryConversationByUser = new Map();
 
 export function isConversationMemoryConfigured() {
@@ -16,18 +16,21 @@ export async function loadConversationHistory(lineUserId) {
     .from(CONVERSATION_TABLE)
     .select("role, content")
     .eq("line_user_id", lineUserId)
-    .order("created_at", { ascending: true })
-    .order("id", { ascending: true });
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(MAX_CONVERSATION_MESSAGES_PER_USER);
 
   if (error) {
     console.error("Supabase conversation history load failed:", error);
     return loadInMemoryConversationHistory(lineUserId);
   }
 
-  return data.map((message) => ({
-    role: message.role,
-    content: message.content
-  }));
+  return [...data]
+    .reverse()
+    .map((message) => ({
+      role: message.role,
+      content: message.content
+    }));
 }
 
 export async function rememberConversationExchange(lineUserId, userMessage, assistantMessage) {
@@ -71,7 +74,7 @@ function rememberInMemoryConversationRows(lineUserId, rows) {
       role: row.role,
       content: row.content
     }))
-  ].slice(-MAX_IN_MEMORY_MESSAGES_PER_USER);
+  ].slice(-MAX_CONVERSATION_MESSAGES_PER_USER);
 
   inMemoryConversationByUser.set(lineUserId, next);
 }

@@ -75,16 +75,7 @@ LINE_VOOM_SYNC_ENABLED=false
 若要讓 bot 記得同一位 LINE 使用者先前的對話，請在 Supabase SQL Editor 建立資料表：
 
 ```sql
-create table if not exists line_conversation_messages (
-  id bigserial primary key,
-  line_user_id text not null,
-  role text not null check (role in ('user', 'assistant')),
-  content text not null,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists line_conversation_messages_user_time_idx
-on line_conversation_messages (line_user_id, created_at, id);
+-- 使用 repo 內的 supabase/conversation_messages.sql
 ```
 
 接著在 Zeabur 或 `.env` 設定：
@@ -93,9 +84,10 @@ on line_conversation_messages (line_user_id, created_at, id);
 SUPABASE_URL=你的_Supabase_Project_URL
 SUPABASE_SERVICE_ROLE_KEY=你的_Supabase_Service_Role_Key
 SUPABASE_CONVERSATION_TABLE=line_conversation_messages
+MAX_CONVERSATION_MESSAGES_PER_USER=40
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。設定完成後，bot 會依 LINE `userId` 讀取該使用者全部歷史對話，回覆後也會把本輪使用者訊息與 bot 回覆寫入 Supabase。
+`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。設定完成後，bot 會依 LINE `userId` 讀取最近 N 則歷史對話，回覆後也會把本輪使用者訊息與 bot 回覆寫入 Supabase。預設 N 是 40，可用 `MAX_CONVERSATION_MESSAGES_PER_USER` 調整。
 
 ## 醫生開關 bot
 
@@ -126,11 +118,7 @@ bot 狀態
 正式部署建議使用 Supabase 保存開關狀態，避免服務重啟後回到預設開啟。請在 Supabase SQL Editor 建立設定表：
 
 ```sql
-create table if not exists bot_settings (
-  key text primary key,
-  value jsonb not null,
-  updated_at timestamptz not null default now()
-);
+-- 使用 repo 內的 supabase/bot_settings.sql
 ```
 
 若要自訂表名，可設定：
@@ -169,6 +157,18 @@ data/official-media-cases-index.md
 npm run sync:embeddings
 ```
 
+也可以用整合指令同步公開資料：
+
+```bash
+npm run sync:knowledge
+```
+
+這會依序同步 LINE VOOM 與官網公開資料；若已設定 `OPENAI_API_KEY`、`SUPABASE_URL`、`SUPABASE_SERVICE_ROLE_KEY`，也會同步 embeddings。若只想更新 Markdown 公開資料、不更新向量庫，可設定：
+
+```bash
+SYNC_EMBEDDINGS=false npm run sync:knowledge
+```
+
 先到 Supabase SQL Editor 執行：
 
 ```sql
@@ -197,7 +197,27 @@ VECTOR_KNOWLEDGE_MIN_SIMILARITY=0.25
 npm run sync:embeddings
 ```
 
-同步會重建 `knowledge_chunks` 表中的知識段落。`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。
+同步會先建立所有新的 embeddings，接著 upsert 到 `knowledge_chunks`，最後才刪除已不存在的 stale chunks。這避免同步中途失敗時把既有向量庫清空。`SUPABASE_SERVICE_ROLE_KEY` 只能放在伺服器環境變數，不要放到前端或公開文件。
+
+若要一次建立所有 Supabase 後端表，可在 SQL Editor 執行：
+
+```sql
+-- 使用 repo 內的 supabase/schema.sql
+```
+
+固定門診表由資料檔驅動：
+
+```text
+data/fixed-schedule.json
+```
+
+若官網門診圖片更新，請同步更新 `data/fixed-schedule.json` 與 `data/website-clinic-hours.md`。
+
+更新後可檢查固定門診資料格式：
+
+```bash
+npm run validate:schedule
+```
 
 ## 本機測試
 
@@ -220,6 +240,14 @@ npm run preflight
 ```
 
 這會確認必要資料檔存在、LINE 環境變數已設定，並用幾個常見問題測試知識庫檢索。
+
+正式啟用向量 RAG 後，建議再跑：
+
+```bash
+npm run smoke:vector
+```
+
+這會確認 Supabase 向量表、RPC 與混合檢索是否能命中預期資料來源。
 
 ## Zeabur 部署
 

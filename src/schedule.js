@@ -1,37 +1,9 @@
+import fs from "node:fs";
 import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
 
-const FIXED_SCHEDULE = {
-  "週一": {
-    早診: "陳偉傑醫師",
-    午診: "手術",
-    晚診: "羅詩修醫師"
-  },
-  "週二": {
-    早診: "陳偉傑醫師",
-    午診: "羅詩修醫師",
-    晚診: "李齊泰醫師"
-  },
-  "週三": {
-    早診: "手術",
-    午診: "吳致寬醫師",
-    晚診: "陳嘉哲醫師（肛門直腸外科門診）"
-  },
-  "週四": {
-    早診: "羅詩修醫師",
-    午診: "手術",
-    晚診: "陳偉傑醫師"
-  },
-  "週五": {
-    早診: "陳偉傑醫師",
-    午診: "羅詩修醫師",
-    晚診: "手術"
-  },
-  "週六": {
-    早診: "羅詩修醫師",
-    午診: "手術",
-    晚診: "休診"
-  }
-};
+const FIXED_SCHEDULE_CONFIG = loadFixedScheduleConfig();
+const FIXED_SCHEDULE = FIXED_SCHEDULE_CONFIG.schedule;
+const PERIOD_TIMES = FIXED_SCHEDULE_CONFIG.periodTimes;
 
 const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
 
@@ -59,7 +31,7 @@ const DOCTOR_ALIASES = [
   ["陳嘉哲醫師", /陳嘉哲/]
 ];
 
-const FIXED_DOCTORS = ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師"];
+const FIXED_DOCTORS = deriveFixedDoctors(FIXED_SCHEDULE);
 
 const DOCTOR_MISSPELLINGS = [
   {
@@ -70,7 +42,23 @@ const DOCTOR_MISSPELLINGS = [
 ];
 
 const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|預約/;
-const TEMPORARY_CHANGE_CONFIRMATION = "臨時異動請以 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。";
+const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
+
+function loadFixedScheduleConfig() {
+  const raw = fs.readFileSync(new URL("../data/fixed-schedule.json", import.meta.url), "utf8");
+  return JSON.parse(raw);
+}
+
+function deriveFixedDoctors(schedule) {
+  const doctors = new Set();
+  for (const daySchedule of Object.values(schedule)) {
+    for (const clinic of Object.values(daySchedule)) {
+      if (clinic === "手術" || clinic === "休診") continue;
+      doctors.add(clinic.replace(/（.+?）/g, ""));
+    }
+  }
+  return [...doctors];
+}
 
 export function answerFixedScheduleQuestion(message, now = new Date(), conversationHistory = []) {
   if (answerLineVoomAnnouncementQuestion(message)) return null;
@@ -300,7 +288,5 @@ function buildDoctorScheduleLines(doctor) {
 }
 
 function periodToTime(period) {
-  if (period === "早診") return "09:30-12:30";
-  if (period === "午診") return "13:30-17:00";
-  return "18:00-20:30";
+  return PERIOD_TIMES[period] ?? "";
 }
