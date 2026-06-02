@@ -130,6 +130,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
+    name: "male urinary symptoms respect requested wednesday colorectal schedule",
+    reply: answerMaleUtiUrgentQuestion("我最近頻尿、夜尿，想看一般泌尿科。週三晚上可以掛嗎？我看到週三晚診有陳嘉哲醫師，那一診適合看頻尿嗎？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
+    expected: ["頻尿", "週三", "晚診", "18:00-20:30", "陳嘉哲醫師", "肛門直腸外科", "不是一般泌尿科門診", "換個時段", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "今天（週二）", "李齊泰醫師"]
+  },
+  {
     name: "female uti blood antibiotic same-day does not invent fever",
     reply: answerMaleUtiUrgentQuestion("我是女生，今天尿尿很痛、一直想尿，下腹也痛，尿裡好像有血。可以先吃家裡剩下的抗生素嗎？今天要看門診還是急診？不要貼連結，直接告訴我下一步。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["尿痛", "疑似血尿", "醫師評估", "不能建議先吃", "抗生素", "請不要自行服藥", "02-2511-9488", "血尿", "立即就醫"],
