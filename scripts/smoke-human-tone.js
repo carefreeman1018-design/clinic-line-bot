@@ -286,23 +286,19 @@ const cases = [
   },
   {
     name: "post circumcision swelling yellow discharge avoids diagnosis",
-    reply: answerWoundCareQuestion("我割包皮第 5 天，龜頭有點水腫，釘子旁邊黃黃的，是不是流膿？可以洗澡或自己多擦藥膏嗎？我在外面不方便看長文，先講重點。"),
+    reply: await buildTestReply("我割包皮第 5 天，龜頭有點水腫，釘子旁邊黃黃的，是不是流膿？可以洗澡或自己多擦藥膏嗎？我在外面不方便看長文，先講重點。"),
     expected: ["術後第 5 天", "光靠訊息無法判斷是否為感染或流膿", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "確定是感染", "不是感染", "可以洗澡", "自己多擦", "不用回診"]
   },
   {
     name: "post circumcision day three wound care beats surgery booking",
-    reply:
-      answerWoundCareQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。") ||
-      answerCircumcisionFastPassQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["術後第 3 天", "光靠訊息無法判斷是否為感染或流膿", "感染", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "快速通關", "當天看診後手術", "手術評估", "實際費用", "可以洗澡", "自己多擦"]
   },
   {
     name: "post cystoscopy chills avoids generic uti schedule",
-    reply:
-      answerUrologyProcedureAftercareQuestion("我今天早上做完膀胱鏡，現在尿尿很刺痛，尿裡有血絲，剛剛有點發冷。這樣正常嗎？可以先多喝水觀察嗎？") ||
-      answerMaleUtiUrgentQuestion("我今天早上做完膀胱鏡，現在尿尿很刺痛，尿裡有血絲，剛剛有點發冷。這樣正常嗎？可以先多喝水觀察嗎？", new Date("2026-06-03T10:11:00+08:00")),
+    reply: await buildTestReply("我今天早上做完膀胱鏡，現在尿尿很刺痛，尿裡有血絲，剛剛有點發冷。這樣正常嗎？可以先多喝水觀察嗎？"),
     expected: ["膀胱鏡後", "尿尿刺痛", "尿中血絲", "發冷", "感染", "發燒風險", "不建議只多喝水觀察", "量體溫", "02-2511-9488", "回診確認", "發燒", "畏寒", "血尿變多", "血塊", "尿不出來", "疼痛加劇", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "門診是", "尿痛合併疑似血尿", "請不要自行服藥", "可以先多喝水觀察"]
   },
@@ -320,21 +316,19 @@ const cases = [
   },
   {
     name: "wart medication question is not routed to wound care",
-    reply:
-      answerWoundCareQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。") ||
-      answerStdTreatmentQuestion("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我私密處長了幾顆小肉芽，朋友說可能是菜花。你可以直接看文字判斷是不是嗎？藥膏要擦幾天、能不能自己買來擦？伴侶需要一起檢查嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["菜花", "HPV", "光靠文字不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "醫師確認", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
   },
   {
     name: "partner wart leftover ointment and same-day cautery stay bounded",
-    reply: answerStdTreatmentQuestion("我男友前幾天被說是菜花，我自己陰道口也摸到小肉芽。可以先擦他剩下的藥膏嗎？今天去能不能直接電燒？"),
+    reply: await buildTestReply("我男友前幾天被說是菜花，我自己陰道口也摸到小肉芽。可以先擦他剩下的藥膏嗎？今天去能不能直接電燒？"),
     expected: ["菜花", "HPV", "看病灶", "光靠文字不能診斷", "不要自行買藥", "自己擦", "伴侶剩下的藥膏", "伴侶", "檢查或篩檢", "電燒", "醫師確認後安排", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先擦", "可以直接電燒", "保證", "元"]
   },
   {
     name: "wart topic that negates pep does not trigger pep answer",
-    reply: answerStdTreatmentQuestion("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？我有點緊張，先跟我說下一步。"),
     expected: ["菜花", "HPV", "光靠文字不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "02-2511-9488"],
     forbidden: ["PEP 需", "72 小時", "保險套破", "無套", "暴露後", "官網介紹：", "https://", "lin.ee", "擦 7 天", "擦兩週"]
   },
@@ -346,7 +340,7 @@ const cases = [
   },
   {
     name: "anonymous screening privacy question stays focused",
-    reply: answerStdTreatmentQuestion("我想做匿名性病篩檢，但很怕被家人知道。去津久檢查需要用真名嗎？報告大概多久會知道？") || answerReportResultQuestion("我想做匿名性病篩檢，但很怕被家人知道。去津久檢查需要用真名嗎？報告大概多久會知道？"),
+    reply: await buildTestReply("我想做匿名性病篩檢，但很怕被家人知道。去津久檢查需要用真名嗎？報告大概多久會知道？"),
     expected: ["匿名篩檢", "重視隱私", "需由現場護理人員", "篩檢項目", "這裡不能先保證", "完全不需任何資料", "不適合", "查個人報告", "家人知道", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "症狀與檢查結果一起判讀", "PSA", "攝護腺", "保證隱私", "100% 絕對匿名", "絕對不會知道"]
   },
@@ -383,13 +377,13 @@ const cases = [
   },
   {
     name: "prep partner hiv positive keeps condoms and sti screening",
-    reply: answerStdTreatmentQuestion("我伴侶是 HIV 陽性但穩定治療，我想開始吃 PrEP。吃了是不是就不用保險套？可以順便不用驗梅毒、淋病、菜花嗎？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我伴侶是 HIV 陽性但穩定治療，我想開始吃 PrEP。吃了是不是就不用保險套？可以順便不用驗梅毒、淋病、菜花嗎？我有點緊張，先跟我說下一步。"),
     expected: ["PrEP 是 HIV 暴露前預防", "醫師評估", "並非 100% 有效", "不代表可以完全不用保險套", "不能預防梅毒、淋病、菜花", "定期篩檢", "伴侶為 HIV 感染者", "HIV 陰性", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "菜花 HPV 相關篩檢與治療評估", "吃了就不用保險套", "就不用保險套", "不用驗"]
   },
   {
     name: "prep after exposure and possible hiv infection stays safe",
-    reply: answerStdTreatmentQuestion("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我昨天無套，現在大概 40 小時，很擔心 HIV。朋友說吃 PrEP 就好，如果我其實已經感染 HIV 也可以吃嗎？你們能不能直接給藥？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["40 小時", "72 小時", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "若已感染 HIV", "PrEP 不適用", "醫師評估治療", "不能只靠訊息判斷或開藥", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃 PrEP 就好", "可以直接給藥", "可以直接拿藥", "不用看診"]
   },
