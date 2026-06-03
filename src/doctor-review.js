@@ -182,10 +182,18 @@ export function buildDoctorReviewNotification(reviewCase, { waitingReply = "" } 
   ].join("\n");
 }
 
-export function buildDoctorReviewWaitingReply(message = "") {
+export function buildDoctorReviewWaitingReply(message = "", { botDraft = "" } = {}) {
   if (hasUrgentBleedingCue(message)) {
     return [
       "你描述術後一直流血、壓了也停不下來又很痛，請不要等線上回覆，先立即就醫或到急診。",
+      "這題我也先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
+  const urgentDraftSummary = buildUrgentDraftSummary(botDraft);
+  if (urgentDraftSummary) {
+    return [
+      urgentDraftSummary,
       "這題我也先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
     ].join("\n");
   }
@@ -198,6 +206,34 @@ export function buildDoctorReviewWaitingReply(message = "") {
     "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。",
     "如果有劇烈疼痛、發燒、尿不出來、大量出血或明顯惡化，請不要等線上回覆，先立即就醫。"
   ].join("\n");
+}
+
+function buildUrgentDraftSummary(botDraft) {
+  const normalized = String(botDraft || "").trim();
+  if (!/(急診|立即就醫)/.test(normalized)) return null;
+
+  const sentences = normalized
+    .split(/(?<=[。！？])/u)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  if (sentences.length === 0) return normalized;
+
+  const selected = [];
+  for (const sentence of sentences) {
+    selected.push(sentence);
+    if (hasActionableUrgentInstruction(sentence) || selected.length >= 4) break;
+  }
+
+  if (!selected.some(hasActionableUrgentInstruction)) {
+    selected.push("請不要等線上回覆，先急診/立即就醫。");
+  }
+
+  return selected.join("");
+}
+
+function hasActionableUrgentInstruction(text) {
+  return /立即就醫|請.*急診|先.*急診|直接.*急診|現在.*急診|就急診/.test(text);
 }
 
 function hasUrgentBleedingCue(message) {

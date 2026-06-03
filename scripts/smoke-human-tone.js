@@ -34,6 +34,18 @@ async function buildTestReply(message, conversationHistory = []) {
   return reply;
 }
 
+async function buildDoctorReviewTestReply(message, conversationHistory = []) {
+  process.env.NODE_ENV = "test";
+  const { buildReplyAndMatches } = await import("../src/index.js");
+  const { reply: botDraft, relevantChunks } = await buildReplyAndMatches(message, [], conversationHistory);
+  return applyResponseStyle({
+    reply: buildDoctorReviewWaitingReply(message, { botDraft }),
+    message,
+    relevantChunks,
+    conversationHistory
+  });
+}
+
 const cases = [
   {
     name: "doctor review report waiting reply does not add unrelated emergency warning",
@@ -43,6 +55,12 @@ const cases = [
     }),
     expected: ["轉請醫師或診所人員確認", "確認後會再回覆你"],
     forbidden: ["劇烈疼痛", "發燒", "尿不出來", "大量出血", "明顯惡化", "立即就醫", "急診"]
+  },
+  {
+    name: "doctor review flow keeps simple report review waiting reply",
+    reply: await buildDoctorReviewTestReply("我健檢報告 PSA 6.8 偏高，超音波也說攝護腺比較大。可以幫我看是不是癌症、要不要切片嗎？我先傳文字問就好。"),
+    expected: ["轉請醫師或診所人員確認", "確認後會再回覆你"],
+    forbidden: ["劇烈疼痛", "發燒", "尿不出來", "大量出血", "明顯惡化", "立即就醫", "急診", "水蒸氣", "Urolift", "可以不用切片", "就是癌症", "不是癌症"]
   },
   {
     name: "pause message does not continue prior medical topic",
@@ -79,6 +97,12 @@ const cases = [
     }),
     expected: ["術後一直流血", "壓了也停不下來", "很痛", "不要等線上回覆", "立即就醫", "急診", "轉請醫師或診所人員確認"],
     forbidden: ["只要等", "等確認後再說", "可以先觀察", "大量出血或明顯惡化"]
+  },
+  {
+    name: "doctor review flow preserves urgent draft before waiting reply",
+    reply: await buildDoctorReviewTestReply("我爸 70 歲有糖尿病，今天陰囊跟會陰突然紅腫很痛，皮膚有一塊變黑，還發燒昏沉。可以先等醫師回覆再決定要不要去急診嗎？"),
+    expected: ["70 歲", "糖尿病", "陰囊", "會陰", "皮膚變黑", "發燒", "昏沉", "佛尼爾氏壞疽", "急診/立即就醫", "轉請醫師或診所人員確認", "確認後會再回覆你"],
+    forbidden: ["只要等", "等醫師回覆再決定", "可以先觀察", "可以等明天", "先預約門診"]
   },
   {
     name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",

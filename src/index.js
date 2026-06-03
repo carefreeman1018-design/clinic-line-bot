@@ -219,7 +219,7 @@ async function handleDoctorReviewRequest({ replyToken, userId, message, conversa
   if (!reviewCase) return false;
 
   const waitingReply = applyResponseStyle({
-    reply: buildDoctorReviewWaitingReply(message),
+    reply: buildDoctorReviewWaitingReply(message, { botDraft }),
     message,
     relevantChunks,
     conversationHistory
