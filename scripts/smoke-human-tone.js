@@ -664,6 +664,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "直接做", "保證", "元"]
   },
   {
+    name: "female frequency negated fever pain stays non-urgent urology route",
+    reply: await buildTestReply("我是女生，這兩天一直頻尿但尿尿不會痛，也沒有發燒或腰痛，只是有點漏尿。可以直接做美磁波鍛肌椅嗎？需要急診嗎？"),
+    expected: ["女性泌尿", "漏尿評估", "美磁波鍛肌椅", "醫師評估", "漏尿原因", "沒有尿痛", "發燒", "腰痛", "血尿", "通常不需要先急診", "門診評估", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛、腰痠/腰痛、發燒", "泌尿道感染", "今天先不要坐美磁波鍛肌椅", "不要自行吃家裡剩的抗生素", "最快可評估時段", "請直接急診"]
+  },
+  {
     name: "female urinary frequency routes to urology without link",
     reply: answerFemaleUrologyQuestion("女性漏尿和頻尿可以看泌尿科嗎？還是要去婦產科？"),
     expected: ["女性漏尿", "頻尿", "泌尿科門診", "評估", "婦產科", "醫師", "下一步"],

@@ -50,11 +50,11 @@ function asksUrologyOrGynecologyRoute(message) {
 function buildSafetyNotes(message) {
   const notes = [];
 
-  if (/發燒|高燒|血尿|尿.*血|尿.*紅|腰痛|腰.*痛|腰.*痠|嚴重疼痛|劇痛|很痛/.test(message)) {
+  if (hasPositiveFeverCue(message) || hasPositiveBloodUrineCue(message) || hasPositiveBackPainCue(message) || /嚴重疼痛|劇痛|很痛/.test(message)) {
     notes.push("若有發燒、血尿、腰痛或嚴重疼痛，需盡快就醫或先電話確認，不建議只等線上回覆。");
   }
 
-  if (/尿痛|尿尿.*痛|解尿.*痛|排尿.*痛|泌尿道感染|感染/.test(message)) {
+  if (hasPositiveUrinationPainCue(message) || /泌尿道感染|感染/.test(message)) {
     notes.push("有尿痛時需先評估是否感染，不能只線上判斷或直接安排療程。");
   }
 
@@ -66,21 +66,25 @@ function buildSafetyNotes(message) {
     notes.push("今天能不能直接做，需確認上述狀況後再安排。");
   }
 
+  if (/急診/.test(message) && notes.length === 0 && hasLowRiskNegatedSymptomCue(message)) {
+    notes.push("以你描述沒有尿痛、發燒、腰痛或血尿，通常不需要先急診；但是否適合美磁波或其他療程仍需門診評估漏尿原因。");
+  }
+
   return notes.join("");
 }
 
 function isFemaleUtiUrgentQuestion(message) {
   return (
-    /尿痛|尿尿.*痛|解尿.*痛|排尿.*痛|泌尿道感染|膀胱炎/.test(message) &&
-    /發燒|高燒|血尿|尿.*血|尿.*紅|腰痛|腰.*痛|腰.*痠|懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕|抗生素|吃藥/.test(message)
+    (hasPositiveUrinationPainCue(message) || /泌尿道感染|膀胱炎/.test(message)) &&
+    (hasPositiveFeverCue(message) || hasPositiveBloodUrineCue(message) || hasPositiveBackPainCue(message) || /懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕|抗生素|吃藥/.test(message))
   );
 }
 
 function answerFemaleUtiUrgentQuestion(message) {
   const symptoms = ["尿痛"];
-  if (/血尿|尿.*血|尿.*紅/.test(message)) symptoms.push("尿紅/血尿");
-  if (/腰痛|腰.*痛|腰.*痠/.test(message)) symptoms.push("腰痠/腰痛");
-  if (/發燒|高燒/.test(message)) symptoms.push("發燒");
+  if (hasPositiveBloodUrineCue(message)) symptoms.push("尿紅/血尿");
+  if (hasPositiveBackPainCue(message)) symptoms.push("腰痠/腰痛");
+  if (hasPositiveFeverCue(message)) symptoms.push("發燒");
 
   const hasPregnancyCue = /懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕/.test(message);
   const pregnancyNote = hasPregnancyCue
@@ -99,4 +103,28 @@ function answerFemaleUtiUrgentQuestion(message) {
     `${treatmentDelay}不要自行吃家裡剩的抗生素；現在要由醫師評估${medicationAssessment}。`,
     `請現在電話 ${PHONE} 確認最快可評估時段；若高燒、腰痛加劇、血尿變多、明顯不舒服、尿不出來或診所無法即時安排，請直接急診/立即就醫。`
   ].join("");
+}
+
+function hasPositiveUrinationPainCue(message) {
+  if (/尿尿不會痛|尿尿不痛|解尿不會痛|解尿不痛|排尿不會痛|排尿不痛|沒有尿痛|沒尿痛|無尿痛|尿尿沒有痛|尿尿沒痛/.test(message)) return false;
+  return /尿痛|尿尿.*痛|解尿.*痛|排尿.*痛/.test(message);
+}
+
+function hasPositiveFeverCue(message) {
+  if (/沒有發燒|沒發燒|無發燒|不發燒|沒有高燒|沒高燒|無高燒/.test(message)) return false;
+  return /發燒|高燒/.test(message);
+}
+
+function hasPositiveBackPainCue(message) {
+  if (/沒有(?:發燒|高燒)?(?:或|、|和|跟)?腰痛|沒(?:有)?(?:發燒|高燒)?(?:或|、|和|跟)?腰痛|無(?:發燒|高燒)?(?:或|、|和|跟)?腰痛|腰不痛|腰沒有痛|腰沒痛|沒有(?:發燒|高燒)?(?:或|、|和|跟)?腰痠|沒(?:有)?(?:發燒|高燒)?(?:或|、|和|跟)?腰痠|無(?:發燒|高燒)?(?:或|、|和|跟)?腰痠/.test(message)) return false;
+  return /腰痛|腰.*痛|腰.*痠/.test(message);
+}
+
+function hasPositiveBloodUrineCue(message) {
+  if (/沒有(?:尿血|血尿)|沒(?:有)?(?:尿血|血尿)|無(?:尿血|血尿)|尿沒有血|尿沒血|尿不紅/.test(message)) return false;
+  return /血尿|尿.*血|尿.*紅/.test(message);
+}
+
+function hasLowRiskNegatedSymptomCue(message) {
+  return /不會痛|不痛|沒有發燒|沒發燒|無發燒|沒有(?:發燒|高燒)?(?:或|、|和|跟)?腰痛|腰不痛|沒有(?:尿血|血尿)|尿不紅/.test(message);
 }
