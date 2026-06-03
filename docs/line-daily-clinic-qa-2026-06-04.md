@@ -429,3 +429,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 |---|---|---|---|---|
 | 1 | 重測 Round23-1：我第一次來但健保卡讀不到，能先自費看嗎？之後可以補健保退費嗎？不要保證。 | Says first-visit health-card read failure may involve system/card/insurance identity issues and cannot be guaranteed on LINE; whether self-pay, later insurance supplement, refund or document supplement is possible depends on 3F counter and insurance rules; bring ID/health card or call first. | Pass | No male-urology or service-fee drift. |
 | 4 | 重測 Round23-4：看完診才想到要診斷證明或病歷摘要，可以隔天再申請嗎？需要本人去嗎？不要貼連結。 | Says diagnosis certificate or medical summary can be asked about by phone/counter for next-day supplemental application; both require physician/record confirmation; self or family proxy, ID/authorization documents, fee and processing time depend on counter/clinic reply. | Pass | Directly covers medical summary without adding receipt noise. |
+
+## Round 24 - Report pickup, LINE report interpretation, mixed afternoon visit, and review-bypass routing
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round24-1：我的抽血報告可以請家人代領嗎？如果我在 LINE 問報告好了沒，你們可以直接回我嗎？請講重點。 | Says report status and pickup involve personal medical data; LINE cannot guarantee direct disclosure; use phone/counter/onsite identity confirmation, and proxy pickup may need patient authorization and identity documents. | Pass | Good privacy boundary, though a little long. |
+| 2 | Round24-2：我把檢查報告拍照傳 LINE，可以請醫師先看正常不正常、需不需要回診嗎？不要講太長。 | Says report interpretation needs physician review with history and symptoms, so LINE photo is not suitable as direct personal-report interpretation; contact clinic/staff or book return visit if worried. | Pass | Safe, concise medical-review boundary. |
+| 3 | Round24-3：我明天下午想看一般泌尿，順便問 HPV 疫苗和抽血報告，可以同一個號處理嗎？不要貼連結。 | Replied only that staff/doctor would confirm and reply later. | Fail | Routine schedule/admin question was swallowed by doctor-review escalation because it mentioned report. |
+| 4 | Round24-4：那明天下午是哪位醫師？我如果只是問報告和疫苗，不想做治療，掛一般泌尿可以嗎？短一點。 | Replied only that staff/doctor would confirm and reply later. | Fail | Same doctor-review escalation problem; missed direct Friday afternoon doctor/schedule answer. |
+| 5 | Round24-5：我只是想確認明天下午門診時間和醫師，跟前面報告問題無關。請直接回答。 | Replied with generic report-review waiting language instead of direct schedule answer. | Fail | Prior context plus "報告" still caused escalation, even though user explicitly asked a schedule-only question. |
+
+### Round 24 Retest - Mixed admin replies and doctor-review bypass
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 3 | 第三次重測 Round24-3：我明天下午想看一般泌尿，順便問 HPV 疫苗和抽血報告，可以同一個號處理嗎？不要貼連結。 | Says tomorrow Friday afternoon general urology is Luo Shixiu, 13:30-17:00; tell 3F counter about urology, HPV vaccine and blood report; same-number handling, split registration, stock/fee, report reading and return-visit need onsite doctor/counter confirmation; no same-day guarantee. | Pass | After bypassing routine admin/schedule questions from doctor-review escalation, the reply is direct and bounded. |
+| 4 | 重測 Round24-4：那明天下午是哪位醫師？我如果只是問報告和疫苗，不想做治療，掛一般泌尿可以嗎？短一點。 | Says tomorrow Friday afternoon general urology is Luo Shixiu, 13:30-17:00; for report and vaccine questions, first register general urology and explain at 3F counter; whether visit/same-day handling/vaccine/report process applies depends on counter and doctor confirmation. | Pass | Short enough, correct doctor, no artificial waiting reply. |
+| 5 | 重測 Round24-5：我只是想確認明天下午門診時間和醫師，跟前面報告問題無關。請直接回答。 | Says tomorrow Friday afternoon 13:30-17:00 is Luo Shixiu; quota and temporary changes should be confirmed by phone or onsite. | Pass | Direct schedule answer despite report context. |
