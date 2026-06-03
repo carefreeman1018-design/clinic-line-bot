@@ -185,11 +185,26 @@ export function buildDoctorReviewNotification(reviewCase) {
   ].join("\n");
 }
 
-export function buildDoctorReviewWaitingReply() {
+export function buildDoctorReviewWaitingReply(message = "") {
+  if (hasUrgentBleedingCue(message)) {
+    return [
+      "你描述術後一直流血、壓了也停不下來又很痛，請不要等線上回覆，先立即就醫或到急診。",
+      "這題我也先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
   return [
     "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。",
     "如果有劇烈疼痛、發燒、尿不出來、大量出血或明顯惡化，請不要等線上回覆，先立即就醫。"
   ].join("\n");
+}
+
+function hasUrgentBleedingCue(message) {
+  return (
+    /術後|手術後|做完/.test(message) &&
+    /流血|出血|血流|大量出血|一直.*血|血.*不停|停不下來|壓不住/.test(message) &&
+    /停不下來|壓不住|一直|大量|很多|很痛|劇痛|疼痛/.test(message)
+  );
 }
 
 export function parseDoctorReviewCommand(message) {

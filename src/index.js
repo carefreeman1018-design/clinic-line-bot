@@ -218,7 +218,12 @@ async function handleDoctorReviewRequest({ replyToken, userId, message, conversa
 
   if (!reviewCase) return false;
 
-  const waitingReply = buildDoctorReviewWaitingReply();
+  const waitingReply = applyResponseStyle({
+    reply: buildDoctorReviewWaitingReply(message),
+    message,
+    relevantChunks,
+    conversationHistory
+  });
   await notifyDoctorReviewTargets(reviewCase);
   await safeReplyText(replyToken, waitingReply);
   await rememberConversationExchange(userId, message, waitingReply);

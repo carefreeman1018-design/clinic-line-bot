@@ -2,6 +2,7 @@ import { draftReply } from "../src/ai.js";
 import { answerAnalColorectalQuestion } from "../src/anal-colorectal.js";
 import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
+import { buildDoctorReviewWaitingReply } from "../src/doctor-review.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerFournierGangreneQuestion } from "../src/fournier-gangrene.js";
 import { answerHematospermiaQuestion } from "../src/hematospermia.js";
@@ -24,6 +25,7 @@ import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
 import { answerWoundCareQuestion } from "../src/wound-care.js";
+import { applyResponseStyle } from "../src/response-style.js";
 
 async function buildTestReply(message, conversationHistory = []) {
   process.env.NODE_ENV = "test";
@@ -33,6 +35,15 @@ async function buildTestReply(message, conversationHistory = []) {
 }
 
 const cases = [
+  {
+    name: "doctor review urgent postoperative bleeding waiting reply is direct",
+    reply: applyResponseStyle({
+      reply: buildDoctorReviewWaitingReply("我術後一直流血，壓了也停不下來，現在很痛，怎麼辦？"),
+      message: "我術後一直流血，壓了也停不下來，現在很痛，怎麼辦？"
+    }),
+    expected: ["術後一直流血", "壓了也停不下來", "很痛", "不要等線上回覆", "立即就醫", "急診", "轉請醫師或診所人員確認"],
+    forbidden: ["只要等", "等確認後再說", "可以先觀察", "大量出血或明顯惡化"]
+  },
   {
     name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",
     reply: await buildTestReply("我是女生，月經晚了快一週不確定有沒有懷孕，這兩天尿尿很痛、尿有點紅，今天腰痠痛又發燒，但我本來也有漏尿，想問能不能今天直接坐美磁波鍛肌椅？可以先吃家裡剩的抗生素嗎？我有點緊張，先跟我說下一步。"),
