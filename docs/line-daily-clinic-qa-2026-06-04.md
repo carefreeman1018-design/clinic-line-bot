@@ -305,3 +305,20 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 |---|---|---|---|---|
 | 2 | 重測 Round16-2：那週一晚上呢？一樣是一般泌尿嗎，誰看？請短一點。 | Says Mon evening is general urology clinic, Luo Shixiu, 18:00-20:30, with temporary changes/quota by phone or onsite confirmation. | Pass | Directly answers the general-urology follow-up. |
 | 3 | 重測 Round16-3：我同一天想問 HPV 疫苗、皮蛇疫苗跟匿名篩檢，可以只先問流程和費用，不一定做嗎？講重點。 | Says the user can ask counter or call about HPV vaccine, shingles vaccine and anonymous screening process/fee; not necessarily same day; same-day feasibility, vaccine stock, evaluation and screening flow depend on clinic/doctor/counter confirmation, with no guaranteed amount or same-day service. | Pass | Keeps all three requested items. |
+
+## Round 17 - Doctor identity, past LINE VOOM notice, Friday surgery slot, and reschedule flow
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round17-1：吳致寬醫師是誰？他主要看什麼？不要列太多。 | Says Wu Chih-Kuan is a urology attending physician and lists urology/male medicine credentials and specialty direction. | Pass | Slightly more detailed than requested, but correct doctor and domain. |
+| 2 | Round17-2：那他週三下午有診嗎？如果是一般泌尿可以看頻尿嗎？請短一點。 | Resolves "he" to Wu Chih-Kuan; says Wed afternoon is general urology, 13:30-17:00, and frequency/nocturia can be seen. | Pass | Pronoun context and general-urology answer both work. |
+| 3 | Round17-3：我看到之前 LINE VOOM 有寫 5/19 晚上李齊泰醫師停診，那天如果只是匿名篩檢或打疫苗還能去嗎？請不要貼連結，短一點。 | Says LINE VOOM found Li Chitai stopped clinic once on 5/19; says "100% anonymous screening" and vaccine services were normal. | Partial | Correctly separates doctor stop-clinic from services, but fails to mark 5/19 as a past notice and uses unnatural "100%" wording. |
+| 4 | Round17-4：明天晚上如果不是一般泌尿，我頻尿要改掛哪個時段？不要列一堆。 | Says Fri evening is surgery time, not general clinic, but also presents the evening slot as something to reference. | Fail | Misleading for urinary frequency; should recommend Fri morning/afternoon general urology only. |
+| 5 | Round17-5：我已經線上掛號明天早診，但想改明天下午，可以直接在 LINE 說嗎？不要貼連結。 | Says online registration changes cannot be completed directly in LINE; lists Fri morning Chen and afternoon Luo, and asks user to confirm via original system/phone/counter. | Pass | No link; slightly long but safe. |
+
+### Round 17 Retest - Past announcement and Friday general-urology slot fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 3 | 重測 Round17-3：我看到之前 LINE VOOM 有寫 5/19 晚上李齊泰醫師停診，那天如果只是匿名篩檢或打疫苗還能去嗎？請不要貼連結，短一點。 | Says 5/19 is a past LINE VOOM notice; Li Chitai stopped clinic once; the notice said anonymous screening and vaccine service were normal; current/latest arrangement should be confirmed by latest notice or phone. | Pass | No "100%" wording and no current-service overpromise. |
+| 4 | 重測 Round17-4：明天晚上如果不是一般泌尿，我頻尿要改掛哪個時段？不要列一堆。 | Says Fri evening is surgery time and not a general clinic; for frequency/nocturia, use Fri morning Chen or Fri afternoon Luo general urology slots and confirm quota by phone. | Pass | No mistaken appointment-change template and no suggestion to use Fri evening. |
