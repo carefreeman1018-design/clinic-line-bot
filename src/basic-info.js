@@ -164,7 +164,7 @@ function asksAddressInfo(message) {
 }
 
 function asksRouteInBundle(message) {
-  return /捷運|MRT|出口|怎麼走|怎麼到|路線|門口|到門口/.test(message);
+  return /行天宮|捷運|MRT|出口|怎麼走|怎麼到|路線|門口|到門口/.test(message);
 }
 
 function asksSurgeryAppointment(message) {

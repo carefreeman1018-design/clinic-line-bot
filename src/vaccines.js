@@ -1,13 +1,25 @@
 const PHONE = "02-2511-9488";
 
 export function answerVaccineQuestion(message, conversationHistory = []) {
-  const isDirectVaccineQuestion = isVaccineQuestion(message);
+  const hasAnonymousScreeningRequest = asksAnonymousScreening(message);
+  const isDirectVaccineQuestion = isVaccineQuestion(message) || hasAnonymousScreeningRequest;
   const followUpContext = isDirectVaccineQuestion ? null : resolveVaccineFollowUpContext(message, conversationHistory);
   if (!isDirectVaccineQuestion && !followUpContext) return null;
+
+  const adverseReactionReply = answerPostVaccineReactionQuestion(message);
+  if (adverseReactionReply) return adverseReactionReply;
 
   const parts = [];
   const hasHpvExposureConcern = hasHpvExposureOrInfectionConcern(message) && !hasCurrentHpvWartConcern(message);
   const hasCurrentWartConcern = hasCurrentHpvWartConcern(message);
+
+  if (!isHpvVaccineQuestion(message) && hasAnonymousScreeningRequest) {
+    return answerAnonymousScreeningAdminQuestion(message);
+  }
+
+  if ((isHpvVaccineQuestion(message) || followUpContext?.includesHpv) && hasAnonymousScreeningRequest) {
+    return answerHpvVaccineWithAnonymousScreeningQuestion(message);
+  }
 
   if (isHpvVaccineQuestion(message) || followUpContext?.includesHpv) {
     parts.push("官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。");
@@ -57,8 +69,66 @@ function isSkinShinglesVaccineQuestion(message) {
   return /皮蛇疫苗|帶狀皰疹疫苗/.test(message);
 }
 
+function answerHpvVaccineWithAnonymousScreeningQuestion(message) {
+  const parts = [
+    "診所有提供 HPV 疫苗施打，也可詢問匿名篩檢；匿名篩檢包含性病相關篩檢服務。"
+  ];
+
+  if (asksSameDayWalkInOrPrice(message)) {
+    parts.push(`價格、疫苗庫存、當天名額與今天現場能不能做，都需要電話 ${PHONE} 或到現場由診所人員確認，不能先保證今天一定能做。`);
+  } else {
+    parts.push(`是否適合施打、疫苗庫存、篩檢流程與費用，建議電話 ${PHONE} 或由診所人員確認。`);
+  }
+
+  return parts.join("");
+}
+
+function answerAnonymousScreeningAdminQuestion(message) {
+  const parts = [
+    "診所有提供匿名篩檢相關服務，可到診後向護理人員詢問流程與項目。"
+  ];
+
+  if (asksSameDayWalkInOrPrice(message)) {
+    parts.push(`費用、當天名額與今天現場能不能做，都需要電話 ${PHONE} 或到現場由診所人員確認，不能先保證今天一定能做。`);
+  } else {
+    parts.push(`篩檢流程、費用與可評估時段，建議電話 ${PHONE} 或由診所人員確認。`);
+  }
+
+  return parts.join("");
+}
+
+function answerPostVaccineReactionQuestion(message) {
+  if (!isPostVaccineReactionQuestion(message)) return null;
+
+  const urgentNow = /現在|目前|還在|還有|持續/.test(message) && /喘|呼吸困難|胸悶|胸痛|喉嚨緊|喉嚨腫|嘴唇腫|臉腫|昏倒|快昏倒/.test(message);
+  const urgentNote = urgentNow
+    ? "若現在還有喘、呼吸困難、胸悶、喉嚨緊、臉或嘴唇腫、快昏倒等狀況，請不要等線上回覆，先急診/立即就醫。"
+    : "若再出現喘、呼吸困難、胸悶、喉嚨緊、臉或嘴唇腫、全身紅疹快速擴散或快昏倒，請急診/立即就醫。";
+
+  return [
+    "打完 HPV/九價或其他疫苗後若出現全身起疹、喘或疑似過敏反應，下一劑能不能照打不能只靠訊息判斷。",
+    "不建議自行先吃抗組織胺或其他藥把症狀壓下去再去打；是否延後、改期或需要醫師評估過敏風險，需由醫師或診所人員確認。",
+    `下一步：請先電話 ${PHONE} 聯絡診所，說明上次接種後症狀與吃過的藥，再決定下一劑安排。${urgentNote}`
+  ].join("");
+}
+
+function isPostVaccineReactionQuestion(message) {
+  const hasVaccineCue = /HPV\s*疫苗|九價|子宮頸癌疫苗|皮蛇疫苗|帶狀皰疹疫苗|疫苗/.test(message);
+  const hasAfterVaccineCue = /打完|接種後|施打後|上週打|昨天打|前天打|下一劑|下次打/.test(message);
+  const hasReactionOrMedicationCue = /起疹|紅疹|蕁麻疹|疹子|過敏|喘|呼吸困難|胸悶|頭暈|昏倒|抗組織胺|吃藥|先吃藥|下一劑|照打|再打/.test(message);
+  return hasVaccineCue && hasAfterVaccineCue && hasReactionOrMedicationCue;
+}
+
 function asksPriceOrStock(message) {
   return /價錢|價格|費用|多少錢|幾多錢|庫存|有貨|現貨|名額|預約時段|可預約|今天|直接打|馬上打|同一天|一起打|同時打/.test(message);
+}
+
+function asksAnonymousScreening(message) {
+  return /匿名.*篩檢|篩檢.*匿名|匿名性病|匿名.*驗|驗.*匿名/.test(message);
+}
+
+function asksSameDayWalkInOrPrice(message) {
+  return /今天|今日|現場|直接|當天|費用|價錢|價格|多少錢|名額|庫存|有貨|可不可以|能不能|可以做|可以打/.test(message);
 }
 
 function asksPersonalSuitability(message) {
