@@ -394,3 +394,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 重測 Round21-2：我手機快沒電，線上掛號的簡訊或截圖可能拿不出來，到櫃台還能查得到嗎？要報姓名還是電話？ | Says to go to 3F counter if phone/SMS/screenshot is unavailable; counter may use name, phone or identity data to help query, with health card/ID recommended; actual lookup depends on counter confirmation. | Pass | No appointment link. |
 | 4 | 重測 Round21-4：我先生去看診但手機沒接，我可以在 LINE 問他有沒有報到或看完了嗎？你們可以幫我查一下嗎？ | Says check-in or finish status is personal medical/visit information and cannot be looked up or disclosed to family on LINE; patient should contact the clinic, or family should use the clinic's identity confirmation/authorization flow by phone or onsite. | Pass | No doctor schedule and no status disclosure. |
 | 5 | 重測 Round21-5：我只是路過想先問尿液檢查流程和費用，不想留下資料或掛號，可以只問櫃台嗎？請短一點。 | Says the user can first ask counter or phone about urine-test flow/fee without necessarily registering, but actual testing, report, physician interpretation or record/payment may require registration and basic data; whether a pure no-data inquiry is possible depends on counter confirmation. | Pass | Clear ask-only vs service boundary. |
+
+## Round 22 - Schedule follow-up, Friday surgery slot, doctor comparison, and temporary notices
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round22-1：今天晚上有一般泌尿門診嗎？誰看？如果臨時停診要去哪裡確認？不要貼連結。 | Says today Thu evening is general urology, Chen Wei-Jie, 18:00-20:30; temporary changes/quota should be confirmed by phone or onsite/online registration. | Pass | Correct current-day evening schedule. |
+| 2 | Round22-2：那明天晚上呢？一樣是一般泌尿嗎？我只想問頻尿，不想跑錯。短一點。 | Replied with urinary-frequency symptom education and urgent warning signs instead of answering tomorrow evening schedule. | Fail | Symptom routing swallowed an explicit schedule/no-wrong-slot question. |
+| 3 | Round22-3：那週五下午看一般泌尿的是誰？他跟院長專長差在哪？不要列太多。 | Replied with Chen Wei-Jie specialty details and said Fri afternoon has no Chen clinic, only same-day morning Chen clinic. | Fail | Missed that Friday afternoon general urology is Luo Shixiu and gave the wrong comparison frame. |
+| 4 | Round22-4：我看到之前有公告某天晚上停診，那是代表今天也停嗎？我只想知道今天晚上要不要白跑。 | Says today Thu evening 18:00-20:30 is Chen Wei-Jie clinic and temporary changes should be confirmed by LINE VOOM, online registration or phone. | Pass | Acceptable answer to a past-notice/current-status question. |
+| 5 | Round22-5：如果我只有明天早上或下午能去，頻尿想先看一般泌尿，院長跟羅醫師我要掛誰比較適合？不要幫我硬選。 | Gave a long doctor-specialty comparison and did not directly state tomorrow Fri morning/afternoon slots. | Partial | Did not hard-pick, but missed the practical schedule choice. |
+
+### Round 22 Retest - Frequency schedule and doctor comparison fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 2 | 重測 Round22-2：那明天晚上呢？一樣是一般泌尿嗎？我只想問頻尿，不想跑錯。短一點。 | Says frequency/nocturia general-urology visit should not use tomorrow Fri evening because it is surgery time, not general clinic; Fri general-urology options are morning Chen Wei-Jie 09:30-12:30 or afternoon Luo Shixiu 13:30-17:00; call to confirm quota/time. | Pass | Schedule now beats symptom education for explicit slot questions. |
+| 3 | 重測 Round22-3：那週五下午看一般泌尿的是誰？他跟院長專長差在哪？不要列太多。 | Says Friday afternoon general urology is Luo Shixiu, 13:30-17:00; the dean is Chen Wei-Jie; Luo can first see general urology/voiding issues, while Chen has more publicly listed male-private/surgery specialties. | Pass | Correct slot and brief comparison. |
+| 5 | 重測 Round22-5：如果我只有明天早上或下午能去，頻尿想先看一般泌尿，院長跟羅醫師我要掛誰比較適合？不要幫我硬選。 | Says tomorrow Fri morning is Chen Wei-Jie 09:30-12:30 and afternoon is Luo Shixiu 13:30-17:00; frequency/general-urology users can choose by available time and it will not hard-pick a doctor; urgent symptoms should call first. | Pass | Practical and bounded, with no long specialty dump. |
