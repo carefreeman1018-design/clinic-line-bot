@@ -101,3 +101,12 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | # | Patient question | LINE reply summary | Result | Notes |
 |---|---|---|---|---|
 | 1 | 我看 LINE VOOM 以前說李醫師停診，所以週二晚上是不是都沒有李醫師？不要貼連結。 | Says no; old LINE VOOM stop-clinic announcements are usually one-time/temporary changes and cannot be treated as every-week stoppage. Then says Tue evening (18:00-20:30) Li Chitai has clinic and phone confirmation is available. | Pass | Retested in LINE after GitHub push. |
+
+## Round 6 - Routine clinic admin and visit logistics
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 看診完可以開診斷證明或收據嗎？要先跟誰說？ | Replied with Li Chitai schedule from previous context. | Fail | Follow-up doctor/schedule context incorrectly overrides routine certificate/receipt admin intent. |
+| 2 | 我上次抽血報告出來了嗎？可以 LINE 直接告訴我數值嗎？ | Says reports need doctor interpretation with history/symptoms; LINE cannot directly provide personal report values. | Pass | Privacy and report follow-up boundary works. |
+| 3 | 我爸爸行動不方便，可以坐輪椅上去嗎？電梯在哪裡？ | Says wheelchair access is possible, but elevator location/route is not clearly documented; suggests asking counter/staff and posts a long encoded website link. | Partial | Direction is conservative, but raw encoded URL is not helpful in LINE and should be replaced by phone/onsite assistance. |
+| 4 | 我藥吃完了但人不舒服，可以請家人直接去幫我拿一樣的藥嗎？ | Says doctor evaluation is needed; call or leave name/phone for convenient time; seek care promptly for pain, fever, abnormal urine or heavy bleeding. | Pass | No proxy refill guarantee. |

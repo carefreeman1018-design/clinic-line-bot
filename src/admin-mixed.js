@@ -11,6 +11,22 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksCertificateOrReceipt(normalized)) {
+    return [
+      "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明或收據。",
+      "診斷證明需由醫師依實際看診內容評估後開立。",
+      "費用、格式、能否補開，請讓櫃台現場或電話確認。"
+    ].join("\n");
+  }
+
+  if (asksWheelchairElevatorAccess(normalized)) {
+    return [
+      "可以從行天宮站 4 號出口附近，進診所所在大樓後搭電梯到 3 樓。",
+      `行動不便可先電話 ${PHONE} 告知；抵達後請櫃台協助動線或上下樓需求。`,
+      "如果入口或電梯位置不確定，也建議先電話確認。"
+    ].join("\n");
+  }
+
   if (asksRouteWithArrivalRegistration(normalized)) {
     return [
       "行天宮站 4 號出口出站右轉，步行約 40 秒，搭電梯到 3 樓。",
@@ -40,6 +56,16 @@ function asksOnlineRegistrationChange(message) {
   return /線上掛號|網路掛號|預約掛號|已經掛號|已掛號/.test(message)
     && /改|更改|換|調整/.test(message)
     && /今天|今晚|晚上|晚診|夜診/.test(message);
+}
+
+function asksCertificateOrReceipt(message) {
+  return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
+    && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
+}
+
+function asksWheelchairElevatorAccess(message) {
+  return /輪椅|行動不便|行動不方便|走路不方便|長輩|老人家|爸爸|媽媽/.test(message)
+    && /電梯|上去|上樓|到\s*3\s*樓|到三樓|無障礙|怎麼走|入口|動線/.test(message);
 }
 
 function asksRouteWithArrivalRegistration(message) {
