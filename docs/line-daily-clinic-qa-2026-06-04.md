@@ -216,3 +216,19 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3b | 重測二：我想做匿名篩檢，但不想留真名，報告怎麼拿？家人會知道嗎？不要貼連結。 | Says anonymous screening is provided and privacy is respected; required information and report notification depend on item; LINE cannot guarantee fully no-data/no-ID processing; clinic will not proactively notify family because of a LINE inquiry; call to confirm flow. | Pass | Retested after preserving anonymous-screening draft in the waiting reply. |
 | 4 | 重測：週三晚上可以看痔瘡還是泌尿？我有肛門痛但也頻尿，該掛誰？講重點。 | Says Wed evening is Chen Jia-Zhe colorectal/anal clinic, not general urology; if the main issue is anal pain/hemorrhoids, book colorectal; if frequency is the main issue, choose general urology hours or phone/counter confirmation; includes brief red flags. | Pass | Schedule and mixed-symptom routing are both explicit. |
 | 5 | 重測：我已經線上掛號了，但想陪我爸一起看，兩個人可以用同一個號嗎？還是要各自掛號？ | Says two patients usually should not share one appointment number; each person needs their own registration data, health card and ID; call counter to confirm whether adding a same-day registration is possible. | Pass | No appointment link dump; answers the two-patient registration question directly. |
+
+## Round 12 - Late arrival, certificates, privacy, anonymous screening follow-up, and waitlist
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round12-1：我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。 | Replied with clinic phone and appointment link only. | Fail | Missed late-arrival flow, whether to call first, and no-guarantee boundary. |
+| 2 | Round12-2：看完診如果要保險理賠用的診斷證明和收據，是掛號時先說，還是看完再跟櫃台說？ | Says after the visit you can tell the counter; for insurance claim use, tell the counter before the visit to avoid missed paperwork. | Pass | Practical and concise. |
+| 3 | Round12-3：我想幫我先生問上次檢查結果，你們可以直接在 LINE 跟我說嗎？他本人不在旁邊。 | Says personal report data cannot be disclosed directly on LINE or proxy-answered without confirmation; patient/family should call or go to counter; may need IDs, authorization or return visit explanation. | Pass | Good privacy boundary; no spouse/name misroute. |
+| 4 | Round12-4：那如果是匿名篩檢，報告可以電話通知嗎？還是一定要本人去拿？請不要貼連結。 | Says anonymous screening privacy is respected, but required information and report notification/pickup method depend on screening item and staff explanation; does not guarantee a specific phone or in-person flow. | Pass | Conservative but reasonable; no link. |
+| 5 | Round12-5：如果我到現場才發現掛號滿了，可以排候補或等現場加號嗎？我人在門口，請短一點。 | Says ask the counter whether waitlist or onsite add-on is available; it is not guaranteed; since the user is at the door, go directly to the counter. | Pass | Short and actionable. |
+
+### Round 12 Retest - Late arrival after online registration
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round12-1：我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。 | Says late arrival after online registration cannot be guaranteed to still be seen; call 02-2511-9488 first to notify/confirm; counter will arrange by check-in time, clinic situation and number/quota; bring health card/ID to 3F counter. | Pass | No appointment link dump; directly answers late-arrival flow. |
