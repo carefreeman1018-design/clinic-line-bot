@@ -53,3 +53,14 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 4 | 攝護腺肥大你們有看嗎？我明天下午可以掛嗎？要帶什麼？ | Answered that prostate enlargement evaluation/treatment is available. | Fail | Missed tomorrow afternoon clinic and what to bring. |
 | 5 | 匿名篩檢可以刷卡嗎？要帶健保卡或身分證嗎？請不要保證。 | Said anonymous screening is available and flow/fees should be confirmed. | Partial | Too generic; missed card payment and document handling. |
 | 6 | 我現在在診所外面，想問 HPV 疫苗、匿名篩檢和掛號，下一步先做什麼？ | Answered HPV vaccine and anonymous screening availability/confirmation. | Partial | Missed immediate onsite next step and registration flow. |
+
+## Round 3 Retest - After mixed admin fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我已經線上掛號了，但想改今天晚上，可以直接改嗎？不要貼連結，請講重點。 | Says LINE cannot guarantee the change; call or ask onsite counter to check whether evening change and quota are possible. | Pass | No link pasted. |
+| 2 | 我第一次去，從行天宮站到診所要怎麼走？到現場要先報到還是先掛號？我在路上，短一點。 | Gives Exit 4 route and tells first-time patient to report to counter; counter confirms registration flow if not registered or data is incomplete. | Pass | Addresses route plus arrival flow. |
+| 3 | 我想做結紮諮詢，今天晚上可以直接去問嗎？費用可以先知道嗎？不要講太長。 | Gives today consult clinics, adds that fee and same-day arrangement need phone/onsite confirmation and cannot be guaranteed or quoted online. | Pass | Fee caveat now present. |
+| 4 | 攝護腺肥大你們有看嗎？我明天下午可以掛嗎？要帶什麼？ | Says clinic evaluates prostate/voiding issues; tomorrow Fri afternoon is Luo clinic; bring health card, ID, recent reports/PSA/ultrasound/medication data if available. | Pass | Service, schedule, and prep all included. |
+| 5 | 匿名篩檢可以刷卡嗎？要帶健保卡或身分證嗎？請不要保證。 | Says anonymous screening flow can be asked onsite; payment/card and document needs depend on item and onsite process; does not guarantee. | Pass | Conservative admin answer. |
+| 6 | 我現在在診所外面，想問 HPV 疫苗、匿名篩檢和掛號，下一步先做什麼？ | Tells patient to go to counter/nursing station and say they want HPV vaccine, anonymous screening, and registration; quota, stock, flow and fees need confirmation. | Pass | Immediate next step works. |
