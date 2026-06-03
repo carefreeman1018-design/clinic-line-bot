@@ -270,3 +270,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 重測 Round14-2：我臨時不能去，線上掛號要取消嗎？可以直接在 LINE 跟你說取消，還是要打電話？不要貼連結。 | Says cancel/change is recommended to avoid occupying a slot; LINE bot cannot guarantee proxy cancellation; safest path is phone confirmation or original online system cancellation/change. | Pass | No appointment URL. |
 | 3 | 重測 Round14-3：我想同一天問 HPV 疫苗跟匿名篩檢，可以先到櫃台問流程跟費用，不一定當天做嗎？不要保證，短一點。 | Says the user can ask counter or call about HPV vaccine and anonymous screening process/fee; not necessarily same day; same-day feasibility, evaluation, vaccine stock and screening flow depend on onsite/doctor/counter confirmation. | Pass | Keeps both service names and avoids card-payment drift. |
 | 5 | 重測 Round14-5：如果我看完才想到要保險收據和診斷證明，可以隔天補開嗎？要本人去嗎？不要講太長。 | Says after-visit insurance receipt or certificate reissue can be confirmed by phone/counter; diagnosis certificate usually needs doctor/record confirmation; next-day, self/proxy handling, certificates and authorization documents depend on clinic reply. | Pass | Directly answers after-visit and proxy boundaries. |
+
+## Round 15 - Accessibility drop-off, arrival order, doctor preference, changes, and company receipts
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round15-1：我爸坐輪椅，我可以先在門口讓他下車再去停車嗎？電梯入口好找嗎？不要保證。 | Says Exit 4 and elevator to 3F, with a phone path for mobility needs. | Partial | Safe, but did not directly answer the door drop-off/parking uncertainty. |
+| 2 | Round15-2：我如果提早半小時到，可以先報到嗎？還是要照掛號號碼等？講重點就好。 | Says early check-in is possible, but actual order depends on onsite queue/number and clinic arrangement; if worried about missing the number, ask staff first. | Pass | Good concise boundary. |
+| 3 | Round15-3：我看泌尿問題可以指定男醫師嗎？如果當天只有別的醫師，可以先問櫃台再決定嗎？短一點。 | Lists doctors on the fixed schedule and says to ask for a doctor's name to check times. | Partial | Missed preference/designation, counter decision, and no-guarantee handling. |
+| 4 | Round15-4：我已經線上掛號了，但想改成同一天另一位醫師，要取消重掛還是可以請櫃台改？不要貼連結。 | Says LINE bot cannot guarantee cancellation/change; safest is phone confirmation or original online system cancellation/change. | Pass | Acceptable no-link change flow. |
+| 5 | Round15-5：公司報帳要收據抬頭或統編，可以看完才請櫃台開嗎？還是掛號時要先說？ | Replied with generic diagnosis certificate/receipt template. | Partial | Missed company reimbursement, receipt title, and tax ID. |
+
+### Round 15 Retest - Accessibility, doctor preference, and company receipts
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round15-1：我爸坐輪椅，我可以先在門口讓他下車再去停車嗎？電梯入口好找嗎？不要保證。 | Says door drop-off cannot be guaranteed and depends on onsite traffic and building entrance; call first if family needs entrance/counter help; the building has an elevator to 3F and phone confirmation is available if entrance/elevator location is unclear. | Pass | Directly handles drop-off without overpromising. |
+| 3 | 重測 Round15-3：我看泌尿問題可以指定男醫師嗎？如果當天只有別的醫師，可以先問櫃台再決定嗎？短一點。 | Says the user can state a designated-doctor or male-doctor preference; whether the specific doctor is available, whether change/waiting is possible, and quota must be confirmed by schedule/counter; if only another doctor is present, ask counter before deciding. | Pass | No doctor-list drift. |
+| 5 | 重測 Round15-5：公司報帳要收據抬頭或統編，可以看完才請櫃台開嗎？還是掛號時要先說？ | Says company receipt title/tax ID/format must be confirmed by counter; best to say before registration or checkout to avoid format-change issues; asking later by counter or phone is possible but not guaranteed. | Pass | No diagnosis-certificate pollution. |
