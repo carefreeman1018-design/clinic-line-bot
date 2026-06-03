@@ -202,7 +202,15 @@ export function buildDoctorReviewWaitingReply(message = "", { botDraft = "" } = 
   if (safetyDraftSummary) {
     return [
       safetyDraftSummary,
-      "這題我也先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+      "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
+  const reportPickupDraft = buildReportPickupDraftSummary(botDraft);
+  if (reportPickupDraft) {
+    return [
+      reportPickupDraft,
+      "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
     ].join("\n");
   }
 
@@ -268,6 +276,12 @@ function buildSafetyDraftSummary(botDraft) {
   }
 
   return selected.length > 0 ? selected.join("") : null;
+}
+
+function buildReportPickupDraftSummary(botDraft) {
+  const normalized = String(botDraft || "").trim();
+  if (!/報告涉及個人醫療資料|能不能由家人代領|代領人身分證|授權或關係資料/.test(normalized)) return null;
+  return normalized;
 }
 
 function hasSelfCareSafetyInstruction(text) {
