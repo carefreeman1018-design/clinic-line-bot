@@ -4,6 +4,14 @@ export function answerAnalColorectalQuestion(message) {
   if (isScheduleExclusionQuestion(message)) return null;
   if (!isAnalColorectalQuestion(message)) return null;
 
+  if (isAnalAbscessRiskQuestion(message)) {
+    return [
+      "肛門旁腫一顆、坐下會痛，又有流膿或發燒，不一定只是痔瘡，要擔心肛門膿瘍、感染或廔管相關問題。",
+      "不建議只擦痔瘡藥膏等到明天；需要醫師實際檢查，必要時處理感染或引流。",
+      `請今天先電話 ${PHONE} 確認肛門直腸外科最快可評估時段；若發燒變高、疼痛加劇、膿變多或明顯不舒服，請直接急診/立即就醫。`
+    ].join("");
+  }
+
   if (isAnalWartQuestion(message)) {
     return [
       "診所有肛門性病診斷與治療，也有肛門直腸外科。",
@@ -27,7 +35,14 @@ function isScheduleExclusionQuestion(message) {
 }
 
 function isAnalColorectalQuestion(message) {
-  return /肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|解便.*血|鮮紅色血|肛門.*痛|肛門.*腫|腫塊|肛門性病|肛門菜花/i.test(message);
+  return /肛門|痔瘡|廔管|瘻管|肛裂|膿瘍|便血|大便.*血|解便.*血|鮮紅色血|肛門.*痛|肛門.*腫|腫塊|肛門性病|肛門菜花/i.test(message);
+}
+
+function isAnalAbscessRiskQuestion(message) {
+  return (
+    /肛門|屁股|肛周|肛門旁|肛門附近/.test(message) &&
+    /膿|流膿|化膿|膿瘍|發燒|坐下.*痛|坐著.*痛/.test(message)
+  );
 }
 
 function isAnalWartQuestion(message) {

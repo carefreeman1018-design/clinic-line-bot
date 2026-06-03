@@ -229,6 +229,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是痔瘡", "可以直接做", "元", "PEP", "72 小時"]
   },
   {
+    name: "anal abscess fever pus avoids generic hemorrhoid template",
+    reply: answerAnalColorectalQuestion("我肛門旁邊這兩天腫一顆，坐下會痛，今天好像有流一點膿又有點發燒。這是不是痔瘡？可以先擦痔瘡藥膏等明天嗎？還是要今天去看？"),
+    expected: ["肛門旁", "腫一顆", "坐下會痛", "流膿", "發燒", "不一定只是痔瘡", "肛門膿瘍", "感染", "廔管", "不建議", "痔瘡藥膏", "等到明天", "醫師實際檢查", "引流", "今天", "肛門直腸外科", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "LINE 不能", "不能只用 LINE", "大便後鮮紅色血", "痔瘡微創手術評估", "不能保證當天直接手術", "可以先擦", "可以等明天"]
+  },
+  {
     name: "pep memory does not intercept anal colorectal question",
     reply: answerPepVisitScheduleFollowUp(
       "我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？我現在有點慌，先跟我說該怎麼做。",
