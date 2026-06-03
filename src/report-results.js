@@ -2,6 +2,7 @@ const PHONE = "02-2511-9488";
 
 export function answerReportResultQuestion(message, conversationHistory = []) {
   if (!isReportResultQuestion(message)) return null;
+  if (isAnonymousScreeningQuestion(message)) return null;
 
   if (isPsaQuestion(message) || isPsaReportFollowUp(message, conversationHistory)) {
     if (asksSurgeryBeforeReportReview(message)) {
@@ -33,6 +34,10 @@ export function answerReportResultQuestion(message, conversationHistory = []) {
 
 function isReportResultQuestion(message) {
   return /報告|檢查結果|PSA|攝護腺指數|超音波|尿流速|切片|癌|腫瘤/.test(message);
+}
+
+function isAnonymousScreeningQuestion(message) {
+  return /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message);
 }
 
 function isPsaQuestion(message) {

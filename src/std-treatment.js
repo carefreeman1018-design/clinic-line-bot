@@ -3,6 +3,10 @@ const PHONE = "02-2511-9488";
 export function answerStdTreatmentQuestion(message) {
   if (!isStdTreatmentQuestion(message)) return null;
 
+  if (isAnonymousScreeningPrivacyQuestion(message)) {
+    return answerAnonymousScreeningQuestion(message);
+  }
+
   if (shouldPrioritizeWartQuestion(message)) {
     return answerWartQuestion(message);
   }
@@ -32,7 +36,19 @@ export function answerStdTreatmentQuestion(message) {
 }
 
 function isStdTreatmentQuestion(message) {
-  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|皰疹|疱疹|HSV|性病|病灶|私密處.*顆粒|肉芽|陰莖.*水泡|陰莖.*潰瘍|生殖器.*水泡|生殖器.*潰瘍/i.test(message);
+  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|皰疹|疱疹|HSV|性病|病灶|私密處.*顆粒|肉芽|陰莖.*水泡|陰莖.*潰瘍|生殖器.*水泡|生殖器.*潰瘍|匿名.*篩檢|篩檢.*匿名/i.test(message);
+}
+
+function isAnonymousScreeningPrivacyQuestion(message) {
+  return /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message) && /家人|知道|真名|姓名|身分|身份|報告|多久|隱私|保密/.test(message);
+}
+
+function answerAnonymousScreeningQuestion(_message) {
+  return [
+    "診所有提供匿名篩檢相關服務，會重視隱私；是否需填哪些資料、報告通知方式與多久可知道結果，需由現場護理人員依篩檢項目說明。",
+    "LINE 不能保證完全不需任何資料，也不適合在這裡查個人報告。",
+    `下一步：先電話 ${PHONE} 確認匿名篩檢流程與可評估時段，或到診後直接向護理人員說明你擔心被家人知道。`
+  ].join("");
 }
 
 function isPrepQuestion(message) {

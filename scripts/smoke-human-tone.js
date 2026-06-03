@@ -255,6 +255,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
   },
   {
+    name: "anonymous screening privacy question stays focused",
+    reply: answerStdTreatmentQuestion("我想做匿名性病篩檢，但很怕被家人知道。去津久檢查需要用真名嗎？報告大概多久會知道？") || answerReportResultQuestion("我想做匿名性病篩檢，但很怕被家人知道。去津久檢查需要用真名嗎？報告大概多久會知道？"),
+    expected: ["匿名篩檢", "重視隱私", "需由現場護理人員", "篩檢項目", "LINE 不能保證", "完全不需任何資料", "不適合", "查個人報告", "家人知道", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "症狀與檢查結果一起判讀", "PSA", "攝護腺", "保證隱私", "100% 絕對匿名", "絕對不會知道"]
+  },
+  {
     name: "pep first question beats same-day schedule routing",
     reply: await buildTestReply("我昨晚跟朋友無套，現在大概過了 20 小時，很怕 HIV。津久今天可以處理 PEP 嗎？我是第一次遇到，不知道現在該先掛號還是直接去。"),
     expected: ["20 小時", "72 小時", "今天盡快", "LINE 不能直接判斷或開藥", "PEP 不能預防其他性病", "02-2511-9488", "儘速就醫"],
