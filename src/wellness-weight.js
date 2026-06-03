@@ -6,12 +6,21 @@ export function answerWellnessWeightQuestion(message) {
   if (isMounjaroQuestion(message)) {
     const hasPregnancyOrBreastfeeding = /懷孕|備孕|哺乳|餵奶|母奶|產後|月經.*晚|可能.*孕|pregnan|breastfeeding|postpartum/i.test(message);
     const asksSelfUseOrDose = /朋友|剩下|剩的|自己.*打|自行.*打|自己.*用|自行.*用|劑量|最低劑量|幾.*mg|多少.*mg|dose|leftover|lowest dose|myself/i.test(message);
+    const hasPostInjectionSideEffects = /打.*後|打完|上週.*打|已經.*打|下一針|下次.*打/i.test(message) && /噁心|想吐|嘔吐|吐|肚子痛|肚子.*悶|腹痛|胃痛|拉肚子|腹瀉|脫水|吃不下/i.test(message);
 
     if (hasPregnancyOrBreastfeeding && asksSelfUseOrDose) {
       return [
         "診所有猛健樂門診，但你正在產後/哺乳，又想用朋友剩下的藥筆，這種情況不能直接施打。",
         "不建議自行使用，也不能在線上告訴你最低劑量或 mg 用法；是否適合需由醫師評估後開立。",
         `下一步請先電話 ${PHONE} 確認可評估時段，並帶目前用藥與產後/哺乳狀況。`
+      ].join("");
+    }
+
+    if (hasPostInjectionSideEffects) {
+      return [
+        "診所有猛健樂門診。你已經施打後有持續噁心、嘔吐或腹痛，下一針不要自行照打，也不要自行調劑量。",
+        "需先回診或電話確認，由醫師評估是否要延後、調整或停用；若腹痛明顯加劇、持續吐到喝不下、發燒、脫水或冒冷汗，請直接急診/立即就醫。",
+        `下一步請先電話 ${PHONE} 確認可回診評估時段，並帶目前用藥與施打日期。`
       ].join("");
     }
 

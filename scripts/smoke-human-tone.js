@@ -161,6 +161,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以自行", "2.5 mg", "5 mg", "費用", "BMI", "共病", "不能保證會瘦幾公斤", "元"]
   },
   {
+    name: "mounjaro post-injection vomiting abdominal pain blocks next dose",
+    reply: answerWellnessWeightQuestion("我上週打猛健樂後這幾天一直噁心，有吐兩次，肚子也悶痛。下一針還可以照打嗎？需要先回診嗎？"),
+    expected: ["猛健樂門診", "施打後", "噁心", "嘔吐", "腹痛", "下一針不要自行照打", "不要自行調劑量", "回診", "醫師評估", "延後", "調整或停用", "急診", "立即就醫", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "BMI", "共病", "體重管理輔助療法", "不能保證會瘦幾公斤", "可以照打", "自行調整劑量", "元"]
+  },
+  {
     name: "wellness drip beats vaccine memory follow-up",
     reply:
       answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？我有點緊張，先跟我說下一步。") ||
