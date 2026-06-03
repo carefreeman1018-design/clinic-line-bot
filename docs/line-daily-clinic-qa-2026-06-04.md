@@ -127,3 +127,11 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 女性一直頻尿漏尿，是要掛泌尿科還是美磁波？差在哪？講重點。 | Says female frequency/leakage can first be evaluated by urology; physician decides whether treatment or other therapy is needed. | Partial | Safe, but missed the requested difference between urology evaluation and magnetic pelvic-floor therapy. |
 | 4 | 那費用大概多少？可以先報一個範圍嗎？ | Replied that HPV vaccine/anonymous screening fees are not public and need confirmation. | Fail | Follow-up fee context incorrectly jumped to HPV/anonymous screening instead of female urology/magnetic therapy. |
 | 5 | 我想順便問皮蛇疫苗和 HPV 疫苗，可以同一天打嗎？要帶什麼？ | Says clinic provides HPV and shingles vaccines; specific items, price, stock and appointment time need phone/staff confirmation. | Partial | Missed same-day coadministration and what to bring. |
+
+## Round 7 Retest - Service fit and fuzzy follow-up fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 3 | 女性一直頻尿漏尿，是要掛泌尿科還是美磁波？差在哪？講重點。 | Explains urology visit is diagnostic evaluation for infection, overactive bladder, stress incontinence and related causes; magnetic pelvic-floor chair is adjunct pelvic-floor training, not a replacement for diagnosis. | Pass | Directly answers the difference. |
+| 4 | 那費用大概多少？可以先報一個範圍嗎？ | Stays on female urology/leakage and magnetic pelvic-floor context; says public knowledge has no fixed price/range and fee depends on assessment and service arrangement; gives phone/staff confirmation path. | Pass | No drift to HPV/anonymous screening. |
+| 5 | 我想順便問皮蛇疫苗和 HPV 疫苗，可以同一天打嗎？要帶什麼？ | Says same-day HPV plus shingles vaccination cannot be guaranteed and needs physician/staff assessment; bring health card/ID and vaccination record if available, and disclose allergy/rash/special conditions. | Pass | Same-day and document questions both answered. |
