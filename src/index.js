@@ -7,12 +7,26 @@ import { draftReply } from "./ai.js";
 import {
   isConversationMemoryConfigured,
   loadConversationHistory,
-  rememberConversationExchange
+  rememberConversationExchange,
+  rememberConversationMessage
 } from "./conversation.js";
+import {
+  buildDoctorReviewNotification,
+  buildDoctorReviewWaitingReply,
+  closeDoctorReviewCase,
+  createDoctorReviewCase,
+  isDoctorReviewConfigured,
+  loadDoctorReviewCase,
+  markDoctorReviewCaseFailed,
+  markDoctorReviewCaseSending,
+  markDoctorReviewCaseSent,
+  parseDoctorReviewCommand
+} from "./doctor-review.js";
 import { answerBasicInfoQuestion } from "./basic-info.js";
 import { answerDoctorInfoQuestion } from "./doctors.js";
 import { loadKnowledge, shouldEscalate } from "./knowledge.js";
-import { replyText, verifyLineSignature } from "./line.js";
+import { pushText, replyText, verifyLineSignature } from "./line.js";
+import { applyResponseStyle } from "./response-style.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
 import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { answerSexualFunctionQuestion } from "./sexual-function.js";
@@ -49,6 +63,12 @@ const adminUserIds = new Set(
     .map((userId) => userId.trim())
     .filter(Boolean)
 );
+const reviewTargetIds = new Set(
+  (process.env.LINE_REVIEW_TARGET_IDS || "")
+    .split(",")
+    .map((targetId) => targetId.trim())
+    .filter(Boolean)
+);
 const pendingAssistanceByUser = new Map();
 const PENDING_ASSISTANCE_TTL_MS = 30 * 60 * 1000;
 const voomSyncEnabled = process.env.LINE_VOOM_SYNC_ENABLED !== "false";
@@ -80,6 +100,8 @@ app.get("/health", async (_req, res) => {
     vectorKnowledgeConfigured: isVectorKnowledgeConfigured(),
     conversationMemoryConfigured: isConversationMemoryConfigured(),
     settingsStoreConfigured: isSettingsStoreConfigured(),
+    doctorReviewConfigured: isDoctorReviewReady(),
+    doctorReviewTargetCount: reviewTargetIds.size,
     lineVoomSyncEnabled: voomSyncEnabled,
     lineVoomSyncTime: voomSyncTime,
     botEnabled
@@ -129,6 +151,12 @@ async function handleLineEvent(event) {
   try {
     const message = event.message.text.trim();
     const userId = event.source?.userId;
+    const reviewCommand = parseDoctorReviewCommand(message);
+    if (reviewCommand) {
+      await handleDoctorReviewCommand(event, reviewCommand);
+      return;
+    }
+
     const adminCommand = parseBotAdminCommand(message);
     if (adminCommand) {
       await handleBotAdminCommand(event.replyToken, userId, adminCommand);
@@ -154,6 +182,18 @@ async function handleLineEvent(event) {
 
     const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
+
+    if (shouldCreateDoctorReviewCase(message)) {
+      const handled = await handleDoctorReviewRequest({
+        replyToken: event.replyToken,
+        userId,
+        message,
+        conversationHistory,
+        chunks
+      });
+      if (handled) return;
+    }
+
     const { reply } = await buildReplyAndMatches(message, chunks, conversationHistory);
     rememberAssistanceIfNeeded(userId, message);
 
@@ -163,6 +203,114 @@ async function handleLineEvent(event) {
     console.error(error);
     await safeReplyText(event.replyToken, "系統暫時查不到資料，請稍後再試或留下問題。");
   }
+}
+
+async function handleDoctorReviewRequest({ replyToken, userId, message, conversationHistory, chunks }) {
+  if (!userId || !isDoctorReviewReady()) return false;
+
+  const { reply: botDraft, relevantChunks } = await buildReplyAndMatches(message, chunks, conversationHistory);
+  const reviewCase = await createDoctorReviewCase({
+    lineUserId: userId,
+    userMessage: message,
+    conversationHistory,
+    botDraft,
+    metadata: {
+      relevant_chunks: relevantChunks.map((chunk) => ({
+        source: chunk.source,
+        title: chunk.title,
+        score: chunk.score
+      }))
+    }
+  });
+
+  if (!reviewCase) return false;
+
+  const waitingReply = buildDoctorReviewWaitingReply();
+  await notifyDoctorReviewTargets(reviewCase);
+  await safeReplyText(replyToken, waitingReply);
+  await rememberConversationExchange(userId, message, waitingReply);
+  return true;
+}
+
+async function handleDoctorReviewCommand(event, command) {
+  const userId = event.source?.userId;
+  const sourceId = getLineSourceId(event.source);
+
+  if (!isDoctorReviewCommandAuthorized(userId, sourceId)) return;
+
+  if (!isDoctorReviewConfigured()) {
+    await safeReplyText(event.replyToken, "醫師覆核佇列尚未啟用，請確認 Supabase 與 DOCTOR_REVIEW_ENABLED。");
+    return;
+  }
+
+  if (command.action === "close") {
+    const closedCase = await closeDoctorReviewCase({
+      caseId: command.caseId,
+      reviewerLineUserId: userId,
+      reviewSourceId: sourceId
+    });
+
+    if (closedCase) {
+      await safeReplyText(event.replyToken, `#${command.caseId} 已關閉，不會發送給病人。`);
+      return;
+    }
+
+    await replyDoctorReviewCaseUnavailable(event.replyToken, command.caseId);
+    return;
+  }
+
+  const reviewCase = await loadDoctorReviewCase(command.caseId);
+  if (!reviewCase) {
+    await safeReplyText(event.replyToken, `找不到 #${command.caseId} 覆核案件。`);
+    return;
+  }
+
+  const finalReply = buildDoctorApprovedReply(reviewCase, command);
+  const sendingCase = await markDoctorReviewCaseSending({
+    caseId: command.caseId,
+    reviewerLineUserId: userId,
+    reviewSourceId: sourceId,
+    doctorReply: command.doctorReply ?? null,
+    finalReply
+  });
+
+  if (!sendingCase) {
+    await replyDoctorReviewCaseUnavailable(event.replyToken, command.caseId);
+    return;
+  }
+
+  try {
+    await pushText(sendingCase.lineUserId, finalReply, channelAccessToken);
+    await markDoctorReviewCaseSent(command.caseId);
+    await rememberConversationMessage(sendingCase.lineUserId, "assistant", finalReply);
+    await safeReplyText(event.replyToken, `#${command.caseId} 已發送給病人。`);
+  } catch (error) {
+    console.error(error);
+    await markDoctorReviewCaseFailed(command.caseId, error.message);
+    await safeReplyText(event.replyToken, `#${command.caseId} 發送失敗：${error.message}`);
+  }
+}
+
+function buildDoctorApprovedReply(reviewCase, command) {
+  const reply = command.action === "reply" ? command.doctorReply : reviewCase.botDraft;
+
+  return applyResponseStyle({
+    reply,
+    message: reviewCase.userMessage,
+    relevantChunks: [],
+    conversationHistory: reviewCase.conversationSnapshot
+  });
+}
+
+async function notifyDoctorReviewTargets(reviewCase) {
+  const notification = buildDoctorReviewNotification(reviewCase);
+  await Promise.all([...reviewTargetIds].map((targetId) => safePushText(targetId, notification)));
+}
+
+async function replyDoctorReviewCaseUnavailable(replyToken, caseId) {
+  const reviewCase = await loadDoctorReviewCase(caseId);
+  const statusText = reviewCase ? `目前狀態是 ${reviewCase.status}` : "找不到案件";
+  await safeReplyText(replyToken, `#${caseId} 不能處理，${statusText}。`);
 }
 
 async function handleBotAdminCommand(replyToken, userId, command) {
@@ -193,7 +341,36 @@ function isAdminUser(userId) {
   return Boolean(userId && adminUserIds.has(userId));
 }
 
+function isDoctorReviewReady() {
+  return isDoctorReviewConfigured() && reviewTargetIds.size > 0;
+}
+
+function shouldCreateDoctorReviewCase(message) {
+  return isDoctorReviewReady() && shouldEscalate(message);
+}
+
+function isDoctorReviewCommandAuthorized(userId, sourceId) {
+  return isAdminUser(userId) || Boolean(sourceId && reviewTargetIds.has(sourceId));
+}
+
+function getLineSourceId(source) {
+  return source?.groupId || source?.roomId || source?.userId || null;
+}
+
 export async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
+  const result = await buildRawReplyAndMatches(message, chunks, conversationHistory);
+  return {
+    ...result,
+    reply: applyResponseStyle({
+      reply: result.reply,
+      message,
+      relevantChunks: result.relevantChunks,
+      conversationHistory
+    })
+  };
+}
+
+async function buildRawReplyAndMatches(message, chunks, conversationHistory = []) {
   const simpleReply = buildSimpleReply(message);
   if (simpleReply) return { reply: simpleReply, relevantChunks: [] };
 
@@ -374,6 +551,14 @@ function buildContextualQuery(message, conversationHistory) {
 async function safeReplyText(replyToken, message) {
   try {
     await replyText(replyToken, message, channelAccessToken);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function safePushText(to, message) {
+  try {
+    await pushText(to, message, channelAccessToken);
   } catch (error) {
     console.error(error);
   }

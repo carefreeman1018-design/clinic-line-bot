@@ -129,6 +129,40 @@ SUPABASE_SETTINGS_TABLE=bot_settings
 
 沒有設定 Supabase 時，bot 開關只會存在目前執行中的記憶體，服務重啟後會回到開啟。
 
+## 醫師覆核佇列
+
+若要把需要醫師判斷的問題收進待回覆佇列，請先在 Supabase SQL Editor 建立資料表：
+
+```sql
+-- 使用 repo 內的 supabase/doctor_review_cases.sql
+```
+
+或一次建立所有後端表：
+
+```sql
+-- 使用 repo 內的 supabase/schema.sql
+```
+
+接著設定：
+
+```text
+DOCTOR_REVIEW_ENABLED=true
+SUPABASE_DOCTOR_REVIEW_TABLE=doctor_review_cases
+LINE_REVIEW_TARGET_IDS=Cxxxxxxxx,Uxxxxxxxx
+```
+
+`LINE_REVIEW_TARGET_IDS` 可放 LINE 管理群 groupId、roomId 或管理員 userId，多個用逗號分隔。功能啟用後，遇到個人症狀、報告、用藥、傷口或其他需要醫師判斷的問題時，bot 會先回覆病人「已轉請醫師或診所人員確認」，並把案件推送到管理群。
+
+管理群可用指令：
+
+```text
+核准 123
+回覆 123 醫師要發給病人的內容
+關閉 123
+```
+
+`核准` 會發送 bot 草稿；`回覆` 會發送醫師輸入的內容；`關閉` 只關閉案件、不發給病人。指令只接受 `LINE_ADMIN_USER_IDS` 白名單內帳號，或來自 `LINE_REVIEW_TARGET_IDS` 指定的管理群/聊天室。
+
 ## 向量知識庫檢索
 
 資料量變大後，bot 支援用 OpenAI embeddings + Supabase `pgvector` 做向量檢索。規則直答仍會優先處理電話、地址、門診、LINE VOOM、醫師資料與醫療安全問題；只有一般知識庫問題才會進入向量/關鍵字混合檢索。若向量檢索未設定或失敗，會自動退回原本關鍵字檢索。
@@ -257,6 +291,7 @@ npm run smoke:vector
    - `LINE_CHANNEL_SECRET`
    - `LINE_CHANNEL_ACCESS_TOKEN`
    - `LINE_ADMIN_USER_IDS`
+   - `LINE_REVIEW_TARGET_IDS`
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL`
    - `OPENAI_EMBEDDING_MODEL`
@@ -264,6 +299,9 @@ npm run smoke:vector
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `SUPABASE_CONVERSATION_TABLE`
    - `SUPABASE_SETTINGS_TABLE`
+   - `SUPABASE_DOCTOR_REVIEW_TABLE`
+   - `DOCTOR_REVIEW_ENABLED`
+   - `DOCTOR_REVIEW_CONTEXT_MESSAGES`
    - `SUPABASE_KNOWLEDGE_TABLE`
    - `SUPABASE_KNOWLEDGE_MATCH_RPC`
    - `VECTOR_KNOWLEDGE_ENABLED`

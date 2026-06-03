@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 
 const LINE_REPLY_URL = "https://api.line.me/v2/bot/message/reply";
+const LINE_PUSH_URL = "https://api.line.me/v2/bot/message/push";
 
 export function verifyLineSignature(rawBody, signature, channelSecret) {
   if (!channelSecret || !signature) return false;
@@ -38,6 +39,30 @@ export async function replyText(replyToken, text, channelAccessToken) {
   if (!response.ok) {
     const body = await response.text();
     throw new Error(`LINE reply failed: ${response.status} ${body}`);
+  }
+}
+
+export async function pushText(to, text, channelAccessToken) {
+  if (!channelAccessToken) {
+    console.log("[dry-run] LINE push:", { to, text });
+    return;
+  }
+
+  const response = await fetch(LINE_PUSH_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${channelAccessToken}`
+    },
+    body: JSON.stringify({
+      to,
+      messages: [{ type: "text", text: truncateLineText(text) }]
+    })
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`LINE push failed: ${response.status} ${body}`);
   }
 }
 

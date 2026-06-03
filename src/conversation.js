@@ -62,6 +62,30 @@ export async function rememberConversationExchange(lineUserId, userMessage, assi
   }
 }
 
+export async function rememberConversationMessage(lineUserId, role, content) {
+  if (!lineUserId || !["user", "assistant"].includes(role) || !content) return;
+
+  const rows = [
+    {
+      line_user_id: lineUserId,
+      role,
+      content
+    }
+  ];
+
+  if (!supabase) {
+    rememberInMemoryConversationRows(lineUserId, rows);
+    return;
+  }
+
+  const { error } = await supabase.from(CONVERSATION_TABLE).insert(rows);
+
+  if (error) {
+    console.error("Supabase conversation message save failed:", error);
+    rememberInMemoryConversationRows(lineUserId, rows);
+  }
+}
+
 function loadInMemoryConversationHistory(lineUserId) {
   return inMemoryConversationByUser.get(lineUserId) ?? [];
 }

@@ -1,0 +1,248 @@
+import { supabase } from "./supabase.js";
+
+const DOCTOR_REVIEW_TABLE = process.env.SUPABASE_DOCTOR_REVIEW_TABLE || "doctor_review_cases";
+const DOCTOR_REVIEW_ENABLED = process.env.DOCTOR_REVIEW_ENABLED !== "false";
+const MAX_CONTEXT_MESSAGES = Number(process.env.DOCTOR_REVIEW_CONTEXT_MESSAGES || 8);
+
+export function isDoctorReviewConfigured() {
+  return Boolean(DOCTOR_REVIEW_ENABLED && supabase);
+}
+
+export async function createDoctorReviewCase({
+  lineUserId,
+  userMessage,
+  conversationHistory = [],
+  botDraft,
+  metadata = {}
+}) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const conversationSnapshot = conversationHistory.slice(-MAX_CONTEXT_MESSAGES);
+  const conversationSummary = summarizeConversation(conversationSnapshot);
+
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .insert({
+      line_user_id: lineUserId,
+      user_message: userMessage,
+      conversation_summary: conversationSummary,
+      conversation_snapshot: conversationSnapshot,
+      bot_draft: botDraft,
+      metadata
+    })
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Doctor review case create failed:", error);
+    return null;
+  }
+
+  return normalizeCase(data);
+}
+
+export async function loadDoctorReviewCase(caseId) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .select("*")
+    .eq("id", caseId)
+    .single();
+
+  if (error) {
+    console.error("Doctor review case load failed:", error);
+    return null;
+  }
+
+  return normalizeCase(data);
+}
+
+export async function markDoctorReviewCaseSending({
+  caseId,
+  reviewerLineUserId,
+  reviewSourceId,
+  doctorReply = null,
+  finalReply
+}) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .update({
+      status: "sending",
+      reviewer_line_user_id: reviewerLineUserId,
+      review_source_id: reviewSourceId,
+      doctor_reply: doctorReply,
+      final_reply: finalReply,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", caseId)
+    .eq("status", "pending")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Doctor review case sending mark failed:", error);
+    return null;
+  }
+
+  return data ? normalizeCase(data) : null;
+}
+
+export async function markDoctorReviewCaseSent(caseId) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .update({
+      status: "sent",
+      sent_at: now,
+      updated_at: now
+    })
+    .eq("id", caseId)
+    .eq("status", "sending")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Doctor review case sent mark failed:", error);
+    return null;
+  }
+
+  return data ? normalizeCase(data) : null;
+}
+
+export async function markDoctorReviewCaseFailed(caseId, errorMessage) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .update({
+      status: "failed",
+      metadata: {
+        last_error: String(errorMessage).slice(0, 1000)
+      },
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", caseId)
+    .eq("status", "sending")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Doctor review case failed mark failed:", error);
+    return null;
+  }
+
+  return data ? normalizeCase(data) : null;
+}
+
+export async function closeDoctorReviewCase({ caseId, reviewerLineUserId, reviewSourceId }) {
+  if (!isDoctorReviewConfigured()) return null;
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from(DOCTOR_REVIEW_TABLE)
+    .update({
+      status: "closed",
+      reviewer_line_user_id: reviewerLineUserId,
+      review_source_id: reviewSourceId,
+      closed_at: now,
+      updated_at: now
+    })
+    .eq("id", caseId)
+    .eq("status", "pending")
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Doctor review case close failed:", error);
+    return null;
+  }
+
+  return data ? normalizeCase(data) : null;
+}
+
+export function buildDoctorReviewNotification(reviewCase) {
+  return [
+    `#${reviewCase.id} 待醫師覆核`,
+    "",
+    "病人問題：",
+    truncateText(reviewCase.userMessage, 900),
+    "",
+    "最近對話：",
+    reviewCase.conversationSummary || "無前文",
+    "",
+    "bot 草稿：",
+    truncateText(reviewCase.botDraft, 900),
+    "",
+    "可用指令：",
+    `核准 ${reviewCase.id}`,
+    `回覆 ${reviewCase.id} 內容...`,
+    `關閉 ${reviewCase.id}`
+  ].join("\n");
+}
+
+export function buildDoctorReviewWaitingReply() {
+  return [
+    "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。",
+    "如果有劇烈疼痛、發燒、尿不出來、大量出血或明顯惡化，請不要等線上回覆，先立即就醫。"
+  ].join("\n");
+}
+
+export function parseDoctorReviewCommand(message) {
+  const normalized = message.trim().replace(/\s+/g, " ");
+  let match = /^核准\s*#?(\d+)[。！!.\s]*$/i.exec(normalized);
+  if (match) return { action: "approve", caseId: Number(match[1]) };
+
+  match = /^關閉\s*#?(\d+)[。！!.\s]*$/i.exec(normalized);
+  if (match) return { action: "close", caseId: Number(match[1]) };
+
+  match = /^回覆\s*#?(\d+)\s+([\s\S]+)$/i.exec(message.trim());
+  if (match) {
+    return {
+      action: "reply",
+      caseId: Number(match[1]),
+      doctorReply: match[2].trim()
+    };
+  }
+
+  return null;
+}
+
+function summarizeConversation(conversationHistory) {
+  return conversationHistory
+    .map((message) => {
+      const roleLabel = message.role === "assistant" ? "bot" : "病人";
+      return `${roleLabel}：${truncateText(message.content ?? "", 180)}`;
+    })
+    .join("\n");
+}
+
+function normalizeCase(row) {
+  return {
+    id: row.id,
+    lineUserId: row.line_user_id,
+    userMessage: row.user_message,
+    conversationSummary: row.conversation_summary,
+    conversationSnapshot: row.conversation_snapshot ?? [],
+    botDraft: row.bot_draft,
+    finalReply: row.final_reply,
+    doctorReply: row.doctor_reply,
+    status: row.status,
+    reviewerLineUserId: row.reviewer_line_user_id,
+    reviewSourceId: row.review_source_id,
+    sentAt: row.sent_at,
+    closedAt: row.closed_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    metadata: row.metadata ?? {}
+  };
+}
+
+function truncateText(text, maxLength) {
+  const normalized = String(text ?? "").trim();
+  return normalized.length > maxLength ? `${normalized.slice(0, maxLength - 3)}...` : normalized;
+}
