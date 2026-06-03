@@ -1,6 +1,7 @@
 process.env.NODE_ENV = "test";
 
 const { buildReplyAndMatches } = await import("../src/index.js");
+const { buildDoctorReviewWaitingReply } = await import("../src/doctor-review.js");
 
 const cases = [
   {
@@ -50,6 +51,22 @@ for (const testCase of cases) {
     if (reply.includes(term)) {
       issues.push(`${testCase.name} includes forbidden term: ${term}\nReply: ${reply}`);
     }
+  }
+}
+
+const outsideReportQuestion = "我上次在別家醫院做檢查，報告可以拿來給醫師看嗎？需要先傳 LINE 給你們嗎？";
+const { reply: outsideReportDraft } = await buildReplyAndMatches(outsideReportQuestion, [], []);
+const outsideReportWaitingReply = buildDoctorReviewWaitingReply(outsideReportQuestion, { botDraft: outsideReportDraft });
+
+for (const term of ["別家醫院", "帶來門診", "不建議先在 LINE 傳個人醫療報告", "這題我先幫你轉請醫師或診所人員確認"]) {
+  if (!outsideReportWaitingReply.includes(term)) {
+    issues.push(`outside hospital report doctor-review waiting reply missing expected term: ${term}\nReply: ${outsideReportWaitingReply}`);
+  }
+}
+
+for (const term of ["能不能由家人代領", "代領人身分證", "授權", "關係資料"]) {
+  if (outsideReportWaitingReply.includes(term)) {
+    issues.push(`outside hospital report doctor-review waiting reply includes forbidden term: ${term}\nReply: ${outsideReportWaitingReply}`);
   }
 }
 

@@ -214,6 +214,14 @@ export function buildDoctorReviewWaitingReply(message = "", { botDraft = "" } = 
     ].join("\n");
   }
 
+  const outsideReportDraft = buildOutsideReportVisitDraftSummary(botDraft);
+  if (outsideReportDraft) {
+    return [
+      outsideReportDraft,
+      "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
   if (isReportReviewQuestion(message) && !hasSymptomCue(message)) {
     return "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。";
   }
@@ -281,6 +289,13 @@ function buildSafetyDraftSummary(botDraft) {
 function buildReportPickupDraftSummary(botDraft) {
   const normalized = String(botDraft || "").trim();
   if (!/報告涉及個人醫療資料|能不能由家人代領|代領人身分證|授權或關係資料/.test(normalized)) return null;
+  return normalized;
+}
+
+function buildOutsideReportVisitDraftSummary(botDraft) {
+  const normalized = String(botDraft || "").trim();
+  if (!/別家醫院|外院/.test(normalized)) return null;
+  if (!/帶來門診|不建議先在 LINE 傳個人醫療報告/.test(normalized)) return null;
   return normalized;
 }
 
