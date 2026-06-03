@@ -90,6 +90,28 @@ const cases = [
     forbidden: ["記住", "記著", "脈絡", "泌尿", "攝護腺", "結石", "急症", "標準回覆", "整理"]
   },
   {
+    name: "complaint message apologizes instead of building internal script",
+    reply: await buildTestReply("搞笑喔", [
+      { role: "assistant", content: "你如果要，我可以直接幫你整理成可直接回覆使用者的短版話術。" }
+    ]),
+    expected: ["抱歉", "重來", "直接說想問的內容"],
+    forbidden: ["整理成", "短版話術", "可直接回覆使用者", "診所可用", "標準回覆"]
+  },
+  {
+    name: "blunt complaint message does not continue prior weird topic",
+    reply: await buildTestReply("屁啦", [
+      { role: "assistant", content: "如果你是要測試回覆，我可以幫你把這種使用者亂回一句整理成診所可用的短答版本。" }
+    ]),
+    expected: ["抱歉", "重來", "直接說想問的內容"],
+    forbidden: ["使用者亂回", "整理成", "短答版本", "診所可用", "標準回覆"]
+  },
+  {
+    name: "private consultation room appointment gives direct booking path",
+    reply: await buildTestReply("沒有啦 想問如何預約私密診療室"),
+    expected: ["私密", "電話", "02-2511-9488", "線上掛號", "https://appointment.uromeeme.inncom.cloud/"],
+    forbidden: ["我也可以幫你整理", "LINE 可直接送出", "短回覆", "要先看當日安排", "通常要先看"]
+  },
+  {
     name: "doctor review urgent postoperative bleeding waiting reply is direct",
     reply: applyResponseStyle({
       reply: buildDoctorReviewWaitingReply("我術後一直流血，壓了也停不下來，現在很痛，怎麼辦？"),

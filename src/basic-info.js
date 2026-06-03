@@ -58,6 +58,14 @@ export function answerBasicInfoQuestion(message) {
     return `官網首頁是 ${HOME_URL}，線上掛號網址是 ${APPOINTMENT_URL}，兩個網址不同，請不要混用。`;
   }
 
+  if (asksPrivateConsultationAppointment(normalized)) {
+    return [
+      "可以，若是私密問題想安排看診，建議先電話 02-2511-9488 確認可預約時段，並告知希望安排較隱私的看診需求。",
+      `也可以先用線上掛號：${APPOINTMENT_URL}`,
+      "若是匿名篩檢或快速通關服務，建議先電話確認流程與當天名額。"
+    ].join("\n");
+  }
+
   if (asksSurgeryAppointment(normalized)) {
     return [
       `手術或快速通關預約可以先用線上掛號：${APPOINTMENT_URL}`,
@@ -102,6 +110,11 @@ function buildClinicAccessReply() {
 
 function asksWebsiteDistinction(message) {
   return /官網|官方網站|首頁/.test(message) && /線上掛號|掛號網址|appointment|預約連結/i.test(message);
+}
+
+function asksPrivateConsultationAppointment(message) {
+  return /私密診療室|私密診療|私密看診|隱私看診|隱密看診|私密問題|泌密會客室/.test(message)
+    && /預約|掛號|怎麼約|如何約|怎麼排|安排|諮詢|看診/.test(message);
 }
 
 function asksBasicInfoBundle(message) {

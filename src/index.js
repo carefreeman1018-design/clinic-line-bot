@@ -514,6 +514,10 @@ function buildSimpleReply(message) {
     return "好，我先等你。";
   }
 
+  if (/^(搞笑喔|搞笑哦|搞笑嗎|屁啦|亂回|你在亂回|不要亂回|回錯了|不是啦|蛤|蛤\?|蛤？|啥|什麼鬼)[。！!?.？\s]*$/i.test(normalized)) {
+    return "抱歉，剛剛回得不對。我重來，你直接說想問的內容就好。";
+  }
+
   if (/^(謝謝|感謝|thanks|thank you|thx)[。！!.\s]*$/i.test(normalized)) {
     return "不客氣，有需要我再幫你查。";
   }
