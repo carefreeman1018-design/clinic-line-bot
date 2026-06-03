@@ -322,3 +322,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 |---|---|---|---|---|
 | 3 | 重測 Round17-3：我看到之前 LINE VOOM 有寫 5/19 晚上李齊泰醫師停診，那天如果只是匿名篩檢或打疫苗還能去嗎？請不要貼連結，短一點。 | Says 5/19 is a past LINE VOOM notice; Li Chitai stopped clinic once; the notice said anonymous screening and vaccine service were normal; current/latest arrangement should be confirmed by latest notice or phone. | Pass | No "100%" wording and no current-service overpromise. |
 | 4 | 重測 Round17-4：明天晚上如果不是一般泌尿，我頻尿要改掛哪個時段？不要列一堆。 | Says Fri evening is surgery time and not a general clinic; for frequency/nocturia, use Fri morning Chen or Fri afternoon Luo general urology slots and confirm quota by phone. | Pass | No mistaken appointment-change template and no suggestion to use Fri evening. |
+
+## Round 18 - Check-in cutoff, companion privacy, lab draw admin, receipts, and wrong registration
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。 | Replied with Chen Wei-Jie fixed clinic schedule. | Fail | Missed check-in cutoff and add-on/waitlist question entirely. |
+| 2 | Round18-2：看診時可以請家人陪我進診間嗎？如果我不想讓家人知道病情，可以請他在外面等嗎？請講得自然一點。 | Says companion entry depends on patient consent, doctor/onsite arrangement and privacy needs; patient can ask for private explanation or have companion wait outside. | Pass | Natural and reassuring. |
+| 3 | Round18-3：我想只抽血驗睪固酮，不想先看醫師，可以直接抽嗎？需要空腹或早上去嗎？不要講太長。 | Says male menopause/testosterone concerns should be evaluated with doctors and mentions doctor backgrounds, but does not directly answer direct blood draw or fasting/morning logistics. | Partial | Safe but too doctor-choice oriented. |
+| 4 | Round18-4：上次看診的收據不見了，可以補印嗎？如果公司要統編，能不能後來再補上？請不要貼連結。 | Says company receipt title/tax ID/format should be confirmed by counter, but does not clearly answer lost receipt reprint. | Partial | Correct tax-ID boundary, missed reprint. |
+| 5 | Round18-5：我線上掛號好像選錯醫師或科別了，到現場可以請櫃台幫我改嗎？還是要取消重掛？請不要貼連結。 | Says LINE bot cannot guarantee cancellation/change; safest is phone confirmation or original online system cancellation/change. | Pass | No link; conservative enough. |
+
+### Round 18 Retest - Check-in, lab draw, and receipt fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。 | Says it cannot guarantee late arrival or add-on after 17:00; lunch clinic 13:30-17:00 is clinic time; check-in deadline and add-on/waitlist require immediate phone or 3F counter confirmation. | Pass | No fixed-doctor schedule drift. |
+| 3 | 重測 Round18-3：我想只抽血驗睪固酮，不想先看醫師，可以直接抽嗎？需要空腹或早上去嗎？不要講太長。 | Says direct blood draw without seeing a doctor cannot be guaranteed; testosterone/male hormone testing needs staff/doctor confirmation of test item, visit/order and draw arrangement; fasting, morning draw, fee and same-day availability require phone/onsite confirmation. | Pass | Directly answers lab logistics without doctor-specialty dump. |
+| 4 | 重測 Round18-4：上次看診的收據不見了，可以補印嗎？如果公司要統編，能不能後來再補上？請不要貼連結。 | Says receipt reprint, company title/tax ID, format and later changes require counter confirmation based on visit/checkout record and rules; best to state tax ID before checkout, and late changes/reprint are not guaranteed. | Pass | Covers both lost receipt and later tax-ID edit. |
