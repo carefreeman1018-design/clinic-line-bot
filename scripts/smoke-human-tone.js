@@ -580,6 +580,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接做", "今天可以直接做", "保證", "元", "費用目前知識庫沒有公開明確數字"]
   },
   {
+    name: "female possible pregnancy uti blocks leftover antibiotics without schedule detour",
+    reply: answerFemaleUrologyQuestion("我這兩天尿尿很痛，今天還有一點血尿，月經也晚了幾天不確定是不是懷孕。家裡有之前剩的抗生素，可以先吃嗎？"),
+    expected: ["尿痛", "尿紅/血尿", "月經晚", "不確定是否懷孕", "泌尿道感染", "孕期感染", "LINE 不能診斷", "不要自行吃家裡剩的抗生素", "醫師評估", "是否懷孕", "適合用藥", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行", "今天（週三）", "晚診", "陳嘉哲", "肛門直腸外科", "男性泌尿"]
+  },
+  {
     name: "female urology hematuria fever back pain urgent boundary",
     reply: answerFemaleUrologyQuestion("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？我有點緊張，先跟我說下一步。"),
     expected: ["尿痛", "血尿", "腰痠", "發燒", "LINE 不能診斷", "先不要坐美磁波鍛肌椅", "漏尿或療程問題先延後", "醫師評估", "適合用藥", "02-2511-9488", "急診", "立即就醫"],
