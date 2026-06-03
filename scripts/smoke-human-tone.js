@@ -139,6 +139,12 @@ const cases = [
     forbidden: ["可以直接打", "今天可以直接打", "費用是", "價格是", "元", "只要等", "等醫師回覆再說", "官網介紹：", "https://", "lin.ee"]
   },
   {
+    name: "doctor review flow keeps genital ulcer medication boundary before waiting reply",
+    reply: await buildDoctorReviewTestReply("我陰莖上這兩天冒出一排小水泡，今天破皮潰瘍又刺痛，朋友說可能皰疹或梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我可以先這樣處理，等醫師回覆再說嗎？"),
+    expected: ["陰莖水泡", "破皮潰瘍", "刺痛", "只靠文字不能診斷或開藥", "不建議自己先擦藥膏", "吃剩下的抗生素", "轉請醫師或診所人員確認", "確認後會再回覆你"],
+    forbidden: ["可以先擦", "可以先吃", "等醫師回覆再說", "自行買藥", "只要等", "官網介紹：", "https://", "lin.ee"]
+  },
+  {
     name: "possible pregnancy uti fever blocks muscle chair and leftover antibiotics",
     reply: await buildTestReply("我是女生，月經晚了快一週不確定有沒有懷孕，這兩天尿尿很痛、尿有點紅，今天腰痠痛又發燒，但我本來也有漏尿，想問能不能今天直接坐美磁波鍛肌椅？可以先吃家裡剩的抗生素嗎？我有點緊張，先跟我說下一步。"),
     expected: ["尿痛", "尿紅", "腰痠", "發燒", "月經晚", "不確定是否懷孕", "泌尿道感染", "孕期感染", "光靠訊息無法診斷", "先不要坐美磁波鍛肌椅", "不要自行吃家裡剩的抗生素", "漏尿或療程問題先延後", "醫師評估", "適合用藥", "02-2511-9488", "急診", "立即就醫"],
