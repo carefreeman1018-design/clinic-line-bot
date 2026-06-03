@@ -198,6 +198,14 @@ export function buildDoctorReviewWaitingReply(message = "", { botDraft = "" } = 
     ].join("\n");
   }
 
+  const safetyDraftSummary = buildSafetyDraftSummary(botDraft);
+  if (safetyDraftSummary) {
+    return [
+      safetyDraftSummary,
+      "這題我也先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
   if (isReportReviewQuestion(message) && !hasSymptomCue(message)) {
     return "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。";
   }
@@ -234,6 +242,40 @@ function buildUrgentDraftSummary(botDraft) {
 
 function hasActionableUrgentInstruction(text) {
   return /立即就醫|請.*急診|先.*急診|直接.*急診|現在.*急診|就急診/.test(text);
+}
+
+function buildSafetyDraftSummary(botDraft) {
+  const normalized = String(botDraft || "").trim();
+  if (!hasSelfCareSafetyInstruction(normalized)) return null;
+
+  const sentences = normalized
+    .split(/(?<=[。！？])/u)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  const selected = [];
+  for (const sentence of sentences) {
+    if (selected.length === 0 && isShortServiceContext(sentence)) {
+      selected.push(sentence);
+      continue;
+    }
+
+    if (hasSelfCareSafetyInstruction(sentence)) {
+      selected.push(sentence);
+    }
+
+    if (selected.length >= 3) break;
+  }
+
+  return selected.length > 0 ? selected.join("") : null;
+}
+
+function hasSelfCareSafetyInstruction(text) {
+  return /不要自行|不建議自行|不能.*自行|不要先自行|下一針不要|不要.*照打|不要.*調劑量|不要.*停藥|不建議使用朋友剩下|不能在線上告訴你最低劑量|不能在線上提供.*劑量/.test(text);
+}
+
+function isShortServiceContext(text) {
+  return text.length <= 30 && /診所有|門診/.test(text);
 }
 
 function hasUrgentBleedingCue(message) {
