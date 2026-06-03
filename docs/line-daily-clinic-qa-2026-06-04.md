@@ -110,3 +110,10 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 我上次抽血報告出來了嗎？可以 LINE 直接告訴我數值嗎？ | Says reports need doctor interpretation with history/symptoms; LINE cannot directly provide personal report values. | Pass | Privacy and report follow-up boundary works. |
 | 3 | 我爸爸行動不方便，可以坐輪椅上去嗎？電梯在哪裡？ | Says wheelchair access is possible, but elevator location/route is not clearly documented; suggests asking counter/staff and posts a long encoded website link. | Partial | Direction is conservative, but raw encoded URL is not helpful in LINE and should be replaced by phone/onsite assistance. |
 | 4 | 我藥吃完了但人不舒服，可以請家人直接去幫我拿一樣的藥嗎？ | Says doctor evaluation is needed; call or leave name/phone for convenient time; seek care promptly for pain, fever, abnormal urine or heavy bleeding. | Pass | No proxy refill guarantee. |
+
+## Round 6 Retest - Routine admin fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 看診完可以開診斷證明或收據嗎？要先跟誰說？ | Tells patient to tell counter or doctor during visit/before checkout; diagnosis certificate depends on physician evaluation; fee, format and reissue need counter/phone confirmation. | Pass | No stale doctor schedule context. |
+| 3 | 我爸爸行動不方便，可以坐輪椅上去嗎？電梯在哪裡？ | Says use the elevator to 3F from the building near Xingtiangong Exit 4; call 02-2511-9488 in advance for mobility needs; ask counter for route/upstairs help. | Pass | No raw URL in LINE reply. |
