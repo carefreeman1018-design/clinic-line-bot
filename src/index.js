@@ -348,7 +348,19 @@ async function isDoctorReviewReady() {
 }
 
 async function shouldCreateDoctorReviewCase(message) {
+  if (shouldBypassDoctorReviewForRoutineAdmin(message)) return false;
   return (await isDoctorReviewReady()) && shouldEscalate(message);
+}
+
+export function shouldBypassDoctorReviewForRoutineAdmin(message) {
+  const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
+  if (!asksTomorrowAfternoon) return false;
+
+  const asksClinicTimeOrDoctor = /門診時間|時間|哪位醫師|哪位醫生|醫師|醫生|誰看|一般泌尿|泌尿/.test(message);
+  const asksRoutineFlow = /同一個號|同一號|同一天|同日|順便|分開掛號|分開.*掛|掛一般泌尿|只是問|只問|不想做治療|請直接回答|跟前面.*無關|無關/.test(message);
+  const mentionsReportOrVaccine = /報告|抽血報告|檢查結果|檢驗結果|HPV\s*疫苗|HPV|九價|疫苗/i.test(message);
+
+  return asksClinicTimeOrDoctor && (asksRoutineFlow || mentionsReportOrVaccine);
 }
 
 async function isDoctorReviewCommandAuthorized(userId, sourceId) {
