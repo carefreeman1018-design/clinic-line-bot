@@ -54,6 +54,15 @@ const cases = [
     forbidden: ["記著", "脈絡", "整理", "門診", "早診", "午診", "晚診"]
   },
   {
+    name: "casual acknowledgement does not trigger topic memory",
+    reply: await buildTestReply("喔喔好", [
+      { role: "user", content: "我尿很痛，今天還有一點血尿，月經也晚了。" },
+      { role: "assistant", content: "尿痛合併血尿需要由醫師評估，尤其月經晚要先確認是否懷孕。" }
+    ]),
+    expected: ["好", "有需要"],
+    forbidden: ["記住", "記著", "脈絡", "泌尿", "攝護腺", "結石", "急症", "標準回覆", "整理"]
+  },
+  {
     name: "doctor review urgent postoperative bleeding waiting reply is direct",
     reply: applyResponseStyle({
       reply: buildDoctorReviewWaitingReply("我術後一直流血，壓了也停不下來，現在很痛，怎麼辦？"),

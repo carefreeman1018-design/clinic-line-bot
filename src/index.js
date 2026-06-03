@@ -516,7 +516,7 @@ function buildSimpleReply(message) {
     return "不客氣，有需要我再幫你查。";
   }
 
-  if (/^(ok|okay|好|好的|了解|收到|知道了|明白)[。！!.\s]*$/i.test(normalized)) {
+  if (/^(ok|okay|好|好的|了解|收到|知道了|明白|喔+好|喔+喔+好|哦+好|嗯+好|恩+好|嗯+嗯+|恩+恩+)[。！!.\s]*$/i.test(normalized)) {
     return "好，有需要再直接傳訊息給我。";
   }
 
