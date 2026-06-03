@@ -25,6 +25,7 @@ import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
 import { answerParaphimosisQuestion } from "./paraphimosis.js";
+import { answerPenileFractureQuestion } from "./penile-fracture.js";
 import { answerPriapismQuestion } from "./priapism.js";
 import { answerProstateQuestion } from "./prostate.js";
 import { answerReportResultQuestion } from "./report-results.js";
@@ -214,6 +215,9 @@ export async function buildReplyAndMatches(message, chunks, conversationHistory 
 
   const priapismReply = answerPriapismQuestion(message);
   if (priapismReply) return { reply: priapismReply, relevantChunks: [] };
+
+  const penileFractureReply = answerPenileFractureQuestion(message);
+  if (penileFractureReply) return { reply: penileFractureReply, relevantChunks: [] };
 
   const fournierGangreneReply = answerFournierGangreneQuestion(message);
   if (fournierGangreneReply) return { reply: fournierGangreneReply, relevantChunks: [] };
