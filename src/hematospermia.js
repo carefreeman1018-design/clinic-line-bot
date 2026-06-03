@@ -14,7 +14,7 @@ export function answerHematospermiaQuestion(message) {
     : repeatedNote;
 
   return [
-    "精液有血/血精不等於一定是癌症，但 LINE 也不能直接排除感染、發炎、攝護腺或其他原因。",
+    "精液有血/血精不等於一定是癌症，但只靠訊息也無法排除感染、發炎、攝護腺或其他原因。",
     nextStepNote,
     `若合併血尿、尿痛、發燒、會陰或睪丸疼痛、排尿困難、血量變多，請盡快就醫；若要安排門診或確認時段，可電話 ${PHONE}。`
   ].join("");

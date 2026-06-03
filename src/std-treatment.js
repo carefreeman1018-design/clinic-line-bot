@@ -31,7 +31,7 @@ export function answerStdTreatmentQuestion(message) {
 
   return [
     "性病篩檢與治療需要依症狀、病灶與檢查結果由醫師判斷。",
-    `LINE 不能線上診斷或開藥；建議預約門診，或電話 ${PHONE} 確認時段。`
+    `不能只靠線上訊息診斷或開藥；建議預約門診，或電話 ${PHONE} 確認時段。`
   ].join("");
 }
 
@@ -46,7 +46,7 @@ function isAnonymousScreeningPrivacyQuestion(message) {
 function answerAnonymousScreeningQuestion(_message) {
   return [
     "診所有提供匿名篩檢相關服務，會重視隱私；是否需填哪些資料、報告通知方式與多久可知道結果，需由現場護理人員依篩檢項目說明。",
-    "LINE 不能保證完全不需任何資料，也不適合在這裡查個人報告。",
+    "這裡不能先保證完全不需任何資料，也不適合直接查個人報告。",
     `下一步：先電話 ${PHONE} 確認匿名篩檢流程與可評估時段，或到診後直接向護理人員說明你擔心被家人知道。`
   ].join("");
 }
@@ -74,7 +74,7 @@ function answerWartQuestion(message) {
 
   return [
     "診所有提供菜花 HPV 相關篩檢與治療評估。",
-    "菜花需要看病灶與檢查結果，LINE 不能診斷，也不能直接回答藥膏要擦幾天；不要自行買藥、自己擦或使用伴侶剩下的藥膏。",
+    "菜花需要看病灶與檢查結果，光靠文字不能診斷，也不能直接回答藥膏要擦幾天；不要自行買藥、自己擦或使用伴侶剩下的藥膏。",
     partnerNote,
     `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
   ].join("");
@@ -119,7 +119,7 @@ function answerPepQuestion(message) {
   return [
     prepClarification,
     hivInfectionBoundary,
-    `${prefix}請今天盡快聯絡診所或到門診/急診由醫師評估；LINE 不能直接判斷或開藥，也不能保證今晚直接拿藥。`,
+    `${prefix}請今天盡快聯絡診所或到門診/急診由醫師評估；不能只靠訊息判斷或開藥，也不能保證今晚直接拿藥。`,
     anonymousScreening,
     `下一步：先電話 ${PHONE} 確認最快可評估時段；若診所無法即時安排，請儘速就醫。`
   ].join("");
@@ -141,7 +141,7 @@ function answerGenitalUlcerQuestion(message) {
     : "建議儘快門診評估。";
 
   return [
-    "陰莖水泡、破皮潰瘍或刺痛可能和皰疹、梅毒或其他感染有關，但 LINE 不能只靠文字診斷或開藥。",
+    "陰莖水泡、破皮潰瘍或刺痛可能和皰疹、梅毒或其他感染有關，但只靠文字不能診斷或開藥。",
     "不建議自己先擦藥膏或吃剩下的抗生素，可能影響判斷或延誤治療。",
     partnerNote,
     `${urgentNote}下一步：預約性病篩檢/治療門診，或先電話 ${PHONE} 確認最快可評估時段。`

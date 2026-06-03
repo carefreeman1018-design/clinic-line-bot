@@ -12,7 +12,7 @@ export function answerVasectomyQuestion(message, now = new Date()) {
 
   if (isPostVasectomyUrgentQuestion(message)) {
     return [
-      "結紮後第 2 天陰囊越來越腫、瘀青變大、傷口滲血，又很痛或發燒，不能只用 LINE 判斷。",
+      "結紮後第 2 天陰囊越來越腫、瘀青變大、傷口滲血，又很痛或發燒，光靠訊息無法判斷嚴重度。",
       "這可能需要排除術後血腫、感染或持續出血；不建議只冰敷、吃止痛藥等到明天。",
       `請現在先電話 ${PHONE} 聯絡診所確認最快處理方式；若聯絡不上、腫痛快速加劇、發燒或出血變多，請直接急診/立即就醫。`
     ].join("");

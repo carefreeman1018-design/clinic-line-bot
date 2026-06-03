@@ -35,9 +35,9 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
   if (asksPersonalSuitability(message) && hasCurrentWartConcern && !isSkinShinglesVaccineQuestion(message)) {
     parts.push(`伴侶也可一起評估是否需要檢查或篩檢；今天能不能打疫苗，請電話 ${PHONE} 由醫師或診所人員依病灶與個人狀況確認。`);
   } else if (asksPersonalSuitability(message) && hasHpvExposureConcern) {
-    parts.push("LINE 不能直接判斷是否適合施打；是否需要檢查或今天能不能直接打，仍需依個人狀況評估。");
+    parts.push("是否適合施打不能只靠訊息判斷；是否需要檢查或今天能不能直接打，仍需依個人狀況評估。");
   } else if (asksPersonalSuitability(message)) {
-    parts.push("LINE 不能直接判斷是否適合施打；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");
+    parts.push("是否適合施打不能只靠訊息判斷；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");
   } else if (!asksPriceOrStock(message)) {
     parts.push(`是否適合、庫存與費用，建議電話 ${PHONE} 或由診所人員確認。`);
   }

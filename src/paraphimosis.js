@@ -4,7 +4,7 @@ export function answerParaphimosisQuestion(message) {
   if (!isParaphimosisQuestion(message)) return null;
 
   return [
-    "你描述的包皮卡在龜頭後面、龜頭腫紫很痛或尿不太出來，可能有嵌頓性包莖/血流受阻風險，LINE 不能直接診斷。",
+    "你描述的包皮卡在龜頭後面、龜頭腫紫很痛或尿不太出來，可能有嵌頓性包莖/血流受阻風險，光靠訊息無法診斷。",
     "不建議自己硬推，也不建議等到明天再掛號；若腫紫、劇痛、尿不出來或越來越腫，請立即就醫或急診處理。",
     `診所是否能今天現場處理需由醫師評估與當天時段確認；現在請先電話 ${PHONE} 確認最快可處理方式。`
   ].join("");

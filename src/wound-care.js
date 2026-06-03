@@ -7,7 +7,7 @@ export function answerWoundCareQuestion(message) {
   if (hasPossibleWoundAbnormality(message)) {
     const surgeryDay = resolveSurgeryDay(message);
     return [
-      `${surgeryDay}水腫、出血或釘子旁黃黃的狀況，LINE 不能直接判斷是否為感染或流膿。`,
+      `${surgeryDay}水腫、出血或釘子旁黃黃的狀況，光靠訊息無法判斷是否為感染或流膿。`,
       "前 2 週傷口建議不要碰水；藥膏與換藥方式也不要自行加量或亂改。",
       `請先拍清楚照片傳給診所或直接回診/電話 ${PHONE} 確認。若疼痛加劇、明顯流膿、發燒、傷口裂開、排尿困難或大量出血，請盡快就醫。`
     ].join("");

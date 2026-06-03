@@ -335,7 +335,7 @@ function buildAssistanceFollowUpReply(userId, message) {
   if (!isAffirmative(message)) return null;
 
   pendingAssistanceByUser.delete(userId);
-  return "可以，請留下姓名、電話、方便聯絡或預約的時段，還有簡短狀況。若有劇烈疼痛、發燒、尿不出來或大量出血，請不要等 LINE 回覆，先立即就醫。";
+  return "可以，請留下姓名、電話、方便聯絡或預約的時段，還有簡短狀況。若有劇烈疼痛、發燒、尿不出來或大量出血，請不要等線上回覆，先立即就醫。";
 }
 
 function rememberAssistanceIfNeeded(userId, message) {

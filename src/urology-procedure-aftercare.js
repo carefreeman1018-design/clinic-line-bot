@@ -6,7 +6,7 @@ export function answerUrologyProcedureAftercareQuestion(message) {
   if (isCystoscopyAftercareQuestion(message)) {
     const caution = hasFeverChillsCue(message)
       ? "你提到發冷，這比單純血絲或短暫刺痛更需要警覺感染或發燒風險；不建議只多喝水觀察。"
-      : "膀胱鏡後短暫尿尿刺痛或少量血絲可能會出現，但 LINE 不能判斷是否仍屬正常範圍。";
+      : "膀胱鏡後短暫尿尿刺痛或少量血絲可能會出現，但仍要看嚴重度與變化才知道是否正常。";
 
     return [
       "膀胱鏡後尿尿刺痛、尿中血絲需要看症狀變化與嚴重度。",
@@ -24,7 +24,7 @@ export function answerUrologyProcedureAftercareQuestion(message) {
       : "";
 
     return [
-      "輸尿管鏡/碎石後出現血尿、腰痛或排尿明顯變少，不能只用 LINE 判斷是否正常。",
+      "輸尿管鏡/碎石後出現血尿、腰痛或排尿明顯變少，不能只靠訊息判斷是否正常。",
       retentionCaution,
       feverCaution,
       `不建議只喝很多水、先吃止痛藥或等到明天；請現在先回診聯絡或電話 ${PHONE} 確認能否即時協助，若幾乎尿不出來、腹部或腰痛加劇、發燒畏寒、血尿變多、有血塊或明顯不舒服，請急診/立即就醫。`

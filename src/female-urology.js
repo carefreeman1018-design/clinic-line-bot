@@ -46,7 +46,7 @@ function buildSafetyNotes(message) {
   const notes = [];
 
   if (/發燒|高燒|血尿|尿.*血|尿.*紅|腰痛|腰.*痛|腰.*痠|嚴重疼痛|劇痛|很痛/.test(message)) {
-    notes.push("若有發燒、血尿、腰痛或嚴重疼痛，需盡快就醫或先電話確認，不建議只等 LINE 回覆。");
+    notes.push("若有發燒、血尿、腰痛或嚴重疼痛，需盡快就醫或先電話確認，不建議只等線上回覆。");
   }
 
   if (/尿痛|尿尿.*痛|解尿.*痛|排尿.*痛|泌尿道感染|感染/.test(message)) {
@@ -90,7 +90,7 @@ function answerFemaleUtiUrgentQuestion(message) {
     : "";
 
   return [
-    `${symptoms.join("、")}，${pregnancyNote}LINE 不能診斷。`,
+    `${symptoms.join("、")}，${pregnancyNote}光靠訊息無法診斷。`,
     `${treatmentDelay}不要自行吃家裡剩的抗生素；現在要由醫師評估${medicationAssessment}。`,
     `請現在電話 ${PHONE} 確認最快可評估時段；若高燒、腰痛加劇、血尿變多、明顯不舒服、尿不出來或診所無法即時安排，請直接急診/立即就醫。`
   ].join("");

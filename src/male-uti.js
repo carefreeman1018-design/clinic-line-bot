@@ -13,7 +13,7 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
 
   if (hasUpperUrinaryEmergency(message)) {
     return [
-      "血尿合併右腰/側腹劇痛和發燒，需要警覺腎臟或輸尿管感染、結石合併感染等急症風險，LINE 不能判斷原因。",
+      "血尿合併右腰/側腹劇痛和發燒，需要警覺腎臟或輸尿管感染、結石合併感染等急症風險，光靠訊息無法判斷原因。",
       "不建議只吃止痛藥撐到明天，也不要自行吃抗生素。",
       `請現在直接急診/立即就醫；若要同步確認診所能否協助，可電話 ${PHONE}，但不要因此延誤處理。`
     ].join("");
@@ -22,14 +22,14 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (hasPainlessGrossHematuriaCancerConcern(message)) {
     return [
       "無痛肉眼血尿即使後來變正常，也不建議只觀察。",
-      "這不等於一定是癌症，但中高年齡或有抽菸時，膀胱或泌尿道腫瘤、結石、感染等原因都需要排除，LINE 不能診斷。",
+      "這不等於一定是癌症，但中高年齡或有抽菸時，膀胱或泌尿道腫瘤、結石、感染等原因都需要排除，光靠訊息無法診斷。",
       `請盡快掛泌尿科做尿液、影像與必要時膀胱鏡等評估；若血尿很多、有血塊、尿不出來或明顯不舒服，請急診/立即就醫。門診可電話 ${PHONE}。`
     ].join("");
   }
 
   const parts = [
     buildSymptomSummary(message),
-    "LINE 不能判斷是否感染、也不能建議先吃哪種抗生素；請不要自行服藥或停藥。"
+    "是否感染、該不該用抗生素，都需要醫師評估；請不要自行服藥或停藥。"
   ];
 
   const scheduleReply = buildRequestedScheduleReply(message, now);
