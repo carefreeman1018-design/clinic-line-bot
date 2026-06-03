@@ -5,6 +5,7 @@ const PHONE = "02-2511-9488";
 
 export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!isUtiQuestion(message)) return null;
+  if (isLikelyHematospermiaQuestion(message)) return null;
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
@@ -101,6 +102,10 @@ function hasPositiveUrinationPainCue(message) {
 function hasPositiveFeverCue(message) {
   if (/沒有發燒|沒發燒|無發燒|不發燒|沒有高燒|沒高燒|無高燒/.test(message)) return false;
   return /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
+}
+
+function isLikelyHematospermiaQuestion(message) {
+  return /血精|精液.*(血|紅|粉紅|咖啡色|褐色|茶色)|射精.*(血|紅|粉紅|咖啡色|褐色|茶色)|射出來.*(血|紅|粉紅|咖啡色|褐色|茶色)|精子.*(血|紅|粉紅|咖啡色|褐色|茶色)/.test(message);
 }
 
 function isChronicProstatitisLikeQuestion(message) {
