@@ -58,7 +58,7 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
 }
 
 function buildSymptomSummary(message) {
-  if (/發燒|高燒/.test(message)) {
+  if (hasPositiveFeverCue(message)) {
     return "尿痛合併發燒需要盡快由醫師評估。";
   }
 
@@ -70,7 +70,7 @@ function buildSymptomSummary(message) {
 }
 
 function isUtiQuestion(message) {
-  return /尿尿.*痛|尿痛|排尿.*痛|小便.*痛|尿道炎|膀胱炎|泌尿道感染|攝護腺炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
+  return hasPositiveUrinationPainCue(message) || /尿道炎|膀胱炎|泌尿道感染|攝護腺炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
 }
 
 function hasUrgentOrMedicationConcern(message) {
@@ -80,7 +80,7 @@ function hasUrgentOrMedicationConcern(message) {
 function hasUpperUrinaryEmergency(message) {
   const hasBloodUrine = /血尿|尿.*血|尿.*紅/.test(message);
   const hasFlankOrWaistPain = /腰.*痛|側腹.*痛|腰腹.*痛|右腰|左腰|腎絞痛|痛到|劇痛|很痛/.test(message);
-  const hasFever = /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
+  const hasFever = hasPositiveFeverCue(message);
 
   return hasBloodUrine && hasFlankOrWaistPain && hasFever;
 }
@@ -91,6 +91,16 @@ function hasPainlessGrossHematuriaCancerConcern(message) {
   const hasCancerOrSmokingRisk = /癌|腫瘤|抽菸|抽煙|菸|煙|5[0-9]\s*歲|6[0-9]\s*歲|7[0-9]\s*歲/.test(message);
 
   return hasGrossHematuria && hasPainlessCue && hasCancerOrSmokingRisk;
+}
+
+function hasPositiveUrinationPainCue(message) {
+  if (/尿尿不會痛|尿尿不痛|小便不會痛|小便不痛|排尿不會痛|排尿不痛|沒有尿痛|沒尿痛|無尿痛|尿尿沒有痛|尿尿沒痛/.test(message)) return false;
+  return /尿尿.*痛|尿痛|排尿.*痛|小便.*痛/.test(message);
+}
+
+function hasPositiveFeverCue(message) {
+  if (/沒有發燒|沒發燒|無發燒|不發燒|沒有高燒|沒高燒|無高燒/.test(message)) return false;
+  return /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
 }
 
 function isChronicProstatitisLikeQuestion(message) {

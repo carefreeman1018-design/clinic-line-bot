@@ -410,6 +410,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "不用看診", "可以放心"]
   },
   {
+    name: "brown semen negated fever and pain stays hematospermia route",
+    reply: await buildTestReply("我昨天射出來精液有點咖啡色，今天又有一點褐色，尿尿不會痛也沒發燒，但我嚇到睡不著。這會不會是癌症？需要急診嗎？"),
+    expected: ["精液有血", "血精", "不等於一定是癌症", "只靠訊息也無法排除", "感染", "發炎", "攝護腺", "沒有發燒", "明顯疼痛", "排尿困難", "通常不需要先急診", "泌尿科門診", "血尿", "尿痛", "發燒", "血量變多", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛合併發燒", "尿痛合併疑似血尿", "是否感染、該不該用抗生素", "請不要自行服藥", "就是癌症", "不是癌症", "立即急診", "不用看診", "可以放心"]
+  },
+  {
     name: "varicocele fertility report blocks direct surgery pricing",
     reply:
       answerMaleFertilityQuestion("我備孕一年都沒成功，精液報告活動力偏低，醫師說可能有精索靜脈曲張。你們可以直接手術嗎？費用大概多少？") ||

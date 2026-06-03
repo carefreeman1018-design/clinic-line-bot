@@ -21,5 +21,5 @@ export function answerHematospermiaQuestion(message) {
 }
 
 function isHematospermiaQuestion(message) {
-  return /血精|精液.*血|精液.*紅|射精.*血|射精.*紅|精子.*血|精子.*紅/.test(message);
+  return /血精|精液.*(血|紅|粉紅|咖啡色|褐色|茶色)|射精.*(血|紅|粉紅|咖啡色|褐色|茶色)|射出來.*(血|紅|粉紅|咖啡色|褐色|茶色)|精子.*(血|紅|粉紅|咖啡色|褐色|茶色)/.test(message);
 }
