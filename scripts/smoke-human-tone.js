@@ -508,6 +508,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛合併發燒", "可以先吃", "可以自行"]
   },
   {
+    name: "painless gross hematuria smoker answers cancer concern",
+    reply: answerMaleUtiUrgentQuestion("我 55 歲男生，有抽菸，今天尿尿突然整杯紅紅的但不會痛，後來又變正常。這樣可以先觀察嗎？會不會是癌症？", new Date("2026-06-03T09:50:00+08:00")),
+    expected: ["無痛肉眼血尿", "變正常", "不建議只觀察", "不等於一定是癌症", "抽菸", "膀胱", "泌尿道腫瘤", "結石", "感染", "需要排除", "LINE 不能診斷", "泌尿科", "尿液", "影像", "膀胱鏡", "血塊", "尿不出來", "急診", "立即就醫", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "不能判斷是否感染", "請不要自行服藥", "今天晚上", "晚診", "就是癌症", "不是癌症", "可以先觀察"]
+  },
+  {
     name: "stone urgent pain hematuria gives er boundary without links",
     reply: answerStoneQuestion("我右腰痛到冒冷汗，尿有點紅，懷疑是腎結石或輸尿管結石。你們可以處理嗎？今天要去門診還是急診？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["右腰痛到冒冷汗", "尿有點紅", "LINE 判斷", "腎結石", "輸尿管結石", "劇痛", "血尿", "優先急診", "02-2511-9488"],

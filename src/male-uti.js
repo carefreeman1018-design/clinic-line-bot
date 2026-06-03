@@ -19,6 +19,14 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
     ].join("");
   }
 
+  if (hasPainlessGrossHematuriaCancerConcern(message)) {
+    return [
+      "無痛肉眼血尿即使後來變正常，也不建議只觀察。",
+      "這不等於一定是癌症，但中高年齡或有抽菸時，膀胱或泌尿道腫瘤、結石、感染等原因都需要排除，LINE 不能診斷。",
+      `請盡快掛泌尿科做尿液、影像與必要時膀胱鏡等評估；若血尿很多、有血塊、尿不出來或明顯不舒服，請急診/立即就醫。門診可電話 ${PHONE}。`
+    ].join("");
+  }
+
   const parts = [
     buildSymptomSummary(message),
     "LINE 不能判斷是否感染、也不能建議先吃哪種抗生素；請不要自行服藥或停藥。"
@@ -62,6 +70,14 @@ function hasUpperUrinaryEmergency(message) {
   const hasFever = /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
 
   return hasBloodUrine && hasFlankOrWaistPain && hasFever;
+}
+
+function hasPainlessGrossHematuriaCancerConcern(message) {
+  const hasGrossHematuria = /血尿|尿.*血|尿.*紅|尿裡.*紅|尿色.*紅|整杯.*紅|紅紅的/.test(message);
+  const hasPainlessCue = /不會痛|不痛|無痛/.test(message);
+  const hasCancerOrSmokingRisk = /癌|腫瘤|抽菸|抽煙|菸|煙|5[0-9]\s*歲|6[0-9]\s*歲|7[0-9]\s*歲/.test(message);
+
+  return hasGrossHematuria && hasPainlessCue && hasCancerOrSmokingRisk;
 }
 
 function isScheduleOnlyUrologyQuestion(message) {
