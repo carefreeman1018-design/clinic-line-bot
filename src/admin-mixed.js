@@ -35,6 +35,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksPostVisitBloodUrineTestFlow(normalized)) {
+    return [
+      "看完診若醫師開立抽血或驗尿，是否當天在診所做、是否要另外約時間，要依醫師開立項目與現場流程安排。",
+      "是否需要空腹、採檢時間、費用與報告時間，也請看完診後依櫃台/護理人員說明確認。",
+      "不能先保證當天一定完成。"
+    ].join("\n");
+  }
+
   if (asksTestosteroneBloodDrawOnly(normalized)) {
     return [
       "不能先保證不看醫師就能直接抽血。",
@@ -173,9 +181,17 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksOutsideHospitalReportForVisit(normalized)) {
     return [
-      "可以，別家醫院或外院做的紙本、影像或檢查報告，可以帶來門診給醫師評估。",
-      "不建議先在 LINE 傳個人醫療報告讓我們線上判讀；報告需要醫師搭配病史、症狀與現場評估一起看。",
-      `若不確定要帶哪些資料，可先電話 ${PHONE} 或到櫃台確認；通常建議帶完整紙本報告、影像光碟/截圖、用藥資料與健保卡。`
+      "可以，別家診所或外院的藥袋、紙本/影像檢查報告，可以帶來門診給醫師參考。",
+      "不建議先在 LINE 傳個人資料、藥袋或醫療報告讓我們線上判讀。",
+      `若要確認是否需要補傳或要帶哪些資料，可先電話 ${PHONE} 或到櫃台確認；通常建議帶完整報告、影像光碟/截圖、藥袋與健保卡。`
+    ].join("\n");
+  }
+
+  if (asksRegistrationPatientSwitch(normalized)) {
+    return [
+      "同一筆掛號能不能改成不同就診者，不能在 LINE 先保證。",
+      `這會涉及身分、健保與掛號資料核對；請帶本人證件到 3 樓櫃台，或先電話 ${PHONE} 請櫃台確認。`,
+      "現場可能需要取消原掛號後重掛，或重新掛號，實際以櫃台處理為準。"
     ].join("\n");
   }
 
@@ -343,6 +359,22 @@ function asksFirstVisitHealthCardReadFailureSelfPay(message) {
   const asksSelfPayOrReimbursement = /自費|補健保|退費|補件|補卡|健保退費|補.*退費|能先|可以先|之後/.test(message);
 
   return mentionsFirstVisit && mentionsHealthCardReadFailure && asksSelfPayOrReimbursement;
+}
+
+function asksPostVisitBloodUrineTestFlow(message) {
+  const hasAfterVisitOrDoctorOrder = /看完診|看完|看診後|醫師說|醫生說|醫師開|醫生開|開立/.test(message);
+  const hasBloodOrUrineTest = /抽血|採血|驗血|血液檢查|驗尿|尿液檢查|尿檢|尿液檢驗/.test(message);
+  const asksTimingOrFlow = /當天|診所做|另外約|另約|約時間|流程|空腹|採檢時間|費用|報告時間|多久/.test(message);
+
+  return hasAfterVisitOrDoctorOrder && hasBloodOrUrineTest && asksTimingOrFlow;
+}
+
+function asksRegistrationPatientSwitch(message) {
+  const hasRegistrationCue = /掛號|預約|線上掛號|網路掛號|同一筆|同一個號|同一號/.test(message);
+  const hasPatientSwitchCue = /幫爸爸|幫爸|幫媽媽|幫媽|幫家人|爸爸掛號|媽媽掛號|換成我要看|改成我要看|換人看|改名字|改姓名|改成.*名字|不同就診者/.test(message);
+  const asksCancelOrRewrite = /取消重掛|取消.*重掛|重新掛號|重掛|改名字|改姓名|同一筆|一定要取消|能不能改|可以.*改/.test(message);
+
+  return hasRegistrationCue && hasPatientSwitchCue && asksCancelOrRewrite;
 }
 
 function asksOnlineRegistrationChange(message) {
