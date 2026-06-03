@@ -223,6 +223,9 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
   if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
 
+  const generalUrologyDoctorChoiceReply = buildGeneralUrologyDoctorChoiceReply(message, now);
+  if (generalUrologyDoctorChoiceReply) return generalUrologyDoctorChoiceReply;
+
   const combinedDoctorScheduleReply = buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now);
   if (combinedDoctorScheduleReply) return combinedDoctorScheduleReply;
 
@@ -247,6 +250,29 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   if (/主要|大概|簡單|重點/.test(message)) return buildConciseSpecialtyReply(resolvedDoctor);
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildGeneralUrologyDoctorChoiceReply(message, now) {
+  const hasGeneralUrologySymptom = /頻尿|夜尿|尿急|排尿|泌尿|一般泌尿/.test(message);
+  const hasDoctorChoiceCue = /院長|醫師|醫生|掛他|掛誰|掛哪|推薦/.test(message);
+  const hasNonExclusiveCue = /一定要|只能|唯一|不要推薦|不一定|非要/.test(message);
+  if (!hasGeneralUrologySymptom || !hasDoctorChoiceCue || !hasNonExclusiveCue) return null;
+
+  const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
+  const dayLabel = buildDayLabel(message, day);
+  const periods = resolveRequestedPeriods(message);
+  const periodText = periods.length > 0
+    ? periods.map((period) => `${period}（${PERIOD_TIMES[period]}）`).join("、")
+    : "一般門診時段";
+  const scheduleNote = periods.includes("晚診") && day === "週四"
+    ? "今天晚診若固定門診是院長陳偉傑醫師可先參考"
+    : `${dayLabel}${periodText}可先參考固定門診`;
+
+  return [
+    "一般頻尿或泌尿問題不一定只能掛院長，也不需要只推薦唯一一位醫師。",
+    `${scheduleNote}；也可以依一般門診時段與名額安排。`,
+    "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
+  ].join("");
 }
 
 function buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now) {
@@ -397,6 +423,13 @@ function resolveDoctor(message) {
 
 function findLastMentionedDoctor(conversationHistory, options = {}) {
   const { excludeDoctor = null } = options;
+  const userMessages = conversationHistory.filter((historyMessage) => historyMessage.role === "user");
+  for (const historyMessage of [...userMessages].reverse()) {
+    const content = historyMessage.content ?? "";
+    const doctor = resolveDoctor(content);
+    if (doctor && doctor !== excludeDoctor) return doctor;
+  }
+
   for (const historyMessage of [...conversationHistory].reverse()) {
     const content = historyMessage.content ?? "";
     const doctor = resolveDoctor(content);

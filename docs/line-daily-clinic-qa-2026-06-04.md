@@ -64,3 +64,14 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 4 | 攝護腺肥大你們有看嗎？我明天下午可以掛嗎？要帶什麼？ | Says clinic evaluates prostate/voiding issues; tomorrow Fri afternoon is Luo clinic; bring health card, ID, recent reports/PSA/ultrasound/medication data if available. | Pass | Service, schedule, and prep all included. |
 | 5 | 匿名篩檢可以刷卡嗎？要帶健保卡或身分證嗎？請不要保證。 | Says anonymous screening flow can be asked onsite; payment/card and document needs depend on item and onsite process; does not guarantee. | Pass | Conservative admin answer. |
 | 6 | 我現在在診所外面，想問 HPV 疫苗、匿名篩檢和掛號，下一步先做什麼？ | Tells patient to go to counter/nursing station and say they want HPV vaccine, anonymous screening, and registration; quota, stock, flow and fees need confirmation. | Pass | Immediate next step works. |
+
+## Round 4 - Natural phrasing and multi-turn context
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 先換個問題。我朋友說院長比較會看，我只是頻尿，今天晚上一定要掛他嗎？不要推薦唯一醫師。 | Replied with generic frequency/urinary urgency evaluation and red-flag guidance. | Partial | Avoided one-doctor recommendation, but missed tonight/director context and whether Chen is required. |
+| 2 | 那羅醫師明天呢？ | Listed full Friday fixed schedule. | Partial | Shows Luo has Friday afternoon clinic, but does not directly answer "Luo tomorrow" in a concise follow-up style. |
+| 3 | 他主要看什麼？ | Answered Chen Wei-Jie specialties. | Fail | Pronoun should resolve to Luo after #2, but landed on Chen. |
+| 4 | 我在外面，不想看長文，想問匿名篩檢跟 HPV，要先抽號嗎？ | Replied with generic anonymous screening service, flow/fee confirmation, and phone. | Fail | Missed onsite short next step and queue/registration wording. |
+| 5 | 那可以直接刷卡嗎？ | Says payment method is not clearly public, cannot guarantee card, confirm onsite or by phone. | Pass | Follow-up payment context is conservative enough. |
+| 6 | 如果我不要貼連結，只想知道明天下午誰看診？ | Says tomorrow Fri afternoon is Luo clinic and no URL, with confirmation reminder. | Pass | Short schedule answer; no link pasted. |

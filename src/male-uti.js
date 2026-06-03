@@ -6,6 +6,15 @@ const PHONE = "02-2511-9488";
 export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!isUtiQuestion(message)) return null;
   if (isLikelyHematospermiaQuestion(message)) return null;
+  if (isNonExclusiveDoctorChoiceQuestion(message)) {
+    return [
+      "一般頻尿或泌尿問題不一定只能掛院長，也不需要只推薦唯一一位醫師。",
+      "今天晚診若固定門診是院長陳偉傑醫師可先參考；也可以依一般門診時段與名額安排。",
+      `到診前請電話 ${PHONE} 確認名額與是否有臨時異動。`,
+      "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
+    ].join("");
+  }
+  if (asksDoctorChoiceForGeneralUrology(message)) return null;
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
@@ -108,6 +117,12 @@ function isLikelyHematospermiaQuestion(message) {
   return /血精|精液.*(血|紅|粉紅|咖啡色|褐色|茶色)|射精.*(血|紅|粉紅|咖啡色|褐色|茶色)|射出來.*(血|紅|粉紅|咖啡色|褐色|茶色)|精子.*(血|紅|粉紅|咖啡色|褐色|茶色)/.test(message);
 }
 
+function asksDoctorChoiceForGeneralUrology(message) {
+  return /院長|醫師|醫生|掛他|掛誰|推薦唯一|不要推薦/.test(message)
+    && /頻尿|夜尿|泌尿|一般泌尿|尿急|排尿/.test(message)
+    && /今天|今晚|晚上|晚診|門診|看診|掛/.test(message);
+}
+
 function isChronicProstatitisLikeQuestion(message) {
   const hasPelvicOrProstateCue = /攝護腺炎|會陰|骨盆|射精.*痛|射精.*酸|陰囊.*悶|睪丸.*悶/.test(message);
   const hasChronicOrMedicationCue = /幾週|幾個禮拜|一陣子|慢性|悶痛|酸痛|抗生素|癌|急診|尿不太順/.test(message);
@@ -120,6 +135,13 @@ function isScheduleOnlyUrologyQuestion(message) {
     hasExplicitScheduleRequest(message) &&
     !/尿痛|尿尿.*痛|小便.*痛|排尿.*痛|發燒|高燒|血尿|尿.*血|尿.*紅|尿不出|排不出尿|抗生素|吃藥|藥|很痛|劇痛|痛到/.test(message)
   );
+}
+
+function isNonExclusiveDoctorChoiceQuestion(message) {
+  const hasUrologySymptom = /頻尿|夜尿|尿急|排尿|小便|尿尿/.test(message);
+  const hasDoctorChoiceCue = /院長|醫師|醫生|哪位|誰|掛他|掛哪|推薦/.test(message);
+  const hasNonExclusiveCue = /一定要|只能|唯一|不要推薦唯一|不一定|非要/.test(message);
+  return hasUrologySymptom && hasDoctorChoiceCue && hasNonExclusiveCue;
 }
 
 function cleanScheduleReply(reply, message) {

@@ -28,8 +28,8 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksOnsiteNextStepForVaccineScreeningRegistration(normalized)) {
     return [
-      "你已在診所外，先進去到櫃台或護理站，直接說：想問 HPV 疫苗、匿名篩檢，並需要掛號。",
-      "請人員先確認今天名額、疫苗庫存、篩檢流程與費用；不能先保證今天三項都能完成。"
+      "如果你已經在外面，先上 3 樓到櫃台或護理站說：想問匿名篩檢跟 HPV。",
+      "要不要抽號或掛號、今天名額、疫苗庫存、篩檢流程和費用，現場人員會幫你確認；不能先保證今天都能做。"
     ].join("\n");
   }
 
@@ -54,8 +54,8 @@ function asksAnonymousScreeningPaymentOrId(message) {
 }
 
 function asksOnsiteNextStepForVaccineScreeningRegistration(message) {
-  return /診所外面|診所門口|已經到|在現場|到現場|我現在在診所/.test(message)
-    && /HPV\s*疫苗|九價|疫苗/i.test(message)
+  return /診所外面|診所門口|已經到|在現場|到現場|我現在在診所|人在外面|我在外面|在外面|外面/.test(message)
+    && /HPV\s*疫苗|HPV|九價|疫苗/i.test(message)
     && /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
-    && /掛號|下一步|先做什麼|怎麼做|怎麼辦/.test(message);
+    && /掛號|抽號|號碼牌|下一步|先做什麼|怎麼做|怎麼辦|先去哪|先問誰|不想看長文|長文|簡短/.test(message);
 }

@@ -104,6 +104,15 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。`, walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION, routeNote]);
   }
 
+  if (!period && doctor) {
+    return compactLines([
+      ...contextNotes,
+      buildDoctorDayAvailabilityReply(doctor, day, dayLabel),
+      `名額與臨時異動請電話 02-2511-9488 確認。`,
+      routeNote
+    ]);
+  }
+
   if (!period) {
     if (asksForUrologyCare(message) && asksForAlternativeClinicTime(message)) {
       return compactLines([
@@ -403,6 +412,18 @@ function buildPeriodLine(day, period) {
   if (clinic === "手術") return `${period}（${time}）手術時段，不是一般門診`;
   if (clinic === "休診") return `${period}（${time}）休診`;
   return `${period}（${time}）${clinic}`;
+}
+
+function buildDoctorDayAvailabilityReply(doctor, day, dayLabel) {
+  const matchingPeriods = ["早診", "午診", "晚診"]
+    .filter((period) => (FIXED_SCHEDULE[day]?.[period] ?? "").includes(doctor))
+    .map((period) => `${period} ${periodToTime(period)}`);
+
+  if (matchingPeriods.length === 0) {
+    return `${doctor}${dayLabel}固定門診沒有列到一般門診。`;
+  }
+
+  return `${doctor}${dayLabel}${matchingPeriods.join("、")} 有診。`;
 }
 
 function asksForUrologyCare(message) {
