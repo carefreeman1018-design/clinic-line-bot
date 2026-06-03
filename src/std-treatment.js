@@ -69,12 +69,24 @@ function isAnonymousScreeningPrivacyQuestion(message) {
   return /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message) && /家人|知道|真名|姓名|身分|身份|報告|多久|隱私|保密/.test(message);
 }
 
-function answerAnonymousScreeningQuestion(_message) {
+function answerAnonymousScreeningQuestion(message) {
+  if (hasAnonymousScreeningAbnormalResultConcern(message)) {
+    return [
+      "篩檢報告出現陽性或不確定結果時，先不要只靠訊息把自己判定為確診，也不適合在線上解讀個人報告。",
+      "請盡快電話聯絡診所或回診，讓醫師或護理人員確認檢驗項目、數值與是否需要複檢或治療安排。",
+      "匿名篩檢會重視隱私；但報告通知、身份資料與後續流程，仍需由現場護理人員依篩檢項目說明。"
+    ].join("");
+  }
+
   return [
     "診所有提供匿名篩檢相關服務，會重視隱私；是否需填哪些資料、報告通知方式與多久可知道結果，需由現場護理人員依篩檢項目說明。",
     "這裡不能先保證完全不需任何資料，也不適合直接查個人報告。",
     `下一步：先電話 ${PHONE} 確認匿名篩檢流程與可評估時段，或到診後直接向護理人員說明你擔心被家人知道。`
   ].join("");
+}
+
+function hasAnonymousScreeningAbnormalResultConcern(message) {
+  return /報告|結果|HIV|愛滋|梅毒|淋病|披衣菌/i.test(message) && /陽性|不確定|確診|看報告|解讀/.test(message);
 }
 
 function isPrepQuestion(message) {
