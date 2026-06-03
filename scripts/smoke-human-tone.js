@@ -4,6 +4,7 @@ import { answerLineVoomAnnouncementQuestion } from "../src/announcements.js";
 import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerFournierGangreneQuestion } from "../src/fournier-gangrene.js";
+import { answerHematospermiaQuestion } from "../src/hematospermia.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerParaphimosisQuestion } from "../src/paraphimosis.js";
@@ -365,6 +366,14 @@ const cases = [
     reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？我在外面不方便看長文，先講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "切片", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
+  },
+  {
+    name: "hematospermia cancer worry is not routed as report review",
+    reply:
+      answerHematospermiaQuestion("我這兩次射精都有一點紅紅的，好像精液有血，尿尿沒有痛。這是不是癌症？可以先觀察嗎？") ||
+      answerReportResultQuestion("我這兩次射精都有一點紅紅的，好像精液有血，尿尿沒有痛。這是不是癌症？可以先觀察嗎？"),
+    expected: ["精液有血", "血精", "不等於一定是癌症", "LINE", "不能直接排除", "感染", "發炎", "攝護腺", "不只一次", "泌尿科門診", "血尿", "尿痛", "發燒", "疼痛", "排尿困難", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "不是癌症", "就是癌症", "不用看診", "可以放心"]
   },
   {
     name: "psa live-style report review does not mention bph procedures",
