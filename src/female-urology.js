@@ -61,6 +61,7 @@ function asksUrologyOrGynecologyRoute(message) {
 function isFemaleUrologyFeeFollowUp(message, conversationHistory) {
   if (!/費用|價格|價錢|多少錢|報價|範圍|一次|療程/.test(message)) return false;
   if (hasExplicitNonFemaleUrologyTopic(message)) return false;
+  if (hasExplicitScheduleIntent(message)) return false;
 
   const recentText = [...conversationHistory]
     .slice(-8)
@@ -72,6 +73,10 @@ function isFemaleUrologyFeeFollowUp(message, conversationHistory) {
 
 function hasExplicitNonFemaleUrologyTopic(message) {
   return /HPV|九價|疫苗|匿名|篩檢|菜花|性病|結紮|包皮|攝護腺|前列腺|結石|痔瘡|肛門|猛健樂|點滴/.test(message);
+}
+
+function hasExplicitScheduleIntent(message) {
+  return /排班|固定門診|時段|手術時段|一般泌尿|週[一二三四五六日天].*(早上|上午|下午|晚上|早診|午診|晚診|夜診)|周[一二三四五六日天].*(早上|上午|下午|晚上|早診|午診|晚診|夜診)|星期[一二三四五六日天].*(早上|上午|下午|晚上|早診|午診|晚診|夜診)|禮拜[一二三四五六日天].*(早上|上午|下午|晚上|早診|午診|晚診|夜診)|早診|午診|晚診|夜診/.test(message);
 }
 
 function buildSafetyNotes(message) {
