@@ -288,3 +288,20 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 1 | 重測 Round15-1：我爸坐輪椅，我可以先在門口讓他下車再去停車嗎？電梯入口好找嗎？不要保證。 | Says door drop-off cannot be guaranteed and depends on onsite traffic and building entrance; call first if family needs entrance/counter help; the building has an elevator to 3F and phone confirmation is available if entrance/elevator location is unclear. | Pass | Directly handles drop-off without overpromising. |
 | 3 | 重測 Round15-3：我看泌尿問題可以指定男醫師嗎？如果當天只有別的醫師，可以先問櫃台再決定嗎？短一點。 | Says the user can state a designated-doctor or male-doctor preference; whether the specific doctor is available, whether change/waiting is possible, and quota must be confirmed by schedule/counter; if only another doctor is present, ask counter before deciding. | Pass | No doctor-list drift. |
 | 5 | 重測 Round15-5：公司報帳要收據抬頭或統編，可以看完才請櫃台開嗎？還是掛號時要先說？ | Says company receipt title/tax ID/format must be confirmed by counter; best to say before registration or checkout to avoid format-change issues; asking later by counter or phone is possible but not guaranteed. | Pass | No diagnosis-certificate pollution. |
+
+## Round 16 - Schedule follow-up, multi-service admin, records, and onsite waitlist
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round16-1：週六我只有下午或晚上有空，一般泌尿還能現場掛嗎？如果早上才有一般門診也請直接說。不要貼連結。 | Says Sat morning has Li Chitai clinic, Sat afternoon is surgery time and not general clinic, Sat evening is closed; onsite registration can try but cannot be guaranteed. | Pass | Correctly separates Sat periods. |
+| 2 | Round16-2：那週一晚上呢？一樣是一般泌尿嗎，誰看？請短一點。 | Says Mon evening is Luo Shixiu clinic, but does not explicitly say it is general urology. | Partial | Useful but missed the direct yes/no for "一般泌尿嗎". |
+| 3 | Round16-3：我同一天想問 HPV 疫苗、皮蛇疫苗跟匿名篩檢，可以只先問流程和費用，不一定做嗎？講重點。 | Says the user can ask counter or call about HPV vaccine and anonymous screening process/fee; not necessarily same day; misses shingles vaccine. | Partial | Mixed service branch dropped one requested item. |
+| 4 | Round16-4：我第一次看診，外院報告、影像光碟、正在吃的藥都要帶嗎？可以先傳 LINE 給你們看嗎？ | Says outside reports, image discs/screenshots and medication information can be brought; do not send personal reports on LINE for online interpretation; bring complete report/image/medication data and health card. | Pass | Slightly long but clear and safe. |
+| 5 | Round16-5：我人在門口，現場掛號如果滿了，可以候補或等加號嗎？我不方便看長文，直接說下一步。 | Says ask counter whether waitlist/add-on is available, but quota depends on onsite situation; since at the door, ask counter directly or call. | Pass | Short and actionable. |
+
+### Round 16 Retest - Schedule and mixed service fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 2 | 重測 Round16-2：那週一晚上呢？一樣是一般泌尿嗎，誰看？請短一點。 | Says Mon evening is general urology clinic, Luo Shixiu, 18:00-20:30, with temporary changes/quota by phone or onsite confirmation. | Pass | Directly answers the general-urology follow-up. |
+| 3 | 重測 Round16-3：我同一天想問 HPV 疫苗、皮蛇疫苗跟匿名篩檢，可以只先問流程和費用，不一定做嗎？講重點。 | Says the user can ask counter or call about HPV vaccine, shingles vaccine and anonymous screening process/fee; not necessarily same day; same-day feasibility, vaccine stock, evaluation and screening flow depend on clinic/doctor/counter confirmation, with no guaranteed amount or same-day service. | Pass | Keeps all three requested items. |
