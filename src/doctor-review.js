@@ -271,7 +271,7 @@ function buildSafetyDraftSummary(botDraft) {
 }
 
 function hasSelfCareSafetyInstruction(text) {
-  return /不要自行|不建議自行|不能.*自行|不要先自行|下一針不要|不要.*照打|不要.*調劑量|不要.*停藥|不建議使用朋友剩下|不能在線上告訴你最低劑量|不能在線上提供.*劑量|是否適合.*不能只靠訊息判斷|不能用來治療|不能取代檢查|不是保證/.test(text);
+  return /不要自行|不建議自行|不能.*自行|不要先自行|下一針不要|不要.*照打|不要.*調劑量|不要.*停藥|不建議使用朋友剩下|不能在線上告訴你最低劑量|不能在線上提供.*劑量|是否適合.*不能只靠訊息判斷|不能用來治療|不能取代檢查|不是保證|不等於一定是.*癌|PSA.*不能只靠訊息判斷|檢查報告需要醫師/.test(text);
 }
 
 function isShortServiceContext(text) {

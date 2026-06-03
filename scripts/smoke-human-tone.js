@@ -59,7 +59,7 @@ const cases = [
   {
     name: "doctor review flow keeps simple report review waiting reply",
     reply: await buildDoctorReviewTestReply("我健檢報告 PSA 6.8 偏高，超音波也說攝護腺比較大。可以幫我看是不是癌症、要不要切片嗎？我先傳文字問就好。"),
-    expected: ["轉請醫師或診所人員確認", "確認後會再回覆你"],
+    expected: ["PSA", "不等於一定是攝護腺癌", "不能只靠訊息判斷", "檢查報告", "醫師", "轉請醫師或診所人員確認", "確認後會再回覆你"],
     forbidden: ["劇烈疼痛", "發燒", "尿不出來", "大量出血", "明顯惡化", "立即就醫", "急診", "水蒸氣", "Urolift", "可以不用切片", "就是癌症", "不是癌症"]
   },
   {
