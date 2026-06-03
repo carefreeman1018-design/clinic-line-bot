@@ -251,3 +251,22 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 1b | 重測三 Round13-1：我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。 | Says Fri evening is surgery time, not general clinic; lists Fri morning Chen and Fri afternoon Luo general clinic; says fee/payment can be asked by phone or counter, but actual fee depends on item/evaluation/flow and LINE cannot guarantee price or card payment. | Pass | Retested with the prior female-urology history still present. |
 | 2 | 重測 Round13-2：那如果我改掛週五下午，羅醫師可以看一般泌尿嗎？還是一定要院長？請短一點。 | Says general urology/urinary issues do not necessarily require the director; Fri afternoon Luo clinic can be referenced. | Pass | Re-established Luo context for the pronoun retest. |
 | 5 | 重測 Round13-5：他主要專長是什麼？如果只是頻尿，我掛他可以嗎？不要列太多。 | Says Luo Shi-Xiu mainly sees general urology/urinary-related issues; public data includes male/female voiding disorders; frequency can first book general urology assessment; red flags should seek care quickly. | Pass | No longer resolves "he" to Chen/director. |
+
+## Round 14 - First-visit admin, cancellation, mixed service fees, access, and documents
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round14-1：我第一次去，已經線上掛號，但健保卡忘在家，只有身分證，可以先報到看診嗎？講重點。 | Replied with female urology/leakage and magnetic pelvic-floor service fee guidance. | Fail | Prior context/service routing swallowed a first-visit registration and health-card admin question. |
+| 2 | Round14-2：我臨時不能去，線上掛號要取消嗎？可以直接在 LINE 跟你說取消，還是要打電話？不要貼連結。 | Replied with clinic phone plus the online appointment URL. | Fail | Missed cancellation/change flow and violated the no-link request. |
+| 3 | Round14-3：我想同一天問 HPV 疫苗跟匿名篩檢，可以先到櫃台問流程跟費用，不一定當天做嗎？不要保證，短一點。 | Gave a generic fee/payment counter answer. | Partial | Correctly avoided guarantees, but dropped the HPV vaccine and anonymous screening service names. |
+| 4 | Round14-4：我從行天宮站走過去，如果爸爸坐輪椅，電梯到三樓好找嗎？附近如果不好停車，我可以先讓他下車嗎？ | Says Exit 4, enter the building and take elevator to 3F; call ahead for wheelchair or mobility needs; counter can assist on arrival. | Pass | Did not overpromise parking; drop-off wording could be more explicit in a future route/access pass. |
+| 5 | Round14-5：如果我看完才想到要保險收據和診斷證明，可以隔天補開嗎？要本人去嗎？不要講太長。 | Says certificates/receipts should be requested before or during visit and fees/formats need counter confirmation. | Partial | Safe but missed after-visit, next-day, and self/proxy handling. |
+
+### Round 14 Retest - Admin routing and mixed services
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round14-1：我第一次去，已經線上掛號，但健保卡忘在家，只有身分證，可以先報到看診嗎？講重點。 | Says first visit with online registration should go to the 3F counter; health card absence depends on onsite counter verification and may affect insurance status, self-pay, or later supplement; bring ID and call if unsure. | Pass | No female-urology or fee-template pollution. |
+| 2 | 重測 Round14-2：我臨時不能去，線上掛號要取消嗎？可以直接在 LINE 跟你說取消，還是要打電話？不要貼連結。 | Says cancel/change is recommended to avoid occupying a slot; LINE bot cannot guarantee proxy cancellation; safest path is phone confirmation or original online system cancellation/change. | Pass | No appointment URL. |
+| 3 | 重測 Round14-3：我想同一天問 HPV 疫苗跟匿名篩檢，可以先到櫃台問流程跟費用，不一定當天做嗎？不要保證，短一點。 | Says the user can ask counter or call about HPV vaccine and anonymous screening process/fee; not necessarily same day; same-day feasibility, evaluation, vaccine stock and screening flow depend on onsite/doctor/counter confirmation. | Pass | Keeps both service names and avoids card-payment drift. |
+| 5 | 重測 Round14-5：如果我看完才想到要保險收據和診斷證明，可以隔天補開嗎？要本人去嗎？不要講太長。 | Says after-visit insurance receipt or certificate reissue can be confirmed by phone/counter; diagnosis certificate usually needs doctor/record confirmation; next-day, self/proxy handling, certificates and authorization documents depend on clinic reply. | Pass | Directly answers after-visit and proxy boundaries. |
