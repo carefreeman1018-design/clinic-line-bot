@@ -117,3 +117,13 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 |---|---|---|---|---|
 | 1 | 看診完可以開診斷證明或收據嗎？要先跟誰說？ | Tells patient to tell counter or doctor during visit/before checkout; diagnosis certificate depends on physician evaluation; fee, format and reissue need counter/phone confirmation. | Pass | No stale doctor schedule context. |
 | 3 | 我爸爸行動不方便，可以坐輪椅上去嗎？電梯在哪裡？ | Says use the elevator to 3F from the building near Xingtiangong Exit 4; call 02-2511-9488 in advance for mobility needs; ask counter for route/upstairs help. | Pass | No raw URL in LINE reply. |
+
+## Round 7 - First-visit admin, service fit, and fuzzy follow-ups
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我第一次去但忘記帶健保卡，只有身分證，可以先看嗎？不要貼連結。 | Says patient can ask onsite, but first visit still recommends health card; with only ID, counter confirms whether patient can be seen first and later supplementation. | Pass | Conservative document boundary. |
+| 2 | 如果現場掛號滿了，我人已經到門口，還可以排候補嗎？我不要長文。 | Says onsite quota/waitlist availability is not guaranteed; go straight to counter and ask staff to check. | Pass | Short onsite next step. |
+| 3 | 女性一直頻尿漏尿，是要掛泌尿科還是美磁波？差在哪？講重點。 | Says female frequency/leakage can first be evaluated by urology; physician decides whether treatment or other therapy is needed. | Partial | Safe, but missed the requested difference between urology evaluation and magnetic pelvic-floor therapy. |
+| 4 | 那費用大概多少？可以先報一個範圍嗎？ | Replied that HPV vaccine/anonymous screening fees are not public and need confirmation. | Fail | Follow-up fee context incorrectly jumped to HPV/anonymous screening instead of female urology/magnetic therapy. |
+| 5 | 我想順便問皮蛇疫苗和 HPV 疫苗，可以同一天打嗎？要帶什麼？ | Says clinic provides HPV and shingles vaccines; specific items, price, stock and appointment time need phone/staff confirmation. | Partial | Missed same-day coadministration and what to bring. |

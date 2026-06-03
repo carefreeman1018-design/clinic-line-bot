@@ -414,6 +414,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
   const wellnessWeightReply = answerWellnessWeightQuestion(message);
   if (wellnessWeightReply) return { reply: wellnessWeightReply, relevantChunks: [] };
 
+  const femaleUrologyReply = answerFemaleUrologyQuestion(message, conversationHistory);
+  if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
+
   const vaccineReply = answerVaccineQuestion(message, conversationHistory);
   if (vaccineReply) return { reply: vaccineReply, relevantChunks: [] };
 
@@ -443,9 +446,6 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const surgeryReply = answerCircumcisionFastPassQuestion(message, conversationHistory);
   if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };
-
-  const femaleUrologyReply = answerFemaleUrologyQuestion(message);
-  if (femaleUrologyReply) return { reply: femaleUrologyReply, relevantChunks: [] };
 
   const malePrivateReply = answerMalePrivateSurgeryQuestion(message);
   if (malePrivateReply) return { reply: malePrivateReply, relevantChunks: [] };

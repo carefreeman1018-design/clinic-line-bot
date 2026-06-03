@@ -1,11 +1,12 @@
 const PHONE = "02-2511-9488";
 
-export function answerFemaleUrologyQuestion(message) {
+export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
   if (hasExplicitMaleSelfCue(message)) return null;
   if (hasMaleSpecificUrologyCue(message)) return null;
   if (!hasFemaleSpecificCue(message) && hasUpperUrinaryEmergencyCue(message)) return null;
-  if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message)) return null;
-  if (!asksSuitabilityPriceOrNextStep(message)) return null;
+  const isFemaleUrologyFollowUp = isFemaleUrologyFeeFollowUp(message, conversationHistory);
+  if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message) && !isFemaleUrologyFollowUp) return null;
+  if (!asksSuitabilityPriceOrNextStep(message) && !isFemaleUrologyFollowUp) return null;
 
   if (isFemaleUtiUrgentQuestion(message)) {
     return answerFemaleUtiUrgentQuestion(message);
@@ -13,8 +14,9 @@ export function answerFemaleUrologyQuestion(message) {
 
   if (asksUrologyOrGynecologyRoute(message)) {
     return [
-      "女性漏尿和頻尿可以先掛泌尿科門診評估。",
-      "診所會評估是否需要轉介婦產科或其他專科；建議先預約泌尿科門診，由醫師檢查後判斷下一步。"
+      "女性頻尿、漏尿建議先看泌尿科/醫師找原因。",
+      "泌尿科門診是做診斷評估，會看是否感染、膀胱過動、應力性尿失禁或其他問題。",
+      "美磁波/磁波鍛肌椅偏向骨盆底訓練或輔助療程，不能取代診斷；適不適合要由醫師評估後決定。"
     ].join("");
   }
 
@@ -29,7 +31,7 @@ export function answerFemaleUrologyQuestion(message) {
 }
 
 function isFemaleUrologyQuestion(message) {
-  return /女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|鍛肌椅|高密度磁波/.test(message);
+  return /女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|磁波|鍛肌椅|高密度磁波/.test(message);
 }
 
 function hasExplicitMaleSelfCue(message) {
@@ -41,7 +43,7 @@ function hasMaleSpecificUrologyCue(message) {
 }
 
 function hasFemaleSpecificCue(message) {
-  return /我是女生|我是女性|我是女的|我.*女生|我.*女性|女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|鍛肌椅|高密度磁波|懷孕|月經|產後|哺乳/.test(message);
+  return /我是女生|我是女性|我是女的|我.*女生|我.*女性|女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|磁波|鍛肌椅|高密度磁波|懷孕|月經|產後|哺乳/.test(message);
 }
 
 function hasUpperUrinaryEmergencyCue(message) {
@@ -53,7 +55,23 @@ function asksSuitabilityPriceOrNextStep(message) {
 }
 
 function asksUrologyOrGynecologyRoute(message) {
-  return /泌尿科|婦產科|可以看|看哪|掛哪/.test(message);
+  return /泌尿科|婦產科|可以看|看哪|掛哪|差在哪|差別|不同/.test(message);
+}
+
+function isFemaleUrologyFeeFollowUp(message, conversationHistory) {
+  if (!/費用|價格|價錢|多少錢|報價|範圍|一次|療程/.test(message)) return false;
+  if (hasExplicitNonFemaleUrologyTopic(message)) return false;
+
+  const recentText = [...conversationHistory]
+    .slice(-8)
+    .map((historyMessage) => historyMessage.content ?? "")
+    .join("\n");
+
+  return /女性泌尿|漏尿|尿失禁|頻尿|膀胱過動|應力性尿失禁|骨盆底肌|美磁波|磁波鍛肌椅|鍛肌椅|高密度磁波/.test(recentText);
+}
+
+function hasExplicitNonFemaleUrologyTopic(message) {
+  return /HPV|九價|疫苗|匿名|篩檢|菜花|性病|結紮|包皮|攝護腺|前列腺|結石|痔瘡|肛門|猛健樂|點滴/.test(message);
 }
 
 function buildSafetyNotes(message) {

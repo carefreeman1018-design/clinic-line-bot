@@ -44,13 +44,21 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
     parts.push(`價格、庫存與可預約時段目前知識庫沒有公開明確數字，建議電話 ${PHONE} 或由診所人員確認。`);
   }
 
+  if (asksSameDayCoadministration(message)) {
+    parts.push(`兩種疫苗能否同一天施打不能先保證；需由醫師或診所人員依年齡、是否可能懷孕、過敏史、過去疫苗反應、疫苗庫存與預約安排評估，請電話 ${PHONE} 或到現場確認。`);
+  }
+
+  if (asksVaccineDocuments(message)) {
+    parts.push("到診建議帶健保卡/身分證；若有疫苗接種紀錄也一起帶，若曾過敏、起疹或有特殊身體狀況，請先告訴櫃台/護理人員與醫師。");
+  }
+
   if (asksPersonalSuitability(message) && hasCurrentWartConcern && !isSkinShinglesVaccineQuestion(message)) {
     parts.push(`伴侶也可一起評估是否需要檢查或篩檢；今天能不能打疫苗，請電話 ${PHONE} 由醫師或診所人員依病灶與個人狀況確認。`);
   } else if (asksPersonalSuitability(message) && hasHpvExposureConcern) {
     parts.push("是否適合施打不能只靠訊息判斷；是否需要檢查或今天能不能直接打，仍需依個人狀況評估。");
-  } else if (asksPersonalSuitability(message)) {
+  } else if (asksPersonalSuitability(message) && !asksSameDayCoadministration(message)) {
     parts.push("是否適合施打不能只靠訊息判斷；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");
-  } else if (!asksPriceOrStock(message)) {
+  } else if (!asksPriceOrStock(message) && !asksVaccineDocuments(message) && !asksSameDayCoadministration(message)) {
     parts.push(`是否適合、庫存與費用，建議電話 ${PHONE} 或由診所人員確認。`);
   }
 
@@ -132,7 +140,17 @@ function isPostVaccineReactionQuestion(message) {
 }
 
 function asksPriceOrStock(message) {
-  return /價錢|價格|費用|多少錢|幾多錢|庫存|有貨|現貨|名額|預約時段|可預約|今天|直接打|馬上打|同一天|一起打|同時打/.test(message);
+  return /價錢|價格|費用|多少錢|幾多錢|庫存|有貨|現貨|名額|預約時段|可預約|今天|直接打|馬上打/.test(message);
+}
+
+function asksSameDayCoadministration(message) {
+  return /同一天|一起打|同時打/.test(message)
+    && /HPV\s*疫苗|九價|子宮頸癌疫苗/.test(message)
+    && /皮蛇疫苗|帶狀皰疹疫苗/.test(message);
+}
+
+function asksVaccineDocuments(message) {
+  return /健保卡|身分證|身份證|證件|疫苗.*紀錄|接種.*紀錄|帶什麼|要帶|攜帶|準備什麼/.test(message);
 }
 
 function asksAnonymousScreening(message) {
