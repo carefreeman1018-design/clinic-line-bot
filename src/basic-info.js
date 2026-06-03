@@ -17,6 +17,10 @@ export function answerBasicInfoQuestion(message) {
     return "診所地址郵遞區號是 104091，地址是台北市中山區松江路 276 號 3 樓。";
   }
 
+  if (/院長|執行院長/.test(normalized) && /誰|哪位|是誰|叫什麼|介紹/.test(normalized)) {
+    return "津久診所院長是陳偉傑醫師；羅詩修醫師是執行院長。";
+  }
+
   if (/停車|開車|車位|停車場/.test(normalized)) {
     return [
       "開車可參考官網列出的附近停車場：",

@@ -61,6 +61,8 @@ function deriveFixedDoctors(schedule) {
 }
 
 export function answerFixedScheduleQuestion(message, now = new Date(), conversationHistory = []) {
+  if (hasDoctorInfoIntent(message)) return null;
+
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
 
   const day = resolveRequestedDay(message, now) ?? resolveFollowUpDay(message, conversationHistory, now);
@@ -186,6 +188,15 @@ export function answerPepVisitScheduleFollowUp(message, now = new Date(), conver
 
 function hasPepVisitFollowUpIntent(message) {
   return /今天|下午|晚上|晚診|夜診|時段|掛|門診|看診|預約|現場|直接到|到診|急診|下一步|怎麼去/.test(message);
+}
+
+function hasDoctorInfoIntent(message) {
+  const hasScheduleSlotCue = Boolean(resolveRequestedDay(message, new Date()))
+    || resolveRequestedPeriods(message).length > 0
+    || /早診|午診|晚診|夜診|早上|上午|下午|晚上/.test(message);
+  if (hasScheduleSlotCue && /誰|哪位|哪個醫師|哪個醫生|看哪位/.test(message)) return false;
+
+  return /專長|專業|主治|擅長|強項|會看什麼|看什麼|現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷|是誰|哪位|介紹|職稱|差別|不同|比較|差在哪/.test(message);
 }
 
 function hasNewPepRiskOrMedicationQuestion(message) {

@@ -179,8 +179,12 @@ const DOCTOR_ALIASES = [
 export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   const doctor = resolveDoctor(message);
   const isSpecialtyQuestion = /專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message);
-  const isProfileQuestion = /現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷/.test(message);
+  const isProfileQuestion = /現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷/.test(message)
+    || (Boolean(doctor) && /是誰|哪位|介紹|職稱/.test(message));
   const isDoctorFollowUp = Boolean(doctor) && /那|呢|其他|其它|別的/.test(message);
+  const comparisonReply = buildDoctorComparisonReply(message, doctor, conversationHistory);
+  if (comparisonReply) return comparisonReply;
+
   const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
   if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
 
@@ -202,6 +206,30 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
   if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildDoctorComparisonReply(message, doctor, conversationHistory) {
+  if (!/差別|不同|比較|差在哪/.test(message)) return null;
+
+  const firstDoctor = findLastMentionedDoctor(conversationHistory, { excludeDoctor: doctor });
+  const secondDoctor = doctor;
+  if (!firstDoctor || !secondDoctor || firstDoctor === secondDoctor) return null;
+
+  const firstSpecialties = DOCTOR_SPECIALTIES[firstDoctor];
+  const secondSpecialties = DOCTOR_SPECIALTIES[secondDoctor];
+  if (!firstSpecialties || !secondSpecialties) return null;
+
+  const shared = firstSpecialties.filter((specialty) => secondSpecialties.includes(specialty));
+  const firstUnique = firstSpecialties.filter((specialty) => !secondSpecialties.includes(specialty));
+  const secondUnique = secondSpecialties.filter((specialty) => !firstSpecialties.includes(specialty));
+
+  return [
+    `${firstDoctor}和${secondDoctor}很多男性泌尿與私密手術專長重疊。`,
+    `共同項目：${shared.slice(0, 4).join("、")}。`,
+    `${firstDoctor}資料中特別列：${firstUnique.join("、") || "目前沒有額外列出不同項目"}。`,
+    `${secondDoctor}資料中特別列：${secondUnique.join("、") || "目前沒有額外列出不同項目"}。`,
+    "實際適合掛哪位，還是要看你想處理的問題與可掛時段。"
+  ].join("\n");
 }
 
 function buildDoctorProfileReply(doctor, message) {
@@ -242,11 +270,12 @@ function resolveDoctor(message) {
   return DOCTOR_ALIASES.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
 }
 
-function findLastMentionedDoctor(conversationHistory) {
+function findLastMentionedDoctor(conversationHistory, options = {}) {
+  const { excludeDoctor = null } = options;
   for (const historyMessage of [...conversationHistory].reverse()) {
     const content = historyMessage.content ?? "";
     const doctor = resolveDoctor(content);
-    if (doctor) return doctor;
+    if (doctor && doctor !== excludeDoctor) return doctor;
   }
 
   return null;
