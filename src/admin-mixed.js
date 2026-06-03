@@ -38,6 +38,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksUrineTestCounterFeeWithoutRegistration(normalized)) {
+    return [
+      `可以先到櫃台或電話 ${PHONE} 問尿液檢查流程/費用，不一定先掛號。`,
+      "但若要實際檢查、報告、醫師判讀或病歷/收費，可能需要掛號與基本資料。",
+      "能否只問且不留資料，以現場櫃台為準。"
+    ].join("\n");
+  }
+
   if (asksFeePaymentAtCounterWithoutVisit(normalized)) {
     return [
       "可以先到櫃台或請診所人員詢問費用與付款方式，不一定要先決定看診。",
@@ -66,6 +74,14 @@ export function answerAdminMixedQuestion(message) {
       "不能先保證沒有健保卡/身分證就一定可報到。",
       "證件不在身上會影響身份核對、健保身分確認與付款流程。",
       `如果已經快到現場，先到 3 樓櫃台或電話 ${PHONE} 確認能否補件、改自費或改天。`
+    ].join("\n");
+  }
+
+  if (asksOnlineRegistrationProofUnavailableCheckin(normalized)) {
+    return [
+      "手機沒電、簡訊或截圖拿不出來，抵達後先到 3 樓櫃台。",
+      "請櫃台用姓名、電話或身分資料協助查詢；建議帶健保卡/身分證方便核對。",
+      "實際是否查得到掛號，仍以櫃台現場確認為準。"
     ].join("\n");
   }
 
@@ -153,6 +169,14 @@ export function answerAdminMixedQuestion(message) {
       `請病人或家人先電話 ${PHONE}，或到現場先問櫃台。`,
       "若現場確認可代領，通常請先準備病人身分證/健保卡或影本、代領人身分證，以及診所要求的授權或關係資料；實際文件以櫃台流程為準。",
       "如果報告需要醫師解釋，仍可能需要掛號回診或門診說明。"
+    ].join("\n");
+  }
+
+  if (asksFamilyMemberVisitStatusLookup(normalized)) {
+    return [
+      "報到或看完了沒，屬於個人就醫資訊，不能直接在 LINE 幫家人查或透露。",
+      `請病人本人聯絡診所，或由家人依診所身份確認/授權流程電話 ${PHONE} 或現場詢問。`,
+      "若是安全或緊急狀況，請依實際情況聯絡家人、現場人員或緊急服務，但 LINE 這裡不能揭露就醫狀態。"
     ].join("\n");
   }
 
@@ -266,6 +290,14 @@ function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   const asksCheckinOrDocuments = /報到|到現場|現場|櫃台|櫃檯|健保卡|身分證|身份證|證件|要帶/.test(message);
 
   return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
+}
+
+function asksOnlineRegistrationProofUnavailableCheckin(message) {
+  const mentionsOnlineRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsProofUnavailable = /手機.*沒電|手機快沒電|沒電|簡訊.*拿不出|截圖.*拿不出|簡訊.*看不到|截圖.*看不到|簡訊.*不見|截圖.*不見|拿不出來/.test(message);
+  const asksLookupOrCheckin = /櫃台|櫃檯|查得到|查詢|找得到|找不到|報到|姓名|電話|身分資料|身份資料|健保卡|身分證|身份證/.test(message);
+
+  return mentionsOnlineRegistration && mentionsProofUnavailable && asksLookupOrCheckin;
 }
 
 function asksOnlineRegistrationDataCorrection(message) {
@@ -418,6 +450,14 @@ function asksReportPickupProxy(message) {
   return hasReportCue && asksPickupOrProxy;
 }
 
+function asksFamilyMemberVisitStatusLookup(message) {
+  const hasFamilyCue = /先生|老公|丈夫|太太|老婆|妻子|配偶|伴侶|家人|爸爸|媽媽|爸|媽|小孩|兒子|女兒/.test(message);
+  const hasVisitStatusCue = /報到|看完|看好了|看診.*結束|結束了|有沒有看|有沒有報到|還在等|輪到|過號|狀態|進診間/.test(message);
+  const asksLineLookup = /LINE|line|這裡|你們|可以.*查|幫我查|查一下|問.*有沒有|透露|告訴我|手機沒接|沒接電話/.test(message);
+
+  return hasFamilyCue && hasVisitStatusCue && asksLineLookup;
+}
+
 function asksDoctorPreferenceOrDesignation(message) {
   const asksUrologyOrVisit = /泌尿|一般泌尿|看診|門診|醫師|醫生/.test(message);
   const asksPreference = /指定|男醫師|男性醫師|男醫生|偏好.*男|想找.*男|指定.*醫師|指定.*醫生/.test(message);
@@ -454,6 +494,14 @@ function asksRouteWithArrivalRegistration(message) {
 function asksAnonymousScreeningPaymentOrId(message) {
   return /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
     && /刷卡|信用卡|付款|付錢|健保卡|身分證|身份證|證件/.test(message);
+}
+
+function asksUrineTestCounterFeeWithoutRegistration(message) {
+  const hasUrineTestCue = /尿液檢查|尿檢|驗尿|尿液篩檢|尿液檢驗/.test(message);
+  const asksProcessOrFee = /流程|費用|價格|價錢|多少錢|收費|怎麼做|怎麼辦/.test(message);
+  const wantsCounterOnly = /路過|櫃台|櫃檯|電話|先問|只問|只是想先問|不想.*留下資料|不留資料|不想.*掛號|不掛號|不用掛號/.test(message);
+
+  return hasUrineTestCue && asksProcessOrFee && wantsCounterOnly;
 }
 
 function asksOnsiteNextStepForVaccineScreeningRegistration(message) {

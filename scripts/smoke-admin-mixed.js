@@ -73,6 +73,12 @@ const cases = [
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "保證"]
   },
   {
+    name: "round21 phone dying registration proof unavailable counter lookup without link",
+    message: "Round21-2：我手機快沒電，線上掛號的簡訊或截圖可能拿不出來，到櫃台還能查得到嗎？要報姓名還是電話？",
+    expected: ["手機沒電", "簡訊", "截圖", "拿不出來", "3 樓櫃台", "姓名", "電話", "身分資料", "健保卡/身分證", "實際是否查得到掛號", "櫃台現場確認為準"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "固定門診", "陳偉傑醫師", "醫師專長", "地址", "捷運", "一定查得到", "保證查得到"]
+  },
+  {
     name: "round19 online registration wrong birthday phone counter correction without link",
     message: "Round19-3：我線上掛號時生日或電話好像填錯了，到現場可以改資料嗎？會不會找不到掛號？",
     expected: ["線上掛號", "生日", "電話", "填錯", "影響櫃台查詢", "健保卡/身分證", "3 樓櫃台", "核對", "協助查詢或修正資料", "不能保證一定找得到", "02-2511-9488"],
@@ -101,6 +107,12 @@ const cases = [
     message: "Round20-5：我看診時會帶一個小孩和推車，診間或候診區放得下嗎？如果不方便，我可以請家人在外面等嗎？",
     expected: ["診間", "候診區", "推車", "不能在 LINE 先保證", "到場先問櫃台", "02-2511-9488", "當天動線與空間", "家人", "外面等", "陪進診間", "現場安排", "病人需求", "需要協助", "告知櫃台"],
     forbidden: ["https://", "appointment", "預約掛號", "立即預約", "地址", "捷運", "固定門診", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "醫師專長", "疫苗庫存"]
+  },
+  {
+    name: "round21 spouse visit status cannot be looked up in line",
+    message: "Round21-4：我先生去看診但手機沒接，我可以在 LINE 問他有沒有報到或看完了嗎？你們可以幫我查一下嗎？",
+    expected: ["報到", "看完", "個人就醫資訊", "不能直接在 LINE 幫家人查或透露", "病人本人聯絡診所", "身份確認/授權流程", "電話 02-2511-9488", "現場詢問", "安全或緊急狀況", "不能揭露就醫狀態"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "固定門診", "陳偉傑醫師", "醫師專長", "地址", "捷運", "已報到", "已看完", "還沒報到", "還沒看完"]
   },
   {
     name: "round14 first visit registered missing health card checks in at counter",
@@ -161,6 +173,12 @@ const cases = [
     message: "Round18-4：上次看診的收據不見了，可以補印嗎？如果公司要統編，能不能後來再補上？請不要貼連結。",
     expected: ["收據", "補印", "公司報帳", "統編", "補上", "格式", "能否補開", "櫃台確認", "收據不見", "事後能否補上統編", "就診/結帳資料", "規定確認", "掛號或結帳前先說", "不能保證可改或補開"],
     forbidden: ["診斷證明", "醫師/病歷確認", "本人", "家人代辦", "委託文件", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
+    name: "round21 urine test process fee counter ask without registration overpromise",
+    message: "Round21-5：我只是路過想先問尿液檢查流程和費用，不想留下資料或掛號，可以只問櫃台嗎？請短一點。",
+    expected: ["櫃台", "電話 02-2511-9488", "尿液檢查流程/費用", "不一定先掛號", "實際檢查", "報告", "醫師判讀", "病歷/收費", "可能需要掛號與基本資料", "能否只問且不留資料", "現場櫃台為準"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "固定門診", "陳偉傑醫師", "醫師專長", "地址", "捷運", "保證可以完全不留資料", "完全不用留下資料", "一定不用掛號", "尿路感染", "血尿", "頻尿"]
   },
   {
     name: "friday surgery schedule keeps counter fee question",
