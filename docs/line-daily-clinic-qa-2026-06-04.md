@@ -447,3 +447,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 第三次重測 Round24-3：我明天下午想看一般泌尿，順便問 HPV 疫苗和抽血報告，可以同一個號處理嗎？不要貼連結。 | Says tomorrow Friday afternoon general urology is Luo Shixiu, 13:30-17:00; tell 3F counter about urology, HPV vaccine and blood report; same-number handling, split registration, stock/fee, report reading and return-visit need onsite doctor/counter confirmation; no same-day guarantee. | Pass | After bypassing routine admin/schedule questions from doctor-review escalation, the reply is direct and bounded. |
 | 4 | 重測 Round24-4：那明天下午是哪位醫師？我如果只是問報告和疫苗，不想做治療，掛一般泌尿可以嗎？短一點。 | Says tomorrow Friday afternoon general urology is Luo Shixiu, 13:30-17:00; for report and vaccine questions, first register general urology and explain at 3F counter; whether visit/same-day handling/vaccine/report process applies depends on counter and doctor confirmation. | Pass | Short enough, correct doctor, no artificial waiting reply. |
 | 5 | 重測 Round24-5：我只是想確認明天下午門診時間和醫師，跟前面報告問題無關。請直接回答。 | Says tomorrow Friday afternoon 13:30-17:00 is Luo Shixiu; quota and temporary changes should be confirmed by phone or onsite. | Pass | Direct schedule answer despite report context. |
+
+## Round 25 - First visit check-in, outside records, registration patient switch, lab flow, and vaccine fee ask
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round25-1：我是第一次去，想掛明天早診。可以 9:30 前先到櫃台報到嗎？還是一定要等醫師開始看診？請講重點。 | Says tomorrow Friday morning 09:30-12:30 is Chen Wei-Jie; onsite may arrive earlier to ask counter/check in, but quota and temporary changes should be confirmed by phone or onsite/online. | Pass | Practical first-visit/check-in answer. |
+| 2 | Round25-2：我有別家診所的藥袋和檢查報告，明天看診要帶去嗎？可以先傳 LINE 給你們嗎？不要幫我判讀。 | Says outside medicine bag and report can be brought for doctor reference, and LINE is not recommended for direct personal-report interpretation, but appends doctor/staff review waiting language. | Partial | Main answer was right, but doctor-review escalation still added an unnecessary waiting tail. |
+| 3 | Round25-3：我幫爸爸掛號，結果臨時換成我要看，可以用同一筆掛號改名字嗎？還是一定要取消重掛？不要貼連結。 | Replied only with official appointment URL and reservation-number entrance. | Fail | Missed different-patient registration-change question and violated no-link request. |
+| 4 | Round25-4：我看完診如果醫師說要抽血或驗尿，是當天在診所做嗎？還是要另外約時間？我只是想知道流程。 | Replied with Chen Wei-Jie fixed clinic schedule. | Fail | Lab-flow admin intent was swallowed by doctor schedule routing. |
+| 5 | Round25-5：如果我只是陪家人來，想在櫃台問疫苗價格和庫存，但本人還沒決定要不要打，可以先問嗎？ | Says the patient/family can first ask counter or staff about fee and payment method, but suitability and whether to vaccinate are still determined by item and clinic process; LINE cannot guarantee direct amount or card/payment. | Pass | Good ask-only boundary. |
+
+### Round 25 Retest - Report logistics review bypass, patient-switch registration, and lab-flow fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 2 | 第三次重測 Round25-2：我有別家診所的藥袋和檢查報告，明天看診要帶去嗎？可以先傳 LINE 給你們嗎？不要幫我判讀。 | Says outside clinic medicine bag and paper/image reports can be brought for doctor reference; do not first send personal data, medicine bag or medical report by LINE for online interpretation; call or ask counter if unsure what to bring. | Pass | Doctor-review waiting tail is gone, while true report interpretation remains protected. |
+| 3 | 重測 Round25-3：我幫爸爸掛號，結果臨時換成我要看，可以用同一筆掛號改名字嗎？還是一定要取消重掛？不要貼連結。 | Says same registration cannot be guaranteed for a different patient or name change on LINE; bring ID/health-card data to 3F counter or call; onsite may need cancelling and rebooking or a new registration. | Pass | No appointment URL and no overpromise. |
+| 4 | 重測 Round25-4：我看完診如果醫師說要抽血或驗尿，是當天在診所做嗎？還是要另外約時間？我只是想知道流程。 | Says after the doctor orders blood or urine testing, same-day vs separate appointment depends on the order and onsite process; fasting, sample time, fee and report time are confirmed by counter/nursing staff after the visit; no same-day guarantee. | Pass | No doctor schedule drift. |
