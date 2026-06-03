@@ -398,6 +398,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "不是癌症", "就是癌症", "不用看診", "可以放心"]
   },
   {
+    name: "hematospermia ER worry answers cancer and urgency directly",
+    reply: answerHematospermiaQuestion("我昨天射精看到精液有血，今天又有一點粉紅色，嚇到睡不著。這是不是癌症？我沒有發燒也不太痛，需要急診嗎？"),
+    expected: ["精液有血", "血精", "不等於一定是癌症", "LINE", "不能直接排除", "沒有發燒", "明顯疼痛", "排尿困難", "通常不需要先急診", "泌尿科門診", "血尿", "尿痛", "發燒", "血量變多", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "不用看診", "可以放心"]
+  },
+  {
     name: "varicocele fertility report blocks direct surgery pricing",
     reply:
       answerMaleFertilityQuestion("我備孕一年都沒成功，精液報告活動力偏低，醫師說可能有精索靜脈曲張。你們可以直接手術嗎？費用大概多少？") ||
