@@ -232,3 +232,22 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | # | Patient question | LINE reply summary | Result | Notes |
 |---|---|---|---|---|
 | 1 | 重測 Round12-1：我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。 | Says late arrival after online registration cannot be guaranteed to still be seen; call 02-2511-9488 first to notify/confirm; counter will arrange by check-in time, clinic situation and number/quota; bring health card/ID to 3F counter. | Pass | No appointment link dump; directly answers late-arrival flow. |
+
+## Round 13 - Surgery-slot schedule, doctor follow-up context, companion privacy, and fee admin
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round13-1：我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。 | Says Fri evening is surgery time and lists Fri morning/afternoon general clinic, but does not answer whether the user can just ask fee/payment. | Partial | Schedule was correct, but admin fee-only question was dropped. |
+| 2 | Round13-2：那如果我改掛週五下午，羅醫師可以看一般泌尿嗎？還是一定要院長？請短一點。 | Says general urology/urinary problems do not necessarily require the director; Fri afternoon is Luo Shi-Xiu clinic and can be referenced. | Pass | Avoids recommending one doctor only. |
+| 3 | Round13-3：那我陪我先生進診間時，如果醫師問私密問題，我可以先出去嗎？診所會不會很尷尬？ | Says companion entry depends on patient consent and doctor/staff arrangement; the companion can wait outside if private issues come up; private issues are routine. | Pass | Natural companion/privacy answer. |
+| 4 | Round13-4：如果我只是想先問檢查費用和能不能刷卡，不想今天看診，櫃台可以先問嗎？講重點。 | Says the user can ask counter/staff about fee and payment first; actual fee depends on item/flow/evaluation; card payment is not guaranteed and should be confirmed by phone or counter. | Pass | Admin intent overrides earlier schedule/doctor context. |
+| 5 | Round13-5：他主要專長是什麼？如果只是頻尿，我掛他可以嗎？不要列太多。 | Replied with Chen Wei-Jie specialties and did not answer whether frequency can be booked with the referred doctor. | Fail | Pronoun should have resolved to Luo Shi-Xiu from Round13-2, not Chen/director. |
+
+### Round 13 Retest - Admin/schedule mix and doctor pronoun context
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round13-1：我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。 | First retest after schedule fix still routed to female urology because prior wrong LINE replies left female-urology context in conversation history. | Fail | Needed an explicit schedule guard in female-urology fee follow-up. |
+| 1b | 重測三 Round13-1：我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。 | Says Fri evening is surgery time, not general clinic; lists Fri morning Chen and Fri afternoon Luo general clinic; says fee/payment can be asked by phone or counter, but actual fee depends on item/evaluation/flow and LINE cannot guarantee price or card payment. | Pass | Retested with the prior female-urology history still present. |
+| 2 | 重測 Round13-2：那如果我改掛週五下午，羅醫師可以看一般泌尿嗎？還是一定要院長？請短一點。 | Says general urology/urinary issues do not necessarily require the director; Fri afternoon Luo clinic can be referenced. | Pass | Re-established Luo context for the pronoun retest. |
+| 5 | 重測 Round13-5：他主要專長是什麼？如果只是頻尿，我掛他可以嗎？不要列太多。 | Says Luo Shi-Xiu mainly sees general urology/urinary-related issues; public data includes male/female voiding disorders; frequency can first book general urology assessment; red flags should seek care quickly. | Pass | No longer resolves "he" to Chen/director. |
