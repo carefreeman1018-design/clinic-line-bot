@@ -198,6 +198,14 @@ export function buildDoctorReviewWaitingReply(message = "", { botDraft = "" } = 
     ].join("\n");
   }
 
+  const anonymousScreeningDraft = buildAnonymousScreeningDraftSummary(botDraft);
+  if (anonymousScreeningDraft) {
+    return [
+      anonymousScreeningDraft,
+      "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。"
+    ].join("\n");
+  }
+
   const safetyDraftSummary = buildSafetyDraftSummary(botDraft);
   if (safetyDraftSummary) {
     return [
@@ -296,6 +304,13 @@ function buildOutsideReportVisitDraftSummary(botDraft) {
   const normalized = String(botDraft || "").trim();
   if (!/別家醫院|外院/.test(normalized)) return null;
   if (!/帶來門診|不建議先在 LINE 傳個人醫療報告/.test(normalized)) return null;
+  return normalized;
+}
+
+function buildAnonymousScreeningDraftSummary(botDraft) {
+  const normalized = String(botDraft || "").trim();
+  if (!/匿名篩檢/.test(normalized)) return null;
+  if (!/報告通知方式|不想留真名|家人|主動通知家人|完全不需任何資料/.test(normalized)) return null;
   return normalized;
 }
 

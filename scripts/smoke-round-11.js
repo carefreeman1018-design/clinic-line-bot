@@ -70,6 +70,22 @@ for (const term of ["能不能由家人代領", "代領人身分證", "授權", 
   }
 }
 
+const anonymousScreeningQuestion = "我想做匿名篩檢，但不想留真名，報告怎麼拿？家人會知道嗎？不要貼連結。";
+const { reply: anonymousScreeningDraft } = await buildReplyAndMatches(anonymousScreeningQuestion, [], []);
+const anonymousScreeningWaitingReply = buildDoctorReviewWaitingReply(anonymousScreeningQuestion, { botDraft: anonymousScreeningDraft });
+
+for (const term of ["匿名篩檢", "重視隱私", "報告通知方式", "不會因為你在 LINE 詢問就主動通知家人", "這題我先幫你轉請醫師或診所人員確認"]) {
+  if (!anonymousScreeningWaitingReply.includes(term)) {
+    issues.push(`anonymous screening doctor-review waiting reply missing expected term: ${term}\nReply: ${anonymousScreeningWaitingReply}`);
+  }
+}
+
+for (const term of ["能不能由家人代領", "代領人身分證", "授權", "關係資料"]) {
+  if (anonymousScreeningWaitingReply.includes(term)) {
+    issues.push(`anonymous screening doctor-review waiting reply includes forbidden term: ${term}\nReply: ${anonymousScreeningWaitingReply}`);
+  }
+}
+
 if (issues.length > 0) {
   console.error(issues.join("\n"));
   process.exit(1);
