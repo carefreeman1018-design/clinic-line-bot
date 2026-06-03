@@ -4,6 +4,7 @@ const LINE_VOOM_ANNOUNCEMENTS_PATH = new URL("../data/line-voom-announcements.md
 const DOCTOR_NAMES = ["陳偉傑醫師", "羅詩修醫師", "吳致寬醫師", "李齊泰醫師", "陳嘉哲醫師", "蔡曜州醫師"];
 const ANNOUNCEMENT_INTENT_PATTERN = /LINE\s*VOOM|VOOM|公告|停診|休診|公休|休假|連假|正常看診|照常看診|有診|看診|門診|營業/i;
 const CONFIRMATION_TEXT = "如要確認當天名額，可電話 02-2511-9488。";
+const PAST_ANNOUNCEMENT_CONFIRMATION_TEXT = "今天/最新安排請以最新公告或電話確認。";
 
 export function answerLineVoomAnnouncementQuestion(message) {
   const normalizedMessage = stripTestQuestionPrefix(message);
@@ -72,6 +73,7 @@ function buildAnnouncementReply(post, requestedDates, requestedDoctor, message) 
   const doctorText = requestedDoctor ? `${requestedDoctor}` : "診所";
   const serviceNote = extractServiceNote(post.content);
   const confirmationText = wantsBriefReply(message) ? "" : CONFIRMATION_TEXT;
+  const isPastAnnouncement = requestedDates.some((date) => isPastMonthDay(date, new Date()));
 
   if (/正常看診|照常看診/.test(post.content)) {
     const mixedScheduleReply = buildMixedNormalAndHolidayReply(post.content, requestedDates, doctorText);
@@ -89,8 +91,13 @@ function buildAnnouncementReply(post, requestedDates, requestedDoctor, message) 
       return `${dateText} 是${doctorText}停診一次，不是每週都停診。固定門診仍請以門診表與最新公告為準。`;
     }
 
-    const lines = [`我查到 LINE VOOM 公告：${dateText} ${doctorText}停診一次。`];
-    if (serviceNote) lines.push(serviceNote);
+    const lines = [
+      isPastAnnouncement
+        ? `${dateText} 是過去 LINE VOOM 公告：${doctorText}停診一次。`
+        : `我查到 LINE VOOM 公告：${dateText} ${doctorText}停診一次。`
+    ];
+    if (serviceNote) lines.push(isPastAnnouncement ? `當時公告寫：${serviceNote}。` : serviceNote);
+    if (isPastAnnouncement) lines.push(PAST_ANNOUNCEMENT_CONFIRMATION_TEXT);
     lines.push(confirmationText);
     return compactLines(lines);
   }
@@ -134,7 +141,11 @@ function dateLineMatches(content, date, pattern) {
 function extractServiceNote(content) {
   const match = content.match(/\*?\s*(100%匿名篩檢[^\n]*)/);
   if (!match) return null;
-  return match[1].replace(/\*+/g, "").trim();
+  return match[1]
+    .replace(/\*+/g, "")
+    .replace(/100%/g, "")
+    .replace(/服務照常營業/g, "服務照常")
+    .trim();
 }
 
 function extractRequestedMonthDays(text) {

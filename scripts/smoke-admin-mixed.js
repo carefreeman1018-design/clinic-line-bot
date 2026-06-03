@@ -35,6 +35,20 @@ const cases = [
     forbidden: ["https://", "lin.ee", "官網介紹：", "保證今天一定能做", "保證金額"]
   },
   {
+    name: "round17 past line voom stop keeps services natural and not overpromised",
+    message: "Round17-3：我看到之前 LINE VOOM 有寫 5/19 晚上李齊泰醫師停診，那天如果只是匿名篩檢或打疫苗還能去嗎？請不要貼連結，短一點。",
+    routedOnly: true,
+    expected: ["5/19 是過去 LINE VOOM 公告", "李齊泰醫師", "停診一次", "匿名篩檢", "疫苗接種服務照常", "最新安排請以最新公告或電話確認"],
+    forbidden: ["100%匿名篩檢", "https://", "lin.ee", "可查看 LINE VOOM"]
+  },
+  {
+    name: "round17 tomorrow friday night urinary frequency recommends general urology slots",
+    message: "Round17-4：明天晚上如果不是一般泌尿，我頻尿要改掛哪個時段？不要列一堆。",
+    routedOnly: true,
+    expected: ["明天（週五）晚診", "18:00-20:30", "手術時段", "不是一般門診", "週五可改一般門診時段", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師"],
+    forbidden: ["已線上掛號", "不能直接幫你改", "請用原本線上掛號系統", "https://", "lin.ee"]
+  },
+  {
     name: "online registration forgot screenshot answers check-in without link",
     message: "我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？",
     expected: ["3 樓櫃台", "姓名", "電話", "身分資料", "報到", "健保卡", "初診", "現場確認為準"],

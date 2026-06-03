@@ -489,7 +489,11 @@ function asksWrongRegistrationConcern(message) {
 }
 
 function asksAppointmentChange(message) {
-  return /改掛|改約|改預約|更改預約|改時間|改今天|改明天|換時段|換到|已經.*掛號|已線上掛號|線上掛號.*改/.test(message);
+  const hasExistingRegistrationCue = /已經.*掛號|已線上掛號|線上掛號|已預約|已經.*預約|原本.*掛|原本.*約|本來.*掛|本來.*約/.test(message);
+  const hasRescheduleCue = /改約|改預約|更改預約|改時間|改今天|改明天|換時段|換到|取消/.test(message)
+    || (hasExistingRegistrationCue && /改掛/.test(message));
+
+  return hasExistingRegistrationCue && hasRescheduleCue;
 }
 
 function buildAppointmentChangeReply(message, day, periods) {
@@ -530,7 +534,7 @@ function buildAvailableGeneralClinicTimesReply(day) {
     .filter(Boolean);
 
   if (lines.length === 0) return `${day}沒有一般泌尿科門診時段。`;
-  return `${day}可改一般門診時段：\n${lines.join("\n")}`;
+  return `${day}可改一般門診時段（一般泌尿）：\n${lines.join("\n")}`;
 }
 
 function buildPastAnnouncementNote(message, now) {
