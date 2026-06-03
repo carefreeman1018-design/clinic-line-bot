@@ -194,3 +194,13 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | # | Patient question | LINE reply summary | Result | Notes |
 |---|---|---|---|---|
 | 1 | 重測：我開車去方便嗎？附近有特約停車或停車場嗎？不要貼連結，講重點。 | Says nearby parking lots can be referenced, but public clinic data does not clearly confirm special-contract/discount parking and it cannot guarantee parking discount; lists Taiwan Unicom Jiangjie 2 and Lianbang Jiajia lots. | Pass | Clarifies the special-contract/discount boundary and avoids duplicated phrasing or links. |
+
+## Round 11 - Vaccine allergy, outside reports, anonymous screening privacy, mixed clinic routing, and group registration
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我今天想打 HPV 疫苗，但以前打針會過敏起疹子，現場可以直接打嗎？要帶什麼？講重點。 | Says clinic provides HPV vaccine and shingles vaccine; whether suitable cannot be judged by message; asks whether pregnant/allergic/rash after vaccination/suitable for shingles same day/today cannot directly vaccinate; says staff will confirm. | Partial | Correct allergy boundary, but polluted by shingles same-day context and missed what to bring. |
+| 2 | 我上次在別家醫院做檢查，報告可以拿來給醫師看嗎？需要先傳 LINE 給你們嗎？ | Treated it as personal report pickup/proxy flow: cannot just pick up report or proxy collect; bring IDs, authorization/relationship documents; may need physician interpretation. | Partial | Should directly answer outside report review: bring paper/image report to visit; LINE is not a good place to send personal report data first. |
+| 3 | 我想做匿名篩檢，但不想留真名，報告怎麼拿？家人會知道嗎？不要貼連結。 | Repeated the personal report/proxy pickup answer. | Fail | Anonymous screening privacy/report-notification intent was swallowed by generic report/pickup routing. |
+| 4 | 週三晚上可以看痔瘡還是泌尿？我有肛門痛但也頻尿，該掛誰？講重點。 | Says anal symptoms can see anal/rectal surgery, urinary frequency may be infection or other issue, and suggests appointment/phone; includes urgent red flags. | Partial | Missed the schedule detail: Wednesday night is colorectal/anal clinic, not general urology; should tell user how to choose if both anal pain and frequency. |
+| 5 | 我已經線上掛號了，但想陪我爸一起看，兩個人可以用同一個號嗎？還是要各自掛號？ | Replied with the online appointment link only. | Fail | Did not answer group registration/two patients question; unnecessary link. |

@@ -28,6 +28,22 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksOutsideHospitalReportForVisit(normalized)) {
+    return [
+      "可以，別家醫院或外院做的紙本、影像或檢查報告，可以帶來門診給醫師評估。",
+      "不建議先在 LINE 傳個人醫療報告讓我們線上判讀；報告需要醫師搭配病史、症狀與現場評估一起看。",
+      `若不確定要帶哪些資料，可先電話 ${PHONE} 或到櫃台確認；通常建議帶完整紙本報告、影像光碟/截圖、用藥資料與健保卡。`
+    ].join("\n");
+  }
+
+  if (asksSharedRegistrationForTwoPatients(normalized)) {
+    return [
+      "兩位病人通常不要先假設可以共用同一個掛號號碼。",
+      "每位病人多半需要各自的掛號資料、身分資料與健保卡，才能分別建立看診與病歷紀錄。",
+      `如果想陪爸爸一起看，請先電話 ${PHONE} 或到櫃台請人員確認能否加掛另一位、安排相近時段或現場名額；實際流程以櫃台確認為準。`
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationChange(normalized)) {
     return [
       "已線上掛號但想改今天晚上，不能只靠 LINE 訊息直接保證改成功。",
@@ -107,6 +123,22 @@ function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
 }
 
+function asksOutsideHospitalReportForVisit(message) {
+  const hasOutsideSource = /別家|外院|外面|其他醫院|他院|別的醫院|健檢中心/.test(message);
+  const hasReportCue = /報告|檢查結果|檢驗結果|影像|光碟|片子|檢查資料/.test(message);
+  const asksBringOrSend = /拿來|帶來|帶去|給醫師看|給醫生看|醫師看|醫生看|先傳|傳.*LINE|LINE.*傳|可以.*看|需要.*傳/i.test(message);
+
+  return hasOutsideSource && hasReportCue && asksBringOrSend;
+}
+
+function asksSharedRegistrationForTwoPatients(message) {
+  const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsCompanionOrFamily = /陪|一起看|一起掛|同行|爸爸|爸|媽媽|媽|家人|另一位|兩個人|二個人|兩位|二位/.test(message);
+  const asksSharedNumber = /同一個號|同一號|同一個掛號|同一筆|共用|一起用|用一個號|一個號碼|各自掛號|另外掛號|另外.*掛|加掛/.test(message);
+
+  return mentionsExistingRegistration && mentionsCompanionOrFamily && asksSharedNumber;
+}
+
 function asksCertificateOrReceipt(message) {
   return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
@@ -129,8 +161,15 @@ function asksMedicationBagRefillWithoutVisit(message) {
 }
 
 function asksReportPickupProxy(message) {
-  return /報告|檢查結果|檢驗結果/.test(message)
-    && /拿|領|取|代拿|代領|家人|親友|本人|不看診|不用看診|只拿|只領|要帶什麼|帶什麼|證件|授權/.test(message);
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+  if (/別家|外院|外面|其他醫院|他院|拿來|帶來|給醫師看|給醫生看|醫師看|醫生看|先傳/.test(message)) return false;
+
+  const hasReportCue = /報告|檢查結果|檢驗結果/.test(message);
+  const asksPickupOrProxy = /代拿|代領|家人|親友|本人|不看診|不用看診|只拿|只領|要帶什麼|帶什麼|證件|授權/.test(message)
+    || /(?:報告|檢查結果|檢驗結果).{0,12}(?:拿|領|取|怎麼拿|怎麼領|如何拿|如何領)/.test(message)
+    || /(?:拿|領|取).{0,12}(?:報告|檢查結果|檢驗結果)/.test(message);
+
+  return hasReportCue && asksPickupOrProxy;
 }
 
 function asksWheelchairElevatorAccess(message) {

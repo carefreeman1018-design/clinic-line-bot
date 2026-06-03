@@ -144,7 +144,8 @@ function isNonExclusiveDoctorChoiceQuestion(message) {
 }
 
 function cleanScheduleReply(reply, message) {
-  const symptomPrefix = /頻尿|夜尿/.test(message) ? "頻尿/夜尿想看一般泌尿科的話，" : "";
+  const hasAnalConcern = /肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|肛門.*痛|肛門.*腫/.test(message);
+  const symptomPrefix = !hasAnalConcern && /頻尿|夜尿/.test(message) ? "頻尿/夜尿想看一般泌尿科的話，" : "";
   return symptomPrefix + reply
     .replace(/臨時異動請以 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。")
     .replace(/可查看 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。");

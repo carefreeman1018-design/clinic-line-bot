@@ -22,6 +22,12 @@ const cases = [
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "保證"]
   },
   {
+    name: "two patients should not assume one registration number",
+    message: "我已經線上掛號了，但想陪我爸一起看，兩個人可以用同一個號嗎？還是要各自掛號？",
+    expected: ["不要先假設", "共用同一個掛號號碼", "每位病人", "各自的掛號資料", "身分資料", "健保卡", "爸爸", "加掛另一位", "相近時段", "櫃台確認為準"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "medication bag refill without visit avoids doctor schedule routing",
     message: "我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？",
     expected: ["不能先保證", "不用看診", "直接拿藥", "一樣的藥", "藥袋", "健保卡", "身分證", "櫃台", "醫師確認", "適合續拿", "需要看診調整", "發燒", "劇烈疼痛", "尿不出來", "02-2511-9488"],

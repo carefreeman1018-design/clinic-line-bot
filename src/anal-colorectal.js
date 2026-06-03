@@ -2,6 +2,7 @@ const PHONE = "02-2511-9488";
 
 export function answerAnalColorectalQuestion(message) {
   if (isScheduleExclusionQuestion(message)) return null;
+  if (isExplicitAnalScheduleChoiceQuestion(message)) return null;
   if (!isAnalColorectalQuestion(message)) return null;
 
   if (isAnalAbscessRiskQuestion(message)) {
@@ -32,6 +33,12 @@ function isScheduleExclusionQuestion(message) {
   const excludesColorectal = /不要掛到?肛門直腸外科|不要.*肛門直腸外科|不是.*肛門直腸外科|不想.*肛門直腸外科/.test(message);
   const hasScheduleCue = /週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|今天|明天|後天|掛|門診|看診|時段|哪一診|哪診|哪個時段|哪一個時段/.test(message);
   return excludesColorectal && hasScheduleCue;
+}
+
+function isExplicitAnalScheduleChoiceQuestion(message) {
+  const hasDayOrPeriod = /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|早診|下午|午診|晚上|晚診|夜診/.test(message);
+  const asksWhereToRoute = /掛誰|該掛|掛哪|哪一診|哪診|可以看|能看|可以掛|能掛|時段|門診|泌尿/.test(message);
+  return hasDayOrPeriod && asksWhereToRoute;
 }
 
 function isAnalColorectalQuestion(message) {

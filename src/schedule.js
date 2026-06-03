@@ -185,6 +185,18 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   }
 
   if (asksForUrologyCare(message) && clinic.includes("肛門直腸外科")) {
+    if (asksMixedAnalAndUrologyCare(message)) {
+      return compactLines([
+        ...contextNotes,
+        `${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。`,
+        "如果主要是肛門痛、痔瘡或肛門直腸問題，這個時段可先掛肛門直腸外科。",
+        "如果主要是頻尿或一般泌尿問題，請改掛一般泌尿科時段，或先請櫃台/電話確認怎麼安排：02-2511-9488。",
+        buildAvailableGeneralClinicTimesReply(day),
+        "若發燒、劇烈疼痛、尿不出來、血尿很多或大量出血，請立即就醫。",
+        routeNote
+      ]);
+    }
+
     const prefix = /不要掛|不適合|對嗎|可以掛|能掛/.test(message) ? "對，" : "";
     if (asksForAlternativeClinicTime(message)) {
       return compactLines([
@@ -438,6 +450,12 @@ function buildDoctorDayAvailabilityReply(doctor, day, dayLabel) {
 
 function asksForUrologyCare(message) {
   return /泌尿科|頻尿|夜尿|尿痛|尿道炎|膀胱炎|排尿|小便|尿尿|尿急|尿流/.test(message);
+}
+
+function asksMixedAnalAndUrologyCare(message) {
+  return /肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|肛門.*痛|肛門.*腫|肛門直腸/.test(message)
+    && asksForUrologyCare(message)
+    && /掛誰|該掛|掛哪|哪一診|哪診|可以看|能看|可以掛|能掛|泌尿/.test(message);
 }
 
 function asksForAlternativeClinicTime(message) {

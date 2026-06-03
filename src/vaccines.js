@@ -5,6 +5,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
   const isDirectVaccineQuestion = isVaccineQuestion(message) || hasAnonymousScreeningRequest;
   const followUpContext = isDirectVaccineQuestion ? null : resolveVaccineFollowUpContext(message, conversationHistory);
   if (!isDirectVaccineQuestion && !followUpContext) return null;
+  if (hasAnonymousScreeningRequest && !isVaccineQuestion(message) && shouldDeferAnonymousScreeningToStd(message)) return null;
 
   const adverseReactionReply = answerPostVaccineReactionQuestion(message);
   if (adverseReactionReply) return adverseReactionReply;
@@ -41,15 +42,18 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
   }
 
   if (asksPriceOrStock(message) && !hasHpvExposureConcern && (!hasCurrentWartConcern || isSkinShinglesVaccineQuestion(message))) {
-    parts.push(`價格、庫存與可預約時段目前知識庫沒有公開明確數字，建議電話 ${PHONE} 或由診所人員確認。`);
+    const adminTopic = asksExplicitPrice(message)
+      ? "價格、庫存與可預約時段"
+      : "今天能不能直接打、疫苗庫存與可預約時段";
+    parts.push(`${adminTopic}目前知識庫沒有公開明確資訊，建議電話 ${PHONE} 或由診所人員確認。`);
   }
 
   if (asksSameDayCoadministration(message)) {
-    parts.push(`兩種疫苗能否同一天施打不能先保證；需由醫師或診所人員依年齡、是否可能懷孕、過敏史、過去疫苗反應、疫苗庫存與預約安排評估，請電話 ${PHONE} 或到現場確認。`);
+    parts.push(`是否適合施打不能只靠訊息判斷；兩種疫苗能否同一天打與今天能不能直接打不能先保證，需由醫師或診所人員依年齡、是否懷孕/備孕、過敏史、過去疫苗反應、疫苗庫存與預約安排評估，請電話 ${PHONE} 或到現場確認。`);
   }
 
   if (asksVaccineDocuments(message)) {
-    parts.push("到診建議帶健保卡/身分證；若有疫苗接種紀錄也一起帶，若曾過敏、起疹或有特殊身體狀況，請先告訴櫃台/護理人員與醫師。");
+    parts.push("到診建議帶健保卡/身分證；若有疫苗接種紀錄也一起帶，並先整理過敏史、用藥狀況與特殊身體狀況給櫃台/護理人員與醫師。");
   }
 
   if (asksPersonalSuitability(message) && hasCurrentWartConcern && !isSkinShinglesVaccineQuestion(message)) {
@@ -57,7 +61,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
   } else if (asksPersonalSuitability(message) && hasHpvExposureConcern) {
     parts.push("是否適合施打不能只靠訊息判斷；是否需要檢查或今天能不能直接打，仍需依個人狀況評估。");
   } else if (asksPersonalSuitability(message) && !asksSameDayCoadministration(message)) {
-    parts.push("是否適合施打不能只靠訊息判斷；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");
+    parts.push(buildPersonalSuitabilityBoundary(message));
   } else if (!asksPriceOrStock(message) && !asksVaccineDocuments(message) && !asksSameDayCoadministration(message)) {
     parts.push(`是否適合、庫存與費用，建議電話 ${PHONE} 或由診所人員確認。`);
   }
@@ -143,6 +147,10 @@ function asksPriceOrStock(message) {
   return /價錢|價格|費用|多少錢|幾多錢|庫存|有貨|現貨|名額|預約時段|可預約|今天|直接打|馬上打/.test(message);
 }
 
+function asksExplicitPrice(message) {
+  return /價錢|價格|費用|多少錢|幾多錢/.test(message);
+}
+
 function asksSameDayCoadministration(message) {
   return /同一天|一起打|同時打/.test(message)
     && /HPV\s*疫苗|九價|子宮頸癌疫苗/.test(message)
@@ -155,6 +163,10 @@ function asksVaccineDocuments(message) {
 
 function asksAnonymousScreening(message) {
   return /匿名.*篩檢|篩檢.*匿名|匿名性病|匿名.*驗|驗.*匿名/.test(message);
+}
+
+function shouldDeferAnonymousScreeningToStd(message) {
+  return /PEP|PrEP|HIV|愛滋|梅毒|淋病|披衣菌|暴露|保險套破|無套|高風險|家人|知道|真名|姓名|身分|身份|報告|結果|多久|隱私|保密|陽性|陰性|確診/i.test(message);
 }
 
 function asksSameDayWalkInOrPrice(message) {
@@ -173,6 +185,39 @@ function asksImmediateOnsiteNextStep(message) {
 
 function asksPersonalSuitability(message) {
   return /過敏|懷孕|備孕|慢性病|免疫|吃藥|用藥|藥物|適合|能不能|可不可以|是不是|不用擔心|陽性|感染|可以直接打|直接打|馬上打|今天.*打|副作用|禁忌|性行為|有用|有效|幾劑|幾針|劑數|間隔|時程/.test(message);
+}
+
+function buildPersonalSuitabilityBoundary(message) {
+  const factors = [];
+
+  if (/懷孕|備孕|月經|孕/.test(message)) {
+    factors.push("是否懷孕/備孕");
+  }
+  if (/過敏|起疹|疹子|打針|疫苗.*反應/.test(message)) {
+    factors.push("過敏史/過去打針或疫苗反應");
+  }
+  if (/吃藥|用藥|藥物/.test(message)) {
+    factors.push("用藥狀況");
+  }
+  if (/慢性病|免疫/.test(message)) {
+    factors.push("慢性病或免疫狀態");
+  }
+  if (/性行為|有用|有效/.test(message)) {
+    factors.push("已發生性行為後是否仍適合");
+  }
+  if (/幾劑|幾針|劑數|間隔|時程/.test(message)) {
+    factors.push("劑數/間隔");
+  }
+
+  if (factors.length === 0) {
+    factors.push("個人狀況");
+  }
+
+  const sameDayText = /今天|直接打|馬上打|現場/.test(message)
+    ? "，以及今天能不能直接打"
+    : "";
+
+  return `是否適合施打不能只靠訊息判斷；${factors.join("、")}${sameDayText}，都需由醫師或診所人員依個人狀況與庫存評估。`;
 }
 
 function hasCurrentHpvWartConcern(message) {
