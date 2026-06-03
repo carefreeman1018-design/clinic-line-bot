@@ -359,8 +359,8 @@ const cases = [
   {
     name: "pep after 80 hours acknowledges missed window and blocks prep rescue",
     reply: await buildTestReply("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？我有點緊張，先跟我說下一步。"),
-    expected: ["80 小時", "已超過", "PEP 黃金 72 小時", "醫師判斷", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能只靠訊息判斷或開藥", "不能保證今晚直接拿藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
-    forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
+    expected: ["80 小時", "已超過", "PEP 黃金 72 小時", "醫師判斷", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能只靠訊息判斷或開藥", "不能保證今晚直接拿藥", "匿名篩檢", "護理人員安排篩檢", "暴露後處置", "02-2511-9488", "儘速就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "80 小時仍在", "若仍在 PEP 時效內", "先讓醫師評估 PEP 較優先", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
   },
   {
     name: "pep schedule follow-up does not intercept new 80-hour prep rescue question",

@@ -138,9 +138,7 @@ function answerPepQuestion(message) {
     ? "若已感染 HIV，PrEP 不適用，需先檢測並由醫師評估治療。"
     : "";
 
-  const anonymousScreening = /匿名|篩檢|驗性病|性病/.test(message)
-    ? "匿名篩檢可一起詢問，到診後由護理人員安排篩檢；若仍在 PEP 時效內，先讓醫師評估 PEP 較優先。"
-    : "PEP 不能預防其他性病，是否需要篩檢也請一起讓醫師評估。";
+  const anonymousScreening = buildPepScreeningNote(message, elapsedHours);
 
   return [
     prepClarification,
@@ -149,6 +147,20 @@ function answerPepQuestion(message) {
     anonymousScreening,
     `下一步：先電話 ${PHONE} 確認最快可評估時段；若診所無法即時安排，請儘速就醫。`
   ].join("");
+}
+
+function buildPepScreeningNote(message, elapsedHours) {
+  const asksScreening = /匿名|篩檢|驗性病|性病/.test(message);
+
+  if (!asksScreening) {
+    return "PEP 不能預防其他性病，是否需要篩檢也請一起讓醫師評估。";
+  }
+
+  if (elapsedHours !== null && elapsedHours > 72) {
+    return "匿名篩檢可一起詢問，到診後由護理人員安排篩檢；是否還有任何暴露後處置，需由醫師依時間、風險與檢查評估。";
+  }
+
+  return "匿名篩檢可一起詢問，到診後由護理人員安排篩檢；若仍在 PEP 時效內，先讓醫師評估 PEP 較優先。";
 }
 
 function isGenitalUlcerQuestion(message) {
