@@ -42,3 +42,14 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 那他主要看什麼？ | Answers Chen Wei-Jie main specialties in a short sentence. | Pass | Pronoun follow-up now stays on director/Chen context. |
 | 3 | 陳偉傑醫師是誰？他今天晚上有診嗎？ | Says Chen Wei-Jie is clinic director, gives concise specialties, and confirms tonight Thu evening clinic. | Pass | Same-message doctor identity plus schedule works. |
 | 5 | 羅醫師明天早上有診嗎？那陳醫師呢？請短一點。 | Says tomorrow Fri morning Luo has no clinic and Chen has clinic, with confirmation reminder. | Pass | Two named doctors are answered separately. |
+
+## Round 3 - Appointment, access, and service mixed questions
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我已經線上掛號了，但想改今天晚上，可以直接改嗎？不要貼連結，請講重點。 | Only answered Thu evening fixed clinic and confirmation channels. | Fail | Missed whether/how an existing online registration can be changed. |
+| 2 | 我第一次去，從行天宮站到診所要怎麼走？到現場要先報到還是先掛號？我在路上，短一點。 | Gave Xingtiangong route to 3F. | Partial | Good route, but missed arrival check-in/registration flow. |
+| 3 | 我想做結紮諮詢，今天晚上可以直接去問嗎？費用可以先知道嗎？不要講太長。 | Gave today consult clinics and same-day arrangement caveat. | Partial | Missed the fee question. |
+| 4 | 攝護腺肥大你們有看嗎？我明天下午可以掛嗎？要帶什麼？ | Answered that prostate enlargement evaluation/treatment is available. | Fail | Missed tomorrow afternoon clinic and what to bring. |
+| 5 | 匿名篩檢可以刷卡嗎？要帶健保卡或身分證嗎？請不要保證。 | Said anonymous screening is available and flow/fees should be confirmed. | Partial | Too generic; missed card payment and document handling. |
+| 6 | 我現在在診所外面，想問 HPV 疫苗、匿名篩檢和掛號，下一步先做什麼？ | Answered HPV vaccine and anonymous screening availability/confirmation. | Partial | Missed immediate onsite next step and registration flow. |

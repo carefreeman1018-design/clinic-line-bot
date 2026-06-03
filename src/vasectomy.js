@@ -78,8 +78,9 @@ function buildVasectomyConsultScheduleReply(message, now) {
   return [
     `${dayLabel}可先諮詢結紮的固定門診：`,
     ...lines,
+    asksCost(message) ? "費用與是否可當天安排需由電話或現場確認，不能先保證或線上報價。" : null,
     `能否當天評估或安排仍需醫師確認；到診前請電話 ${PHONE} 確認名額與時段。`
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 }
 
 function buildVasectomyConsultLines(day) {
@@ -154,6 +155,10 @@ function asksPostVasectomyContraception(message) {
 
 function asksSexualFunctionImpact(message) {
   return /性慾|勃起|性能力|射精量|射精感|荷爾蒙|精液量|影響.*射精|影響.*性/.test(message);
+}
+
+function asksCost(message) {
+  return /費用|價格|價錢|多少錢|報價/.test(message);
 }
 
 function isPostVasectomyUrgentQuestion(message) {

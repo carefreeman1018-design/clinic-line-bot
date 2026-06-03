@@ -34,7 +34,7 @@ export function answerBasicInfoQuestion(message) {
   }
 
   if (asksClinicAccess(normalized)) {
-    return buildClinicAccessReply();
+    return buildClinicAccessReply(normalized);
   }
 
   if (asksMrtAccess(normalized)) {
@@ -105,11 +105,17 @@ function asksClinicAccess(message) {
   return /診所|津久|你們|現場|門診/.test(message) && /如何去|怎麼去|怎麼走|怎麼到|交通|路線|地址|位置|在哪|到診/.test(message);
 }
 
-function buildClinicAccessReply() {
-  return [
+function buildClinicAccessReply(message) {
+  const lines = [
     "津久診所地址是 104091 台北市中山區松江路 276 號 3 樓。",
     "捷運可搭到行天宮站 4 號出口，出站後右轉，步行約 40 秒可看到津久診所招牌，搭電梯上 3 樓。"
-  ].join("\n");
+  ];
+
+  if (asksArrivalFlow(message)) {
+    lines.push("到現場先到櫃台說明：已掛號就報到；未掛號先問現場掛號與名額。");
+  }
+
+  return lines.join("\n");
 }
 
 function asksWebsiteDistinction(message) {
@@ -165,6 +171,10 @@ function asksAddressInfo(message) {
 
 function asksRouteInBundle(message) {
   return /行天宮|捷運|MRT|出口|怎麼走|怎麼到|路線|門口|到門口/.test(message);
+}
+
+function asksArrivalFlow(message) {
+  return /報到|先掛號|先.*掛號|現場掛號|第一次去|初診|到現場/.test(message);
 }
 
 function asksSurgeryAppointment(message) {

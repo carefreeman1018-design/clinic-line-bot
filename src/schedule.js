@@ -80,6 +80,13 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   if (!hasScheduleIntent && !doctor && !misspelledDoctor && !doctorListReply && !followUpDoctor) return null;
   if (announcementReply && !shouldBlendScheduleWithAnnouncement) return null;
 
+  if (day && asksAppointmentChange(message)) {
+    return compactLines([
+      buildAppointmentChangeReply(message, day, periods),
+      TEMPORARY_CHANGE_CONFIRMATION
+    ]);
+  }
+
   if (!day && doctorListReply) return doctorListReply;
   if (!day && misspelledDoctor) return buildMisspelledDoctorScheduleReply(misspelledDoctor);
   if (!day && doctor) return buildDoctorScheduleReply(doctor);
@@ -409,6 +416,21 @@ function asksForAlternativeClinicTime(message) {
 
 function asksWalkInRegistration(message) {
   return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診/.test(message);
+}
+
+function asksAppointmentChange(message) {
+  return /改掛|改約|改預約|更改預約|改時間|改今天|改明天|換時段|換到|已經.*掛號|已線上掛號|線上掛號.*改/.test(message);
+}
+
+function buildAppointmentChangeReply(message, day, periods) {
+  const dayLabel = buildDayLabel(message, day);
+  const requestedPeriods = periods.length > 0 ? periods : ["早診", "午診", "晚診"];
+  const scheduleText = buildPeriodSummary(day, requestedPeriods);
+  return [
+    "已線上掛號要改時間，這裡不能直接幫你改或保證改成功。",
+    `${dayLabel}可先參考：${scheduleText}。`,
+    "請用原本線上掛號系統、電話 02-2511-9488，或到現場櫃台確認是否能改與是否還有名額。"
+  ].join("\n");
 }
 
 function buildAvailableClinicTimesReply(day) {

@@ -70,6 +70,13 @@ function isSkinShinglesVaccineQuestion(message) {
 }
 
 function answerHpvVaccineWithAnonymousScreeningQuestion(message) {
+  if (asksImmediateOnsiteNextStep(message)) {
+    return [
+      "你已經在診所外面，下一步先上 3 樓到櫃台或護理人員那邊說明：想問 HPV 疫苗、匿名篩檢，也要掛號。",
+      `疫苗庫存、匿名篩檢流程、費用與今天能不能做，現場會依項目確認；也可先電話 ${PHONE}。`
+    ].join("");
+  }
+
   const parts = [
     "診所有提供 HPV 疫苗施打，也可詢問匿名篩檢；匿名篩檢包含性病相關篩檢服務。"
   ];
@@ -87,6 +94,11 @@ function answerAnonymousScreeningAdminQuestion(message) {
   const parts = [
     "診所有提供匿名篩檢相關服務，可到診後向護理人員詢問流程與項目。"
   ];
+
+  if (asksPaymentOrIdentityDocuments(message)) {
+    parts.push("刷卡、健保卡或身分證要不要用，需依現場匿名篩檢流程與項目確認；可先帶著，但不先保證一定可刷或一定不用證件。");
+    return parts.join("");
+  }
 
   if (asksSameDayWalkInOrPrice(message)) {
     parts.push(`費用、當天名額與今天現場能不能做，都需要電話 ${PHONE} 或到現場由診所人員確認，不能先保證今天一定能做。`);
@@ -129,6 +141,16 @@ function asksAnonymousScreening(message) {
 
 function asksSameDayWalkInOrPrice(message) {
   return /今天|今日|現場|直接|當天|費用|價錢|價格|多少錢|名額|庫存|有貨|可不可以|能不能|可以做|可以打/.test(message);
+}
+
+function asksPaymentOrIdentityDocuments(message) {
+  return /刷卡|信用卡|現金|付款|付費|健保卡|身分證|身份證|證件|帶什麼|要帶/.test(message);
+}
+
+function asksImmediateOnsiteNextStep(message) {
+  return /現在|已經|人在|我在/.test(message)
+    && /診所外|外面|現場|門口|樓下|附近/.test(message)
+    && /下一步|先做什麼|怎麼辦|先去哪|先問誰|掛號/.test(message);
 }
 
 function asksPersonalSuitability(message) {

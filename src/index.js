@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { syncLineVoomAnnouncements } from "../scripts/sync-line-voom.js";
 import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
+import { answerAdminMixedQuestion } from "./admin-mixed.js";
 import { answerAnalColorectalQuestion } from "./anal-colorectal.js";
 import { draftReply } from "./ai.js";
 import {
@@ -406,6 +407,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
+
+  const adminMixedReply = answerAdminMixedQuestion(message);
+  if (adminMixedReply) return { reply: adminMixedReply, relevantChunks: [] };
 
   const wellnessWeightReply = answerWellnessWeightQuestion(message);
   if (wellnessWeightReply) return { reply: wellnessWeightReply, relevantChunks: [] };
