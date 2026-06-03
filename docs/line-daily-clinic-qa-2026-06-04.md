@@ -162,3 +162,11 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 我想看男性更年期或睪固酮低下，是要找院長還是羅醫師？差在哪？講重點。 | Listed broad Chen/Luo specialties and asked whether the user wants to arrange a time; did not directly answer male menopause/testosterone routing. | Partial | Too broad and misses whether the public doctor data clearly distinguishes this specific issue. |
 | 4 | 如果只是想先問費用跟能不能刷卡，不想看診，可以到櫃台問嗎？ | Stayed on sexual urology/testosterone context; says fees are not public and need confirmation by phone or callback, but misses card payment and counter-only question. | Partial | Admin/payment question should override prior service context. |
 | 5 | 第一次去要先報到還是直接上三樓？我從行天宮站過去，講重點就好。 | Says Exit 4, walk about 40 seconds, take elevator to 3F; report to counter first and counter can help check registration if not yet done. | Pass | Good concise route plus report flow. |
+
+### Round 9 Retest
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 2 | 重測：那明天晚上呢？我還是想看頻尿，不想掛錯。 | Says tomorrow Fri evening is surgery time, not general clinic; suggests Fri morning Chen Weijie and Fri afternoon Luo Shixiu, with phone/onsite/online confirmation. | Pass | Schedule follow-up now beats generic urinary symptom guidance. |
+| 3 | 重測：我想看男性更年期或睪固酮低下，是要找院長還是羅醫師？差在哪？講重點。 | Says male menopause/suspected low testosterone should be evaluated in urology/men's health; symptoms and blood values need physician assessment; public data does not require one specific doctor; choose by general urology time or preference. | Pass | No broad unrelated specialty dump or treatment guarantee. |
+| 4 | 重測：如果只是想先問費用跟能不能刷卡，不想看診，可以到櫃台問嗎？ | Says the user can ask counter/staff about fee and payment first, but exact fee depends on item/process/evaluation; card payment is not publicly guaranteed; call or ask onsite before deciding. | Pass | Admin/payment intent now overrides previous service context. |
