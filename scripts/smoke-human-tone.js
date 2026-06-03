@@ -36,6 +36,24 @@ async function buildTestReply(message, conversationHistory = []) {
 
 const cases = [
   {
+    name: "pause message does not continue prior medical topic",
+    reply: await buildTestReply("等等", [
+      { role: "user", content: "我尿很痛，今天還有一點血尿，月經也晚了。" },
+      { role: "assistant", content: "尿痛合併血尿需要由醫師評估，尤其月經晚要先確認是否懷孕。" }
+    ]),
+    expected: ["好", "先等你"],
+    forbidden: ["泌尿", "攝護腺", "結石", "急症", "標準回覆", "完整問題", "整理"]
+  },
+  {
+    name: "ok acknowledgement stays natural and does not claim memory",
+    reply: await buildTestReply("Ok", [
+      { role: "user", content: "今天有開嗎？" },
+      { role: "assistant", content: "今天固定門診可先參考早午晚診時段，臨時異動請電話確認。" }
+    ]),
+    expected: ["好", "有需要"],
+    forbidden: ["記著", "脈絡", "整理", "門診", "早診", "午診", "晚診"]
+  },
+  {
     name: "doctor review urgent postoperative bleeding waiting reply is direct",
     reply: applyResponseStyle({
       reply: buildDoctorReviewWaitingReply("我術後一直流血，壓了也停不下來，現在很痛，怎麼辦？"),

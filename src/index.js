@@ -508,12 +508,16 @@ function buildSimpleReply(message) {
     return "我在。你想查門診、預約、交通，還是想問診所有沒有提供某項服務？";
   }
 
+  if (/^(等一下|等等|稍等|先等一下|先等等|等我一下|我等一下|我等等)[。！!.\s]*$/i.test(normalized)) {
+    return "好，我先等你。";
+  }
+
   if (/^(謝謝|感謝|thanks|thank you|thx)[。！!.\s]*$/i.test(normalized)) {
     return "不客氣，有需要我再幫你查。";
   }
 
-  if (/^(ok|okay|好|好的|了解|收到)[。！!.\s]*$/i.test(normalized)) {
-    return "收到，我先幫你記著這個脈絡。";
+  if (/^(ok|okay|好|好的|了解|收到|知道了|明白)[。！!.\s]*$/i.test(normalized)) {
+    return "好，有需要再直接傳訊息給我。";
   }
 
   return null;
