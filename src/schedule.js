@@ -69,6 +69,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   const day = resolveRequestedDay(message, now) ?? resolveFollowUpDay(message, conversationHistory, now);
   const periods = resolveRequestedPeriods(message);
   const period = periods[0];
+  const requestedDoctors = resolveRequestedDoctors(message);
   const doctor = resolveRequestedDoctor(message);
   const misspelledDoctor = resolveMisspelledDoctor(message);
   const doctorListReply = buildDoctorListReply(message, conversationHistory);
@@ -115,6 +116,16 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 
   const clinic = FIXED_SCHEDULE[day][period];
   const time = periodToTime(period);
+
+  if (requestedDoctors.length > 0 && !(asksForUrologyCare(message) && clinic.includes("肛門直腸外科"))) {
+    return compactLines([
+      ...contextNotes,
+      buildRequestedDoctorPeriodReply(dayLabel, period, time, clinic, requestedDoctors),
+      walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+      routeNote
+    ]);
+  }
+
   if (clinic === "休診") {
     if (asksForAlternativeClinicTime(message)) {
       return compactLines([
@@ -266,6 +277,14 @@ function hasExplicitFullDate(message) {
 
 function resolveRequestedDoctor(message) {
   return DOCTOR_ALIASES.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
+}
+
+function resolveRequestedDoctors(message) {
+  return DOCTOR_ALIASES
+    .map(([doctor, pattern]) => ({ doctor, index: message.search(pattern) }))
+    .filter(({ index }) => index >= 0)
+    .sort((a, b) => a.index - b.index)
+    .map(({ doctor }) => doctor);
 }
 
 function resolveMisspelledDoctor(message) {
@@ -471,6 +490,21 @@ function buildMrtRouteNote() {
 
 function compactLines(lines) {
   return lines.filter(Boolean).join("\n");
+}
+
+function buildRequestedDoctorPeriodReply(dayLabel, period, time, clinic, doctors) {
+  const slotLabel = `${dayLabel}${period}（${time}）`;
+  const clinicDoctor = clinic === "手術" || clinic === "休診" ? null : clinic.replace(/（.+?）/g, "");
+  const doctorStatuses = doctors.map((doctor) => `${doctor}${clinicDoctor === doctor ? "有診" : "沒有診"}`);
+
+  if (!clinicDoctor) {
+    const slotStatus = clinic === "手術" ? "是手術時段，不是一般門診" : "休診";
+    return `${slotLabel}：${doctorStatuses.join("；")}。該時段${slotStatus}。`;
+  }
+
+  const hasAnyRequestedDoctor = doctors.some((doctor) => doctor === clinicDoctor);
+  const actualClinicNote = hasAnyRequestedDoctor ? "" : `，該時段是${clinic}門診`;
+  return `${slotLabel}：${doctorStatuses.join("；")}${actualClinicNote}。`;
 }
 
 function buildDoctorScheduleReply(doctor) {

@@ -1,3 +1,28 @@
+import fs from "node:fs";
+
+const FIXED_SCHEDULE_CONFIG = loadFixedScheduleConfig();
+const FIXED_SCHEDULE = FIXED_SCHEDULE_CONFIG.schedule;
+const PERIOD_TIMES = FIXED_SCHEDULE_CONFIG.periodTimes;
+const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
+
+const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+
+const DAY_ALIASES = [
+  ["週日", /週日|星期日|星期天|禮拜日|禮拜天|周日/],
+  ["週一", /週一|星期一|禮拜一|周一/],
+  ["週二", /週二|星期二|禮拜二|周二/],
+  ["週三", /週三|星期三|禮拜三|周三/],
+  ["週四", /週四|星期四|禮拜四|周四/],
+  ["週五", /週五|星期五|禮拜五|周五/],
+  ["週六", /週六|星期六|禮拜六|周六/]
+];
+
+const PERIOD_ALIASES = [
+  ["早診", /早上|上午|早診|09:30|9:30/],
+  ["午診", /下午|午診|13:30|1:30/],
+  ["晚診", /今晚|今天晚上|晚上|晚診|夜診|18:00|6:00|週[一二三四五六日]晚|周[一二三四五六日]晚|星期[一二三四五六日天]晚|禮拜[一二三四五六日天]晚/]
+];
+
 const DOCTOR_SPECIALTIES = {
   "陳偉傑醫師": [
     "精雕微創包皮槍手術",
@@ -176,7 +201,17 @@ const DOCTOR_ALIASES = [
   ["李彥錞醫師", /李彥錞/]
 ];
 
-export function answerDoctorInfoQuestion(message, conversationHistory = []) {
+const ROLE_DOCTOR_ALIASES = [
+  ["羅詩修醫師", /執行院長/],
+  ["陳偉傑醫師", /院長/]
+];
+
+function loadFixedScheduleConfig() {
+  const raw = fs.readFileSync(new URL("../data/fixed-schedule.json", import.meta.url), "utf8");
+  return JSON.parse(raw);
+}
+
+export function answerDoctorInfoQuestion(message, conversationHistory = [], now = new Date()) {
   const doctor = resolveDoctor(message);
   const isSpecialtyQuestion = /專長|專業|主治|擅長|強項|會看什麼|看什麼/.test(message);
   const isProfileQuestion = /現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷/.test(message)
@@ -187,6 +222,11 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
 
   const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
   if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
+
+  const combinedDoctorScheduleReply = buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now);
+  if (combinedDoctorScheduleReply) return combinedDoctorScheduleReply;
+
+  if (hasScheduleOnlyDoctorQuestion(message)) return null;
 
   if (isProfileQuestion) {
     const resolvedDoctor = doctor ?? findLastMentionedDoctor(conversationHistory);
@@ -204,8 +244,91 @@ export function answerDoctorInfoQuestion(message, conversationHistory = []) {
 
   const specialties = DOCTOR_SPECIALTIES[resolvedDoctor];
   if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
+  if (/主要|大概|簡單|重點/.test(message)) return buildConciseSpecialtyReply(resolvedDoctor);
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now) {
+  if (!hasDoctorScheduleQuestion(message)) return null;
+
+  const resolvedDoctor = doctor ?? findLastMentionedDoctor(conversationHistory);
+  if (!resolvedDoctor) return null;
+
+  const lines = [buildConciseDoctorIntro(resolvedDoctor)];
+  const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
+  const periods = resolveRequestedPeriods(message);
+  const scheduleLine = buildDoctorDayScheduleLine(resolvedDoctor, day, buildDayLabel(message, day), periods);
+  if (scheduleLine) lines.push(scheduleLine);
+  lines.push(TEMPORARY_CHANGE_CONFIRMATION);
+
+  return lines.join("\n");
+}
+
+function hasDoctorScheduleQuestion(message) {
+  const hasScheduleCue = /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|下午|今晚|今天晚上|晚上|早診|午診|晚診|夜診|看診|門診|有診/.test(message);
+  const hasDoctorInfoCue = /是誰|哪位|介紹|職稱|院長|現職|主治|專長|擅長|看什麼/.test(message);
+  return hasScheduleCue && hasDoctorInfoCue;
+}
+
+function hasScheduleOnlyDoctorQuestion(message) {
+  const hasScheduleCue = /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|下午|今晚|今天晚上|晚上|早診|午診|晚診|夜診|看診|門診|有診/.test(message);
+  const hasInfoCue = /是誰|哪位|介紹|職稱|院長|現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷|主治|專長|擅長|看什麼/.test(message);
+  return hasScheduleCue && !hasInfoCue;
+}
+
+function buildConciseDoctorIntro(doctor) {
+  const profile = DOCTOR_PROFILES[doctor];
+  const specialties = DOCTOR_SPECIALTIES[doctor] ?? [];
+  const role = profile?.current?.[0] ?? "津久診所醫師";
+  const specialtyText = specialties.slice(0, 3).join("、");
+  if (!specialtyText) return `${doctor}是${role}。`;
+  return `${doctor}是${role}，主要看${specialtyText}。`;
+}
+
+function buildConciseSpecialtyReply(doctor) {
+  const specialties = DOCTOR_SPECIALTIES[doctor] ?? [];
+  const specialtyText = specialties.slice(0, 3).join("、");
+  if (!specialtyText) return `目前沒有整理到${doctor}的主治專長。`;
+  return `${doctor}主要看${specialtyText}。`;
+}
+
+function buildDoctorDayScheduleLine(doctor, day, dayLabel, requestedPeriods) {
+  const schedule = FIXED_SCHEDULE[day];
+  if (!schedule) return `${dayLabel}固定門診沒有列到${doctor}的一般門診。`;
+
+  const periodsToCheck = requestedPeriods.length > 0 ? requestedPeriods : ["早診", "午診", "晚診"];
+  const matchingLines = periodsToCheck
+    .map((period) => {
+      const clinic = schedule[period] ?? "休診";
+      if (!clinic.includes(doctor)) return null;
+      return `${period}（${PERIOD_TIMES[period]}）`;
+    })
+    .filter(Boolean);
+
+  if (matchingLines.length > 0) return `${dayLabel}${matchingLines.join("、")}是${doctor}門診。`;
+
+  if (requestedPeriods.length > 0) {
+    const requestedText = requestedPeriods.map((period) => `${period}（${PERIOD_TIMES[period]}）`).join("、");
+    const otherLines = buildDoctorAvailablePeriodsForDay(doctor, day);
+    if (otherLines.length > 0) return `${dayLabel}${requestedText}沒有${doctor}門診；同一天${otherLines.join("、")}有。`;
+    return `${dayLabel}${requestedText}沒有${doctor}門診。`;
+  }
+
+  return `${dayLabel}固定門診沒有列到${doctor}的一般門診。`;
+}
+
+function buildDoctorAvailablePeriodsForDay(doctor, day) {
+  const schedule = FIXED_SCHEDULE[day];
+  if (!schedule) return [];
+
+  return ["早診", "午診", "晚診"]
+    .map((period) => {
+      const clinic = schedule[period] ?? "休診";
+      if (!clinic.includes(doctor)) return null;
+      return `${period}（${PERIOD_TIMES[period]}）`;
+    })
+    .filter(Boolean);
 }
 
 function buildDoctorComparisonReply(message, doctor, conversationHistory) {
@@ -267,7 +390,9 @@ function buildOtherDoctorSpecialtyReply(message, conversationHistory) {
 }
 
 function resolveDoctor(message) {
-  return DOCTOR_ALIASES.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
+  return DOCTOR_ALIASES.find(([, pattern]) => pattern.test(message))?.[0]
+    ?? ROLE_DOCTOR_ALIASES.find(([, pattern]) => pattern.test(message))?.[0]
+    ?? null;
 }
 
 function findLastMentionedDoctor(conversationHistory, options = {}) {
@@ -286,4 +411,54 @@ function hasRecentSpecialtyContext(conversationHistory) {
     .reverse()
     .slice(0, 4)
     .some((historyMessage) => /主治專長|專長|專業|擅長|強項/.test(historyMessage.content ?? ""));
+}
+
+function resolveRequestedPeriods(message) {
+  return PERIOD_ALIASES
+    .filter(([, pattern]) => pattern.test(message))
+    .map(([period]) => period);
+}
+
+function resolveRequestedDay(message, now) {
+  const relativeOffset = resolveRelativeDayOffset(message);
+  if (relativeOffset !== null) return getTaipeiWeekday(addDays(now, relativeOffset));
+
+  return DAY_ALIASES.find(([, pattern]) => pattern.test(message))?.[0] ?? null;
+}
+
+function buildDayLabel(message, day) {
+  if (/今天|今日|今晚|今天晚上/.test(message)) return `今天（${day}）`;
+  if (/明天|明日/.test(message)) return `明天（${day}）`;
+  if (/後天/.test(message)) return `後天（${day}）`;
+  return day;
+}
+
+function resolveRelativeDayOffset(message) {
+  if (/今天|今日|今晚|今天晚上/.test(message)) return 0;
+  if (/明天|明日/.test(message)) return 1;
+  if (/後天/.test(message)) return 2;
+  return null;
+}
+
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function getTaipeiWeekday(date) {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    weekday: "short"
+  }).format(date);
+
+  return {
+    Sun: "週日",
+    Mon: "週一",
+    Tue: "週二",
+    Wed: "週三",
+    Thu: "週四",
+    Fri: "週五",
+    Sat: "週六"
+  }[weekday];
 }

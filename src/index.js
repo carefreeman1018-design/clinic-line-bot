@@ -476,6 +476,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
   const pepVisitReply = answerPepVisitScheduleFollowUp(message, new Date(), conversationHistory);
   if (pepVisitReply) return { reply: pepVisitReply, relevantChunks: [] };
 
+  const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
+  if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
+
   const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
   if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
 
@@ -488,9 +491,6 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const basicInfoReply = answerBasicInfoQuestion(message);
   if (basicInfoReply) return { reply: basicInfoReply, relevantChunks: [] };
-
-  const doctorInfoReply = answerDoctorInfoQuestion(message, conversationHistory);
-  if (doctorInfoReply) return { reply: doctorInfoReply, relevantChunks: [] };
 
   const relevantChunks = await retrieveHybridRelevantChunks(chunks, buildContextualQuery(message, conversationHistory));
 
