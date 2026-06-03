@@ -360,13 +360,15 @@ function getLineSourceId(source) {
 }
 
 async function getAdminUserIds() {
-  if (envAdminUserIds.size > 0) return envAdminUserIds;
-  return new Set(await getStringListSetting(ADMIN_USER_IDS_SETTING_KEY, []));
+  const settingUserIds = await getStringListSetting(ADMIN_USER_IDS_SETTING_KEY, []);
+  if (settingUserIds.length > 0) return new Set(settingUserIds);
+  return envAdminUserIds;
 }
 
 async function getReviewTargetIds() {
-  if (envReviewTargetIds.size > 0) return envReviewTargetIds;
-  return new Set(await getStringListSetting(REVIEW_TARGET_IDS_SETTING_KEY, []));
+  const settingTargetIds = await getStringListSetting(REVIEW_TARGET_IDS_SETTING_KEY, []);
+  if (settingTargetIds.length > 0) return new Set(settingTargetIds);
+  return envReviewTargetIds;
 }
 
 function parseIdSet(value) {
