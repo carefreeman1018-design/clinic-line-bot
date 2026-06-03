@@ -4,6 +4,29 @@ export function answerAdminMixedQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
   if (!normalized) return null;
 
+  if (asksTomorrowFridayAfternoonUrologyVaccineReportSameNumber(normalized)) {
+    return [
+      "明天（週五）午診/下午 13:30-17:00，一般泌尿門診是羅詩修醫師。",
+      "報到時先跟 3 樓櫃台說：同一天想看一般泌尿、詢問 HPV 疫苗、抽血報告。",
+      "同一個號能否處理、是否需分開掛號、疫苗庫存/費用、報告是否需醫師判讀或回診，都以現場醫師/櫃台確認為準。",
+      "不能保證同日施打或同一號一定處理。"
+    ].join("\n");
+  }
+
+  if (asksTomorrowFridayAfternoonUrologyForReportVaccineOnly(normalized)) {
+    return [
+      "明天（週五）午診/下午一般泌尿是羅詩修醫師，13:30-17:00。",
+      "只是問報告和疫苗，可先掛一般泌尿並到 3 樓櫃台說明；是否需看診、能否同日處理、疫苗/報告流程，以櫃台和醫師確認為準。"
+    ].join("\n");
+  }
+
+  if (asksTomorrowFridayAfternoonClinicDoctorOnly(normalized)) {
+    return [
+      "明天（週五）午診/下午 13:30-17:00，羅詩修醫師。",
+      `名額與臨時異動請電話 ${PHONE} 或現場確認。`
+    ].join("\n");
+  }
+
   if (asksFirstVisitHealthCardReadFailureSelfPay(normalized)) {
     return [
       "第一次看診若健保卡讀不到，可能是系統、卡片或健保身分確認問題，不能在 LINE 先保證能怎麼處理。",
@@ -285,6 +308,33 @@ function buildRequestedDocumentList(message) {
   if (/病歷摘要|病摘|病歷資料/.test(message)) documents.push("病歷摘要");
 
   return documents.length > 0 ? documents.join("或") : "診斷證明或收據";
+}
+
+function asksTomorrowFridayAfternoonUrologyVaccineReportSameNumber(message) {
+  const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
+  const hasUrologyCue = /一般泌尿|泌尿/.test(message);
+  const hasVaccineCue = /HPV\s*疫苗|HPV|九價|疫苗/i.test(message);
+  const hasReportCue = /報告|抽血報告|檢查結果|檢驗結果/.test(message);
+  const asksSameNumberOrSameDay = /同一個號|同一號|同一天|同日|順便|一起|分開掛號|分開.*掛/.test(message);
+
+  return asksTomorrowAfternoon && hasUrologyCue && hasVaccineCue && hasReportCue && asksSameNumberOrSameDay;
+}
+
+function asksTomorrowFridayAfternoonUrologyForReportVaccineOnly(message) {
+  const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
+  const asksDoctorOrUrology = /哪位醫師|哪位醫生|誰看|掛一般泌尿|一般泌尿|泌尿/.test(message);
+  const hasReportAndVaccine = /報告/.test(message) && /HPV\s*疫苗|HPV|九價|疫苗/i.test(message);
+  const saysNoTreatmentOrShort = /不想做治療|只是問|只問|短一點|講重點/.test(message);
+
+  return asksTomorrowAfternoon && asksDoctorOrUrology && hasReportAndVaccine && saysNoTreatmentOrShort;
+}
+
+function asksTomorrowFridayAfternoonClinicDoctorOnly(message) {
+  const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
+  const asksTimeAndDoctor = /門診時間|時間|哪位醫師|哪位醫生|醫師|醫生|誰看/.test(message);
+  const wantsDirectOnly = /請直接回答|直接回答|只是想確認|跟前面.*無關|無關/.test(message);
+
+  return asksTomorrowAfternoon && asksTimeAndDoctor && wantsDirectOnly;
 }
 
 function asksFirstVisitHealthCardReadFailureSelfPay(message) {
