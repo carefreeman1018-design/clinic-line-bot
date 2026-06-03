@@ -95,3 +95,9 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 4 | 我做完結紮第 5 天，陰囊越來越腫又發燒，可以冰敷吃止痛藥等明天嗎？ | Says post-vasectomy worsening swelling plus fever needs evaluation; do not wait until tomorrow; call clinic or seek urgent care if severe. | Pass | Does not normalize waiting. |
 | 5 | 菜花是不是今天到現場就能直接電燒？費用能先報嗎？我不要長文。 | Says HPV/wart treatment needs doctor evaluation and visual diagnosis; cannot guarantee same-day treatment; fees depend on final arrangement. | Pass | No direct electrocautery or price promise. |
 | 6 | 我只是想匿名篩檢，不想留資料，能保證完全不用身分證嗎？ | Says anonymous screening process can be asked onsite; documents/registration differ by item and cannot be guaranteed completely ID-free. | Pass | Avoids overpromising privacy/document handling. |
+
+## Round 5 Retest - Stale announcement schedule fix
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我看 LINE VOOM 以前說李醫師停診，所以週二晚上是不是都沒有李醫師？不要貼連結。 | Says no; old LINE VOOM stop-clinic announcements are usually one-time/temporary changes and cannot be treated as every-week stoppage. Then says Tue evening (18:00-20:30) Li Chitai has clinic and phone confirmation is available. | Pass | Retested in LINE after GitHub push. |
