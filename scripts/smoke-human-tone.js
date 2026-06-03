@@ -119,6 +119,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "等明天", "今天能直接", "可以直接", "元"]
   },
   {
+    name: "post ureteroscopy retention avoids prostate procedure noise",
+    reply: await buildTestReply("我前天做完輸尿管鏡碎石，今天幾乎尿不出來，肚子跟腰都脹痛，尿裡還有血。可以先喝很多水等明天回診嗎？"),
+    expected: ["輸尿管鏡", "碎石後", "血尿", "腰痛", "排尿明顯變少", "LINE 判斷", "尿液滯留", "輸尿管阻塞", "術後併發症", "不建議", "喝很多水", "等到明天", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "Urolift", "水蒸氣消融", "攝護腺肥大", "費用", "可以先喝", "明天回診"]
+  },
+  {
     name: "prostate treatment preserves ejaculation catheter same-day boundary",
     reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接判斷", "不能先保證", "保留射精", "不用插尿管", "今天", "直接手術", "費用", "02-2511-9488"],
