@@ -266,12 +266,12 @@ const PROCEDURE_RETRIEVAL_CASES = [
   {
     question: "你們有 HPV 疫苗和皮蛇疫苗嗎？",
     source: "vaccines.md",
-    expectedTerms: ["HPV", "皮蛇疫苗", "官方 LINE"]
+    expectedTerms: ["HPV", "皮蛇疫苗", "02-2511-9488"]
   },
   {
     question: "包皮手術後怎麼換藥？",
     source: "wound-care.md",
-    expectedTerms: ["清、擦、噴、塗", "生理食鹽水", "官方 LINE"]
+    expectedTerms: ["清、擦、噴、塗", "生理食鹽水", "回診"]
   },
   {
     question: "官網有菜花肉芽長怎樣的衛教嗎？",

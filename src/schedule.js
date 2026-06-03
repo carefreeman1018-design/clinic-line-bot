@@ -138,7 +138,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
 
     return compactLines([
       ...contextNotes,
-      `${dayLabel}${period}（${time}）是手術時段，不是一般門診。可查看 LINE VOOM / 官方 LINE、線上掛號或電話 02-2511-9488 確認。`,
+      `${dayLabel}${period}（${time}）是手術時段，不是一般門診。可查看 LINE VOOM、線上掛號或電話 02-2511-9488 確認。`,
       routeNote
     ]);
   }

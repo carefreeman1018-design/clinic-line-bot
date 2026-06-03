@@ -1120,6 +1120,7 @@ const cases = [
 ];
 
 const issues = [];
+const unnaturalLineReferencePattern = /LINE\s*(?:也)?不能|不能只[靠用]?\s*LINE|只[靠用]\s*LINE\s*判斷|官方\s*LINE\s*或電話|透過官方\s*LINE/;
 
 for (const testCase of cases) {
   for (const term of testCase.expected) {
@@ -1138,6 +1139,10 @@ for (const testCase of cases) {
     if (pattern.test(testCase.reply)) {
       issues.push(`${testCase.name} matches forbidden pattern: ${pattern}`);
     }
+  }
+
+  if (unnaturalLineReferencePattern.test(testCase.reply)) {
+    issues.push(`${testCase.name} includes unnatural LINE reference`);
   }
 }
 

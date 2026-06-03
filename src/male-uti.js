@@ -120,8 +120,8 @@ function isScheduleOnlyUrologyQuestion(message) {
 function cleanScheduleReply(reply, message) {
   const symptomPrefix = /頻尿|夜尿/.test(message) ? "頻尿/夜尿想看一般泌尿科的話，" : "";
   return symptomPrefix + reply
-    .replace(/臨時異動請以 LINE VOOM \/ 官方 LINE、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。")
-    .replace(/可查看 LINE VOOM \/ 官方 LINE、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。");
+    .replace(/臨時異動請以 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。")
+    .replace(/可查看 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。");
 }
 
 function buildRequestedScheduleReply(message, now) {
