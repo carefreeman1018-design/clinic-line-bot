@@ -7,6 +7,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
 
   const parts = [];
   const hasHpvExposureConcern = hasHpvExposureOrInfectionConcern(message) && !hasCurrentHpvWartConcern(message);
+  const hasCurrentWartConcern = hasCurrentHpvWartConcern(message);
 
   if (isHpvVaccineQuestion(message) || followUpContext?.includesHpv) {
     parts.push("官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。");
@@ -14,7 +15,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
       parts.push("HPV 疫苗可降低部分型別感染與菜花風險，但不是保證不會感染或長菜花；若已感染 HPV，疫苗不能處理既有感染或讓病毒消失。");
       parts.push(`伴侶有菜花或 HPV 陽性時，疫苗不能取代檢查；今天能不能打、費用與庫存，建議電話 ${PHONE}，由醫師或診所人員評估是否需 HPV/性病篩檢與施打。`);
     }
-    if (hasCurrentHpvWartConcern(message)) {
+    if (hasCurrentWartConcern) {
       parts.push("HPV 疫苗主要是預防方向，不能用來治療已經出現的菜花或肉芽病灶；目前有疑似菜花時，需先由醫師看病灶並評估篩檢與治療。");
     }
   }
@@ -27,11 +28,13 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
     parts.push("官網列出診所有提供 HPV、皮蛇疫苗施打。");
   }
 
-  if (asksPriceOrStock(message) && !hasHpvExposureConcern) {
+  if (asksPriceOrStock(message) && !hasHpvExposureConcern && (!hasCurrentWartConcern || isSkinShinglesVaccineQuestion(message))) {
     parts.push(`價格、庫存與可預約時段目前知識庫沒有公開明確數字，建議電話 ${PHONE} 或由診所人員確認。`);
   }
 
-  if (asksPersonalSuitability(message) && hasHpvExposureConcern) {
+  if (asksPersonalSuitability(message) && hasCurrentWartConcern && !isSkinShinglesVaccineQuestion(message)) {
+    parts.push(`伴侶也可一起評估是否需要檢查或篩檢；今天能不能打疫苗，請電話 ${PHONE} 由醫師或診所人員依病灶與個人狀況確認。`);
+  } else if (asksPersonalSuitability(message) && hasHpvExposureConcern) {
     parts.push("LINE 不能直接判斷是否適合施打；是否需要檢查或今天能不能直接打，仍需依個人狀況評估。");
   } else if (asksPersonalSuitability(message)) {
     parts.push("LINE 不能直接判斷是否適合施打；是否懷孕/備孕、已發生性行為後是否仍適合、過敏史、劑數/間隔、兩種疫苗能否同一天打，以及今天能不能直接打，都需由醫師或診所人員依個人狀況與庫存評估。");

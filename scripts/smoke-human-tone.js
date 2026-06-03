@@ -663,6 +663,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "會直接好", "可以治療", "可以直接打", "兩種可以同一天打", "費用是", "價格是", "元"]
   },
   {
+    name: "hpv wart vaccine live-style answer stays concise",
+    reply: answerVaccineQuestion("我私密處最近長了幾顆像肉芽的東西，朋友說可能是菜花。如果我今天打九價 HPV 疫苗，這些會自己消掉嗎？伴侶需要一起檢查嗎？"),
+    expected: ["HPV", "九價", "不能用來治療", "菜花", "肉芽病灶", "醫師看病灶", "篩檢與治療", "伴侶", "檢查或篩檢", "02-2511-9488"],
+    forbidden: ["皮蛇疫苗", "價格", "庫存", "劑數", "間隔", "兩種疫苗", "懷孕", "備孕", "過敏史", "已發生性行為後是否仍適合", "官網介紹：", "https://", "lin.ee", "會自己消掉", "可以治療"]
+  },
+  {
     name: "hpv vaccine partner positive does not promise wart prevention or treatment",
     reply: answerVaccineQuestion("我女朋友檢查說 HPV 陽性，我自己沒有長東西。那我是不是打 HPV 疫苗就不用擔心菜花？如果已經感染，疫苗能治療嗎？"),
     expected: ["HPV", "九價", "降低", "菜花風險", "不是保證", "不會感染", "長菜花", "已感染 HPV", "不能處理既有感染", "醫師或診所人員", "02-2511-9488"],
