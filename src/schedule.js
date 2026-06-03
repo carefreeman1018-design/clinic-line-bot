@@ -104,10 +104,11 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   ].filter(Boolean);
   const routeNote = asksRouteInScheduleQuestion(message) ? buildMrtRouteNote() : null;
   const walkInNote = asksWalkInRegistration(message) ? WALK_IN_CONFIRMATION : null;
+  const feePaymentCounterNote = buildFeePaymentCounterNote(message);
   const wrongRegistrationNote = asksWrongRegistrationConcern(message)
     ? "到診前可電話 02-2511-9488、現場或線上掛號確認名額與臨時異動，避免掛錯。"
     : null;
-  const confirmationNote = walkInNote ?? wrongRegistrationNote ?? temporaryChangeConfirmation;
+  const confirmationNote = feePaymentCounterNote ?? walkInNote ?? wrongRegistrationNote ?? temporaryChangeConfirmation;
 
   if (!FIXED_SCHEDULE[day]) {
     return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
@@ -465,6 +466,14 @@ function asksForAlternativeClinicTime(message) {
 
 function asksWalkInRegistration(message) {
   return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診/.test(message);
+}
+
+function buildFeePaymentCounterNote(message) {
+  const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
+  const wantsCounterOnly = /櫃台|櫃檯|電話|先問|詢問|只想.*問|只是.*問|只去.*問|問費用|問.*付款|問.*刷卡|問完再決定/.test(message);
+  if (!asksFeeOrPayment || !wantsCounterOnly) return null;
+
+  return "只想先問費用或付款方式，可以先電話 02-2511-9488 或到櫃台詢問；但實際費用會依項目、評估與流程確認，LINE 不能保證價格或一定可刷卡。";
 }
 
 function asksWrongRegistrationConcern(message) {

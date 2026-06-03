@@ -250,6 +250,8 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
 
   const specialties = DOCTOR_SPECIALTIES[resolvedDoctor];
   if (!specialties) return `目前沒有整理到${resolvedDoctor}的主治專長。`;
+  const generalUrologyFitReply = buildGeneralUrologyDoctorFitReply(resolvedDoctor, message);
+  if (generalUrologyFitReply) return generalUrologyFitReply;
   if (/主要|大概|簡單|重點/.test(message)) return buildConciseSpecialtyReply(resolvedDoctor);
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
@@ -274,13 +276,17 @@ function buildGeneralUrologyDoctorChoiceReply(message, now) {
   const hasNonExclusiveCue = /一定要|只能|唯一|不要推薦|不一定|非要/.test(message);
   if (!hasGeneralUrologySymptom || !hasDoctorChoiceCue || !hasNonExclusiveCue) return null;
 
+  const doctor = resolveDoctor(message);
   const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
   const dayLabel = buildDayLabel(message, day);
   const periods = resolveRequestedPeriods(message);
   const periodText = periods.length > 0
     ? periods.map((period) => `${period}（${PERIOD_TIMES[period]}）`).join("、")
     : "一般門診時段";
-  const scheduleNote = periods.includes("晚診") && day === "週四"
+  const doctorScheduleLine = doctor ? buildDoctorDayScheduleLine(doctor, day, dayLabel, periods) : null;
+  const scheduleNote = doctorScheduleLine && !doctorScheduleLine.includes("沒有")
+    ? `${doctorScheduleLine}可先參考固定門診`
+    : periods.includes("晚診") && day === "週四"
     ? "今天晚診若固定門診是院長陳偉傑醫師可先參考"
     : `${dayLabel}${periodText}可先參考固定門診`;
 
@@ -333,6 +339,20 @@ function buildConciseSpecialtyReply(doctor) {
   const specialtyText = specialties.slice(0, 3).join("、");
   if (!specialtyText) return `目前沒有整理到${doctor}的主治專長。`;
   return `${doctor}主要看${specialtyText}。`;
+}
+
+function buildGeneralUrologyDoctorFitReply(doctor, message) {
+  if (!/頻尿|夜尿|尿急|排尿|泌尿|一般泌尿|掛他|掛這位/.test(message)) return null;
+  if (!["陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "蔡曜州醫師"].includes(doctor)) return null;
+
+  const specialtyNote = doctor === "羅詩修醫師"
+    ? "公開專長也列有男性/女性排尿障礙"
+    : "可先看一般泌尿/泌尿相關問題";
+
+  return [
+    `${doctor}主要看一般泌尿/泌尿相關問題，${specialtyNote}。`,
+    "只是頻尿可以先掛一般泌尿門診評估；若血尿、尿不出來、發燒等，請盡快就醫/急診。"
+  ].join("");
 }
 
 function buildDoctorDayScheduleLine(doctor, day, dayLabel, requestedPeriods) {

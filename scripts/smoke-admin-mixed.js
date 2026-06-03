@@ -38,6 +38,13 @@ const cases = [
     message: "我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？",
     expected: ["不能先保證", "不用看診", "直接拿藥", "一樣的藥", "藥袋", "健保卡", "身分證", "櫃台", "醫師確認", "適合續拿", "需要看診調整", "發燒", "劇烈疼痛", "尿不出來", "02-2511-9488"],
     forbidden: ["固定門診", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "早診", "午診", "晚診", "https://", "lin.ee", "官網介紹：", "可以不看診"]
+  },
+  {
+    name: "friday surgery schedule keeps counter fee question",
+    message: "我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。",
+    routedOnly: true,
+    expected: ["週五", "晚診", "18:00-20:30", "手術時段", "不是一般門診", "週五可改一般門診時段", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "只想先問費用或付款方式", "電話 02-2511-9488", "櫃台", "實際費用", "依項目", "評估", "流程", "LINE 不能保證價格", "一定可刷卡"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   }
 ];
 
@@ -47,7 +54,7 @@ for (const testCase of cases) {
   const directReply = answerAdminMixedQuestion(testCase.message) ?? "";
   const { reply } = await buildReplyAndMatches(testCase.message, [], testCase.conversationHistory ?? []);
 
-  if (directReply !== reply) {
+  if (!testCase.routedOnly && directReply !== reply) {
     issues.push(`${testCase.name} routed reply differs from admin-mixed reply`);
   }
 
