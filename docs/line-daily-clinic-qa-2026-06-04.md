@@ -152,3 +152,13 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 |---|---|---|---|---|
 | 1 | 最後再測：我只是要拿上次的檢查報告，不看診，可以請家人代拿嗎？要帶什麼？ | Says reports involve personal medical data; whether family can proxy-pick up must be confirmed by counter/staff; gives phone path, patient and proxy IDs, authorization/relationship documents, and possible return visit for physician explanation. | Pass | Needed the doctor-review waiting reply to preserve the admin draft. |
 | 3 | 我陪我先生看診，可以一起進診間嗎？如果是私密問題會不會很尷尬？ | Says companion entry depends on patient consent, doctor/staff arrangement, and privacy needs; tell counter/nursing staff on arrival; patient can speak alone or companion can wait outside; private issues are routine. | Pass | No longer misreads spouse "先生" as a doctor name/schedule query. |
+
+## Round 9 - Relative schedule follow-ups, service fit, and admin handoff
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我今天下午第一次去看頻尿，下午可以看一般泌尿科嗎？現場掛可以嗎？不要貼連結。 | Says today Thu afternoon is surgery time, not general clinic; suggests Thu morning/evening clinic times and notes onsite registration is not guaranteed. | Pass | Correct date/period and walk-in caveat. |
+| 2 | 那明天晚上呢？我還是想看頻尿，不想掛錯。 | Gave generic frequency/nocturia medical safety guidance and phone path; did not answer tomorrow night schedule. | Fail | Follow-up schedule intent was swallowed by symptom routing; should say Fri night is surgery time, not general clinic, and suggest Fri morning/afternoon. |
+| 3 | 我想看男性更年期或睪固酮低下，是要找院長還是羅醫師？差在哪？講重點。 | Listed broad Chen/Luo specialties and asked whether the user wants to arrange a time; did not directly answer male menopause/testosterone routing. | Partial | Too broad and misses whether the public doctor data clearly distinguishes this specific issue. |
+| 4 | 如果只是想先問費用跟能不能刷卡，不想看診，可以到櫃台問嗎？ | Stayed on sexual urology/testosterone context; says fees are not public and need confirmation by phone or callback, but misses card payment and counter-only question. | Partial | Admin/payment question should override prior service context. |
+| 5 | 第一次去要先報到還是直接上三樓？我從行天宮站過去，講重點就好。 | Says Exit 4, walk about 40 seconds, take elevator to 3F; report to counter first and counter can help check registration if not yet done. | Pass | Good concise route plus report flow. |

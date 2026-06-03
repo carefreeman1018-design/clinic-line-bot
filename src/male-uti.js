@@ -15,6 +15,10 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
     ].join("");
   }
   if (asksDoctorChoiceForGeneralUrology(message)) return null;
+  if (isScheduleOnlyUrologyQuestion(message)) {
+    const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);
+    if (requestedScheduleReply) return cleanScheduleReply(requestedScheduleReply, message);
+  }
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
@@ -27,11 +31,6 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
       "這不等於一定是癌症；但若症狀持續幾週，建議掛泌尿科門診評估。",
       `以你描述若沒有高燒、尿不出來、血尿變多或劇烈疼痛，通常不需要先急診；可先電話 ${PHONE} 確認可評估時段。若上述症狀出現或明顯很不舒服，請急診/立即就醫。`
     ].join("");
-  }
-
-  if (isScheduleOnlyUrologyQuestion(message)) {
-    const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);
-    if (requestedScheduleReply) return cleanScheduleReply(requestedScheduleReply, message);
   }
 
   if (hasUpperUrinaryEmergency(message)) {
@@ -175,7 +174,7 @@ function buildRequestedScheduleReply(message, now) {
 function hasExplicitScheduleRequest(message) {
   const hasDay = /今天|今日|明天|明日|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]/.test(message);
   const hasPeriod = /早上|上午|早診|下午|午診|晚上|晚診|夜診|09:30|9:30|13:30|1:30|18:00|6:00/.test(message);
-  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|掛哪|改掛|該掛|預約|可以掛|能掛|能看|可以看|適合看|哪一診|哪診/.test(message);
+  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|掛錯|掛哪|改掛|該掛|預約|可以掛|能掛|能看|可以看|適合看|哪一診|哪診/.test(message);
 
   return hasDay && hasPeriod && hasScheduleIntent;
 }

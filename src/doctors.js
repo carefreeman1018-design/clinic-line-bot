@@ -217,6 +217,9 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   const isProfileQuestion = /現職|學歷|經歷|履歷|證照|證書|專科|認證|背景|資歷/.test(message)
     || (Boolean(doctor) && /是誰|哪位|介紹|職稱/.test(message));
   const isDoctorFollowUp = Boolean(doctor) && /那|呢|其他|其它|別的/.test(message);
+  const maleMenopauseDoctorChoiceReply = buildMaleMenopauseDoctorChoiceReply(message);
+  if (maleMenopauseDoctorChoiceReply) return maleMenopauseDoctorChoiceReply;
+
   const comparisonReply = buildDoctorComparisonReply(message, doctor, conversationHistory);
   if (comparisonReply) return comparisonReply;
 
@@ -250,6 +253,19 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   if (/主要|大概|簡單|重點/.test(message)) return buildConciseSpecialtyReply(resolvedDoctor);
 
   return `${resolvedDoctor}主治專長：${specialties.join("、")}。`;
+}
+
+function buildMaleMenopauseDoctorChoiceReply(message) {
+  const hasMaleMenopauseCue = /男性更年期|睪固酮|睾固酮|男性荷爾蒙|低下|低睪/.test(message);
+  const hasDoctorChoiceCue = /院長|羅醫師|羅醫生|醫師|醫生|掛誰|掛哪|哪位|推薦|差在哪|差別|不同/.test(message);
+  if (!hasMaleMenopauseCue || !hasDoctorChoiceCue) return null;
+
+  return [
+    "男性更年期或疑似睪固酮低下，建議以泌尿科/男性健康門診評估。",
+    "症狀和抽血數值需要醫師一起判斷，線上不能直接診斷，也不能先保證睪固酮治療或解讀報告。",
+    "公開醫師專長資料沒有明確寫這題一定只能找院長陳偉傑醫師或羅詩修醫師其中一位；兩位都有男性泌尿、性功能相關背景。",
+    "重點：可先依一般泌尿門診可掛時段或你偏好的醫師安排，並電話/現場確認。"
+  ].join("");
 }
 
 function buildGeneralUrologyDoctorChoiceReply(message, now) {

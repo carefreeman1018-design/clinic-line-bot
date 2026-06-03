@@ -41,7 +41,7 @@ const DOCTOR_MISSPELLINGS = [
   }
 ];
 
-const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約/;
+const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛錯|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約/;
 const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
 const WALK_IN_CONFIRMATION = "現場掛號可先到現場、也可先參考固定門診；但名額與臨時異動仍需以電話 02-2511-9488 或現場/線上掛號確認，不能保證一定掛得到。";
 
@@ -104,6 +104,10 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   ].filter(Boolean);
   const routeNote = asksRouteInScheduleQuestion(message) ? buildMrtRouteNote() : null;
   const walkInNote = asksWalkInRegistration(message) ? WALK_IN_CONFIRMATION : null;
+  const wrongRegistrationNote = asksWrongRegistrationConcern(message)
+    ? "到診前可電話 02-2511-9488、現場或線上掛號確認名額與臨時異動，避免掛錯。"
+    : null;
+  const confirmationNote = walkInNote ?? wrongRegistrationNote ?? temporaryChangeConfirmation;
 
   if (!FIXED_SCHEDULE[day]) {
     return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
@@ -128,11 +132,11 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
       ]);
     }
 
-    return compactLines([...contextNotes, buildFullDayReply(day, dayLabel, walkInNote ?? temporaryChangeConfirmation), routeNote]);
+    return compactLines([...contextNotes, buildFullDayReply(day, dayLabel, confirmationNote), routeNote]);
   }
 
   if (periods.length > 1) {
-    return compactLines([...contextNotes, buildSelectedPeriodsReply(day, dayLabel, periods, walkInNote ?? temporaryChangeConfirmation), routeNote]);
+    return compactLines([...contextNotes, buildSelectedPeriodsReply(day, dayLabel, periods, confirmationNote), routeNote]);
   }
 
   const clinic = FIXED_SCHEDULE[day][period];
@@ -142,7 +146,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([
       ...contextNotes,
       buildRequestedDoctorPeriodReply(dayLabel, period, time, clinic, requestedDoctors),
-      walkInNote ?? temporaryChangeConfirmation,
+      confirmationNote,
       routeNote
     ]);
   }
@@ -153,12 +157,12 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${dayLabel}${period}（${time}）休診。`,
         buildAvailableClinicTimesReply(day),
-        walkInNote ?? temporaryChangeConfirmation,
+        confirmationNote,
         routeNote
       ]);
     }
 
-    return compactLines([...contextNotes, `${dayLabel}${period}（${time}）休診。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
+    return compactLines([...contextNotes, `${dayLabel}${period}（${time}）休診。`, confirmationNote, routeNote]);
   }
 
   if (clinic === "手術") {
@@ -167,7 +171,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${dayLabel}${period}（${time}）是手術時段，不是一般門診。`,
         buildAvailableGeneralClinicTimesReply(day),
-        walkInNote ?? temporaryChangeConfirmation,
+        confirmationNote,
         routeNote
       ]);
     }
@@ -187,7 +191,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。`,
         buildAvailableGeneralClinicTimesReply(day),
-        walkInNote ?? temporaryChangeConfirmation,
+        confirmationNote,
         routeNote
       ]);
     }
@@ -195,7 +199,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([...contextNotes, `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`, walkInNote, routeNote]);
   }
 
-  return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
+  return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。`, confirmationNote, routeNote]);
 }
 
 export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
@@ -437,12 +441,16 @@ function asksForUrologyCare(message) {
 }
 
 function asksForAlternativeClinicTime(message) {
-  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|該掛|掛哪|改哪|換哪|比較適合|有診|可以看|可以掛|能掛|適合看|不適合|一般泌尿|不是一般泌尿|那診不是|下一步/.test(message)
+  return /如果沒有|若沒有|哪個時段|哪一個時段|哪時段|該掛|掛錯|掛哪|改哪|換哪|比較適合|有診|可以看|可以掛|能掛|適合看|不適合|一般泌尿|不是一般泌尿|那診不是|下一步/.test(message)
     || asksWalkInRegistration(message);
 }
 
 function asksWalkInRegistration(message) {
   return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診/.test(message);
+}
+
+function asksWrongRegistrationConcern(message) {
+  return /掛錯|不想.*掛錯|不要.*掛錯/.test(message);
 }
 
 function asksAppointmentChange(message) {

@@ -4,6 +4,14 @@ export function answerAdminMixedQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
   if (!normalized) return null;
 
+  if (asksFeePaymentAtCounterWithoutVisit(normalized)) {
+    return [
+      "可以先到櫃台或請診所人員詢問費用與付款方式，不一定要先決定看診。",
+      "但實際費用會依項目、當天流程與是否需要醫師評估而定，不能在 LINE 直接保證金額。",
+      `刷卡/付款方式目前沒有明確公開資訊，不能保證一定可刷卡；建議先電話 ${PHONE}，或到現場櫃台確認後再決定。`
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationChange(normalized)) {
     return [
       "已線上掛號但想改今天晚上，不能只靠 LINE 訊息直接保證改成功。",
@@ -78,6 +86,14 @@ function asksOnlineRegistrationChange(message) {
 function asksCertificateOrReceipt(message) {
   return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
+}
+
+function asksFeePaymentAtCounterWithoutVisit(message) {
+  const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
+  const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
+  const wantsBeforeVisitDecision = /不想看診|不看診|不用看診|還不想看|先問|先知道|只是想先問|只想先問|問完再決定|再決定|能不能.*問|可以.*問/.test(message);
+
+  return asksFeeOrPayment && asksCounterOrStaff && wantsBeforeVisitDecision;
 }
 
 function asksReportPickupProxy(message) {
