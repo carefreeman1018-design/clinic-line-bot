@@ -1,10 +1,14 @@
 import { answerFixedScheduleQuestion } from "./schedule.js";
+import { answerUrethralDischargeStdQuestion } from "./std-treatment.js";
 
 const PHONE = "02-2511-9488";
 
 export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (!isUtiQuestion(message)) return null;
   if (!hasUrgentOrMedicationConcern(message)) return null;
+
+  const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
+  if (urethralDischargeReply) return urethralDischargeReply;
 
   if (isScheduleOnlyUrologyQuestion(message)) {
     const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);

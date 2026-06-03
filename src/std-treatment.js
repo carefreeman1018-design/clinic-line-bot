@@ -3,6 +3,9 @@ const PHONE = "02-2511-9488";
 export function answerStdTreatmentQuestion(message) {
   if (!isStdTreatmentQuestion(message)) return null;
 
+  const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
+  if (urethralDischargeReply) return urethralDischargeReply;
+
   if (isAnonymousScreeningPrivacyQuestion(message)) {
     return answerAnonymousScreeningQuestion(message);
   }
@@ -35,8 +38,31 @@ export function answerStdTreatmentQuestion(message) {
   ].join("");
 }
 
+export function answerUrethralDischargeStdQuestion(message) {
+  if (!isUrethralDischargeQuestion(message)) return null;
+
+  const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+    ? "伴侶也建議一起評估是否需要檢查或治療；在醫師確認前先避免性行為，或至少全程保險套。"
+    : "";
+
+  return [
+    "尿道口黃黃分泌物、像流膿，合併尿尿刺痛時，要擔心淋病、披衣菌或其他性傳染感染。",
+    "不要自行吃朋友剩下的抗生素，也不要只靠症狀自己判斷；用錯藥可能影響檢查與治療。",
+    partnerNote,
+    `下一步：預約性病篩檢/治療門診，或先電話 ${PHONE} 確認最快可評估時段；若發燒、睪丸痛、下腹痛、尿不出來或明顯很不舒服，請急診/立即就醫。`
+  ].join("");
+}
+
 function isStdTreatmentQuestion(message) {
-  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|皰疹|疱疹|HSV|性病|病灶|私密處.*顆粒|肉芽|陰莖.*水泡|陰莖.*潰瘍|生殖器.*水泡|生殖器.*潰瘍|匿名.*篩檢|篩檢.*匿名/i.test(message);
+  return /PrEP|PEP|HIV|愛滋|暴露前|暴露後|保險套破|無套|高風險|菜花|尖銳濕疣|HPV(?!\s*疫苗)|梅毒|淋病|披衣菌|皰疹|疱疹|HSV|性病|病灶|私密處.*顆粒|肉芽|陰莖.*水泡|陰莖.*潰瘍|生殖器.*水泡|生殖器.*潰瘍|尿道口.*分泌|尿道.*流膿|流膿|匿名.*篩檢|篩檢.*匿名/i.test(message);
+}
+
+function isUrethralDischargeQuestion(message) {
+  const hasUrethralCue = /尿道口|尿道|龜頭|陰莖/.test(message);
+  const hasDischargeCue = /黃黃.*分泌|分泌物|流膿|膿/.test(message);
+  const hasStdCue = /淋病|披衣菌|性病|無套|伴侶|抗生素|尿尿.*刺痛|尿痛|排尿.*痛/.test(message);
+
+  return hasUrethralCue && hasDischargeCue && hasStdCue;
 }
 
 function isAnonymousScreeningPrivacyQuestion(message) {

@@ -474,6 +474,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
+    name: "urethral discharge routes to std treatment before generic uti",
+    reply: await buildTestReply("我男生，這兩天尿尿會刺痛，尿道口有黃黃的分泌物，有點像流膿。朋友說可能是淋病或披衣菌，可以先吃他剩下的抗生素嗎？伴侶也需要一起檢查嗎？"),
+    expected: ["尿道口", "黃黃分泌物", "流膿", "尿尿刺痛", "淋病", "披衣菌", "性傳染感染", "不要自行吃朋友剩下的抗生素", "用錯藥", "伴侶", "檢查或治療", "避免性行為", "性病篩檢/治療門診", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "尿痛、頻尿或急尿可能有不同原因", "請不要自行服藥或停藥", "今天晚上", "晚診", "李齊泰醫師", "可以先吃", "自己判斷就好"]
+  },
+  {
     name: "explicit male uti fever does not use female pregnancy route",
     reply: await buildTestReply("我是男生，這兩天尿尿很痛，今天右邊腰也痛，還有點發燒發冷。家裡有之前剩的抗生素，可以先吃一顆觀察到明天嗎？"),
     expected: ["尿痛", "發燒", "需要醫師評估", "不要自行", "抗生素", "02-2511-9488", "盡快", "泌尿科就醫", "急診", "立即就醫"],
