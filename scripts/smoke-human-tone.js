@@ -464,8 +464,8 @@ const cases = [
   {
     name: "explicit male uti fever does not use female pregnancy route",
     reply: await buildTestReply("我是男生，這兩天尿尿很痛，今天右邊腰也痛，還有點發燒發冷。家裡有之前剩的抗生素，可以先吃一顆觀察到明天嗎？"),
-    expected: ["尿痛", "發燒", "LINE 不能判斷", "不要自行", "抗生素", "02-2511-9488", "急診", "立即就醫"],
-    forbidden: ["懷孕", "月經", "孕期感染", "女性泌尿", "美磁波", "可以先吃", "觀察到明天"]
+    expected: ["尿痛", "發燒", "LINE 不能判斷", "不要自行", "抗生素", "02-2511-9488", "盡快", "泌尿科就醫", "急診", "立即就醫"],
+    forbidden: ["懷孕", "月經", "孕期感染", "女性泌尿", "美磁波", "今天晚上", "晚診", "陳嘉哲", "肛門直腸外科", "可以先吃", "觀察到明天"]
   },
   {
     name: "hematuria flank pain fever prioritizes er over clinic schedule",

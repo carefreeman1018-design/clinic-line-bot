@@ -100,21 +100,25 @@ function buildRequestedScheduleReply(message, now) {
     if (requestedScheduleReply) {
       return `你問的時段可先參考：${requestedScheduleReply}`;
     }
+
+    const scheduleOnlyQuestion = /今晚|今天晚上|晚上|夜診|晚診/.test(message)
+      ? "今天晚上有診嗎？"
+      : "今天有診嗎？";
+    const scheduleReply = answerFixedScheduleQuestion(scheduleOnlyQuestion, now, []);
+    if (scheduleReply) {
+      const conciseSchedule = scheduleReply.split("。")[0];
+      const scheduleLabel = scheduleOnlyQuestion === "今天晚上有診嗎？" ? "今天晚上時段" : "時段";
+      return `你問的${scheduleLabel}可先參考：${conciseSchedule}。`;
+    }
   }
 
-  if (!/今天|晚上|夜診|晚診|現在/.test(message)) return null;
-
-  const scheduleReply = answerFixedScheduleQuestion("今天晚上有診嗎？", now, []);
-  if (!scheduleReply) return null;
-
-  const conciseSchedule = scheduleReply.split("。")[0];
-  return `今天晚上可先參考：${conciseSchedule}。`;
+  return null;
 }
 
 function hasExplicitScheduleRequest(message) {
   const hasDay = /今天|今日|明天|明日|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]/.test(message);
   const hasPeriod = /早上|上午|早診|下午|午診|晚上|晚診|夜診|09:30|9:30|13:30|1:30|18:00|6:00/.test(message);
-  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|掛哪|改掛|該掛|預約|可以掛|能掛|適合看|哪一診|哪診/.test(message);
+  const hasScheduleIntent = /看診|門診|泌尿科|有診|休診|停診|時段|掛號|掛哪|改掛|該掛|預約|可以掛|能掛|能看|可以看|適合看|哪一診|哪診/.test(message);
 
   return hasDay && hasPeriod && hasScheduleIntent;
 }
