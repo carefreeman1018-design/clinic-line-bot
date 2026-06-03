@@ -33,3 +33,12 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 4 | 他跟羅詩修醫師差在哪？我不知道要掛誰。 | Compared Chen and Luo specialties and said to choose based on issue and available time. | Pass | Good enough; does not force one doctor. |
 | 5 | 羅醫師明天早上有診嗎？那陳醫師呢？請短一點。 | Replied only that tomorrow Friday morning is Chen clinic. | Fail | Missed Luo part and two-doctor comparison; likely multi-doctor schedule parsing issue. |
 | 6 | 如果只是一般泌尿問題，我要掛哪位？不要推薦唯一一個。 | Said either doctor is okay for general urology; choose by schedule, unless specific conditions. | Pass | Avoids recommending a single doctor. |
+
+### Retest after c2bbe13
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 院長是誰？他今天有看診嗎？不要貼連結，講重點。 | Says Chen Wei-Jie is clinic director, gives concise specialties, and says today Thu evening is Chen clinic. | Pass | Doctor identity no longer lost to schedule routing. |
+| 2 | 那他主要看什麼？ | Answers Chen Wei-Jie main specialties in a short sentence. | Pass | Pronoun follow-up now stays on director/Chen context. |
+| 3 | 陳偉傑醫師是誰？他今天晚上有診嗎？ | Says Chen Wei-Jie is clinic director, gives concise specialties, and confirms tonight Thu evening clinic. | Pass | Same-message doctor identity plus schedule works. |
+| 5 | 羅醫師明天早上有診嗎？那陳醫師呢？請短一點。 | Says tomorrow Fri morning Luo has no clinic and Chen has clinic, with confirmation reminder. | Pass | Two named doctors are answered separately. |
