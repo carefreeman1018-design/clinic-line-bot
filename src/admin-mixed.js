@@ -4,6 +4,13 @@ export function answerAdminMixedQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
   if (!normalized) return null;
 
+  if (asksVaccineScreeningCounterProcessFee(normalized)) {
+    return [
+      `可以先到櫃台或電話 ${PHONE} 問 HPV 疫苗與匿名篩檢的流程/費用，不一定當天做。`,
+      "是否同日可做、是否需看診/評估、備苗與篩檢流程，以診所現場與醫師/櫃台確認為準；不保證當天做或金額。"
+    ].join("\n");
+  }
+
   if (asksFeePaymentAtCounterWithoutVisit(normalized)) {
     return [
       "可以先到櫃台或請診所人員詢問費用與付款方式，不一定要先決定看診。",
@@ -28,11 +35,26 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksOnlineRegistrationFirstVisitMissingHealthCard(normalized)) {
+    return [
+      "第一次來、已經線上掛號，到診後請先到 3 樓櫃台報到。",
+      "健保卡忘帶能不能先報到，要以櫃台現場核對為準；可能影響健保身分、改自費或後續補件。",
+      `先帶身分證給櫃台確認；不確定可先電話 ${PHONE}。`
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationLateArrival(normalized)) {
     return [
       "已線上掛號但可能晚到，不能先保證晚到 20 分鐘一定還看得到。",
       `建議先電話 ${PHONE} 通知並確認；現場會由櫃台依報到時間、醫師門診狀況、號碼/名額安排。`,
       "到診後仍請帶健保卡/身分證到 3 樓櫃台報到。"
+    ].join("\n");
+  }
+
+  if (asksOnlineRegistrationCancellation(normalized)) {
+    return [
+      "臨時不能去，建議先取消或改期，避免占用名額。",
+      `LINE bot 不保證能代你取消；最穩妥是打 ${PHONE} 請櫃台確認，或依原本線上掛號系統取消/改期。`
     ].join("\n");
   }
 
@@ -69,6 +91,13 @@ export function answerAdminMixedQuestion(message) {
   }
 
   if (asksCertificateOrReceipt(normalized)) {
+    if (asksCertificateOrReceiptAfterVisit(normalized)) {
+      return [
+        `看完才想到要保險收據或診斷證明，可先電話 ${PHONE} 或問櫃台能否補開。`,
+        "診斷證明通常需醫師/病歷確認；能否隔天、本人或家人代辦、要帶證件或委託文件，都以診所回覆為準。"
+      ].join("\n");
+    }
+
     return [
       "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明或收據。",
       "診斷證明需由醫師依實際看診內容評估後開立。",
@@ -131,12 +160,29 @@ function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
 }
 
+function asksOnlineRegistrationFirstVisitMissingHealthCard(message) {
+  const mentionsFirstVisit = /第一次去|第一次來|初診|第一次看/.test(message);
+  const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsMissingHealthCard = /健保卡.*忘|忘.*健保卡|沒帶健保卡|沒有帶健保卡|健保卡.*家|健保卡不在/.test(message);
+  const mentionsIdOrCheckin = /身分證|身份證|證件|報到|櫃台|櫃檯|看診/.test(message);
+
+  return mentionsFirstVisit && mentionsExistingRegistration && mentionsMissingHealthCard && mentionsIdOrCheckin;
+}
+
 function asksOnlineRegistrationLateArrival(message) {
   const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
   const mentionsLateArrival = /晚到|遲到|會晚|可能晚|來不及|晚.*分鐘|遲.*分鐘|延誤|塞車/.test(message);
   const asksCanStillBeSeenOrCall = /看得到|還能看|還可以看|能不能看|可不可以看|會不會過號|過號|打電話|先電話|通知|確認/.test(message);
 
   return mentionsExistingRegistration && mentionsLateArrival && asksCanStillBeSeenOrCall;
+}
+
+function asksOnlineRegistrationCancellation(message) {
+  const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const asksCancelOrReschedule = /取消|退掛|不能去|無法去|沒辦法去|不能到|無法到|改期|改時間|改約/.test(message);
+  const asksLineOrPhone = /LINE|line|這裡|跟你說|打電話|電話|怎麼取消|要取消|要打/.test(message);
+
+  return mentionsExistingRegistration && asksCancelOrReschedule && asksLineOrPhone;
 }
 
 function asksOutsideHospitalReportForVisit(message) {
@@ -160,12 +206,23 @@ function asksCertificateOrReceipt(message) {
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
 }
 
+function asksCertificateOrReceiptAfterVisit(message) {
+  return /隔天|明天|補開|補申請|才想到|本人|家人|代辦|委託/.test(message)
+    && /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票|保險/.test(message);
+}
+
 function asksFeePaymentAtCounterWithoutVisit(message) {
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
   const wantsBeforeVisitDecision = /不想看診|不看診|不用看診|還不想看|先問|先知道|只是想先問|只想先問|問完再決定|再決定|能不能.*問|可以.*問/.test(message);
 
   return asksFeeOrPayment && asksCounterOrStaff && wantsBeforeVisitDecision;
+}
+
+function asksVaccineScreeningCounterProcessFee(message) {
+  return /HPV\s*疫苗|HPV|九價|疫苗/i.test(message)
+    && /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
+    && /流程|費用|價格|價錢|多少錢|同一天|同日|當天|今天|先問|詢問|櫃台|櫃檯|電話/.test(message);
 }
 
 function asksMedicationBagRefillWithoutVisit(message) {

@@ -16,16 +16,34 @@ const cases = [
     forbidden: ["睪固酮", "男性荷爾蒙", "性功能", "勃起", "testosterone", "https://", "lin.ee", "官網介紹："]
   },
   {
+    name: "round14 mixed HPV vaccine anonymous screening keeps service names",
+    message: "Round14-3：我想同一天問 HPV 疫苗跟匿名篩檢，可以先到櫃台問流程跟費用，不一定當天做嗎？不要保證，短一點。",
+    expected: ["HPV 疫苗", "匿名篩檢", "櫃台", "02-2511-9488", "流程/費用", "不一定當天做", "是否同日可做", "看診/評估", "備苗", "篩檢流程", "醫師/櫃台確認為準", "不保證當天做或金額"],
+    forbidden: ["付款方式", "刷卡", "信用卡", "https://", "lin.ee", "官網介紹：", "保證今天一定能做", "保證金額"]
+  },
+  {
     name: "online registration forgot screenshot answers check-in without link",
     message: "我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？",
     expected: ["3 樓櫃台", "姓名", "電話", "身分資料", "報到", "健保卡", "初診", "現場確認為準"],
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "保證"]
   },
   {
+    name: "round14 first visit registered missing health card checks in at counter",
+    message: "Round14-1：我第一次去，已經線上掛號，但健保卡忘在家，只有身分證，可以先報到看診嗎？講重點。",
+    expected: ["第一次", "已經線上掛號", "3 樓櫃台", "報到", "健保卡忘帶", "櫃台現場核對為準", "健保身分", "自費", "補件", "身分證", "02-2511-9488"],
+    forbidden: ["女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "費用目前知識庫", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "online registration late arrival answers counter flow without link",
     message: "我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。",
     expected: ["已線上掛號", "晚到", "不能先保證", "20 分鐘", "02-2511-9488", "通知並確認", "報到時間", "醫師門診狀況", "號碼/名額", "健保卡/身分證", "3 樓櫃台報到"],
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
+    name: "round14 online registration cancellation avoids appointment link",
+    message: "Round14-2：我臨時不能去，線上掛號要取消嗎？可以直接在 LINE 跟你說取消，還是要打電話？不要貼連結。",
+    expected: ["臨時不能去", "建議先取消或改期", "LINE bot 不保證", "代你取消", "02-2511-9488", "櫃台確認", "線上掛號系統取消/改期"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿"]
   },
   {
     name: "two patients should not assume one registration number",
@@ -38,6 +56,12 @@ const cases = [
     message: "我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？",
     expected: ["不能先保證", "不用看診", "直接拿藥", "一樣的藥", "藥袋", "健保卡", "身分證", "櫃台", "醫師確認", "適合續拿", "需要看診調整", "發燒", "劇烈疼痛", "尿不出來", "02-2511-9488"],
     forbidden: ["固定門診", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "早診", "午診", "晚診", "https://", "lin.ee", "官網介紹：", "可以不看診"]
+  },
+  {
+    name: "round14 certificate receipt after visit gives short admin boundary",
+    message: "Round14-5：如果我看完才想到要保險收據和診斷證明，可以隔天補開嗎？要本人去嗎？不要講太長。",
+    expected: ["保險收據", "診斷證明", "電話 02-2511-9488", "櫃台", "補開", "醫師/病歷確認", "隔天", "本人", "家人代辦", "證件", "委託文件", "診所回覆為準"],
+    forbidden: ["女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "醫療診斷"]
   },
   {
     name: "friday surgery schedule keeps counter fee question",
