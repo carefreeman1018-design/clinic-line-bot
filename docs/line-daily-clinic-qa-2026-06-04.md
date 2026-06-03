@@ -145,3 +145,10 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 我陪我先生看診，可以一起進診間嗎？如果是私密問題會不會很尷尬？ | Replied with Li Chitai schedule. | Fail | Misread spouse term "先生" as doctor/name context and ignored companion/privacy intent. |
 | 4 | 週六下午或晚上有開嗎？我只想現場掛號，不要貼連結。 | Says Sat afternoon is surgery time, not general clinic; Sat evening is closed; onsite registration can ask counter but cannot guarantee availability. | Pass | Fixed schedule plus onsite caveat. |
 | 5 | 那可以刷卡嗎？ | Says card payment is not clearly public and cannot be guaranteed; can organize message or ask counter/phone to confirm onsite payment method. | Pass | Conservative fuzzy payment answer. |
+
+### Round 8 Retest
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 最後再測：我只是要拿上次的檢查報告，不看診，可以請家人代拿嗎？要帶什麼？ | Says reports involve personal medical data; whether family can proxy-pick up must be confirmed by counter/staff; gives phone path, patient and proxy IDs, authorization/relationship documents, and possible return visit for physician explanation. | Pass | Needed the doctor-review waiting reply to preserve the admin draft. |
+| 3 | 我陪我先生看診，可以一起進診間嗎？如果是私密問題會不會很尷尬？ | Says companion entry depends on patient consent, doctor/staff arrangement, and privacy needs; tell counter/nursing staff on arrival; patient can speak alone or companion can wait outside; private issues are routine. | Pass | No longer misreads spouse "先生" as a doctor name/schedule query. |
