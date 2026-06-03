@@ -212,6 +212,14 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([...contextNotes, `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`, walkInNote, routeNote]);
   }
 
+  if (asksForUrologyCare(message)) {
+    return compactLines([
+      ...contextNotes,
+      `${dayLabel}${period}是一般泌尿門診，${clinic}，${time}；臨時異動/名額以電話或現場確認。`,
+      routeNote
+    ]);
+  }
+
   return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。`, confirmationNote, routeNote]);
 }
 
@@ -450,7 +458,7 @@ function buildDoctorDayAvailabilityReply(doctor, day, dayLabel) {
 }
 
 function asksForUrologyCare(message) {
-  return /泌尿科|頻尿|夜尿|尿痛|尿道炎|膀胱炎|排尿|小便|尿尿|尿急|尿流/.test(message);
+  return /一般泌尿|泌尿科|泌尿|頻尿|夜尿|尿痛|尿道炎|膀胱炎|排尿|小便|尿尿|尿急|尿流/.test(message);
 }
 
 function asksMixedAnalAndUrologyCare(message) {

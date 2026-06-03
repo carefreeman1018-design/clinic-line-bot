@@ -5,9 +5,12 @@ export function answerAdminMixedQuestion(message) {
   if (!normalized) return null;
 
   if (asksVaccineScreeningCounterProcessFee(normalized)) {
+    const vaccineItems = asksSkinShinglesVaccine(normalized)
+      ? "HPV 疫苗、皮蛇疫苗與匿名篩檢"
+      : "HPV 疫苗與匿名篩檢";
     return [
-      `可以先到櫃台或電話 ${PHONE} 問 HPV 疫苗與匿名篩檢的流程/費用，不一定當天做。`,
-      "是否同日可做、是否需看診/評估、備苗與篩檢流程，以診所現場與醫師/櫃台確認為準；不保證當天做或金額。"
+      `可以先到櫃台或電話 ${PHONE} 問 ${vaccineItems}的流程/費用，不一定當天做。`,
+      "是否同日可做、是否需看診/評估、疫苗庫存/備苗與篩檢流程，以診所現場與醫師/櫃台確認為準；不保證當天做或金額。"
     ].join("\n");
   }
 
@@ -247,6 +250,10 @@ function asksVaccineScreeningCounterProcessFee(message) {
   return /HPV\s*疫苗|HPV|九價|疫苗/i.test(message)
     && /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
     && /流程|費用|價格|價錢|多少錢|同一天|同日|當天|今天|先問|詢問|櫃台|櫃檯|電話/.test(message);
+}
+
+function asksSkinShinglesVaccine(message) {
+  return /皮蛇疫苗|帶狀皰疹疫苗/.test(message);
 }
 
 function asksMedicationBagRefillWithoutVisit(message) {

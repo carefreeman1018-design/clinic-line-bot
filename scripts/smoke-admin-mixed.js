@@ -22,6 +22,19 @@ const cases = [
     forbidden: ["付款方式", "刷卡", "信用卡", "https://", "lin.ee", "官網介紹：", "保證今天一定能做", "保證金額"]
   },
   {
+    name: "round16 monday night confirms general urology without appointment link",
+    message: "Round16-2：那週一晚上呢？一樣是一般泌尿嗎，誰看？請短一點。",
+    routedOnly: true,
+    expected: ["週一晚診", "一般泌尿門診", "羅詩修醫師", "18:00-20:30", "臨時異動/名額", "電話或現場確認"],
+    forbidden: ["https://", "lin.ee", "appointment", "線上掛號", "不是一般泌尿"]
+  },
+  {
+    name: "round16 mixed HPV shingles anonymous screening keeps all items",
+    message: "Round16-3：我同一天想問 HPV 疫苗、皮蛇疫苗跟匿名篩檢，可以只先問流程和費用，不一定做嗎？講重點。",
+    expected: ["HPV 疫苗", "皮蛇疫苗", "匿名篩檢", "流程/費用", "不一定當天做", "是否同日可做", "看診/評估", "備苗", "篩檢流程", "醫師/櫃台確認為準", "不保證當天做或金額"],
+    forbidden: ["https://", "lin.ee", "官網介紹：", "保證今天一定能做", "保證金額"]
+  },
+  {
     name: "online registration forgot screenshot answers check-in without link",
     message: "我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？",
     expected: ["3 樓櫃台", "姓名", "電話", "身分資料", "報到", "健保卡", "初診", "現場確認為準"],
