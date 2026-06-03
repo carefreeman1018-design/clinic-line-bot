@@ -47,13 +47,13 @@ const cases = [
   },
   {
     name: "pde5 cardiac nitrate risk blocks direct medication",
-    reply: answerSexualFunctionQuestion("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我 58 歲，最近勃起硬度不太夠，想問能不能今天直接拿威而鋼或犀利士。我有心臟病，胸悶時會含硝化甘油，血壓藥也在吃。你們可以直接開藥嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["心臟病", "胸悶", "硝化甘油", "威而鋼", "犀利士", "硝酸鹽", "不可自行", "PDE5 抑制劑", "危險低血壓", "不能直接線上開藥或報價", "心血管評估", "用藥清單", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接拿", "可以直接開藥", "費用", "診所有提供性功能障礙評估與治療，包含勃起功能障礙"]
   },
   {
     name: "genital blister ulcer gives STD evaluation and medication boundary",
-    reply: answerStdTreatmentQuestion("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我陰莖上這兩天冒出一排小水泡，今天有點破皮潰瘍、很刺痛，還有點發燒。朋友說可能是皰疹，也可能是梅毒，叫我自己先擦藥膏或吃剩下的抗生素。我的伴侶也需要檢查嗎？我有點緊張，先跟我說下一步。"),
     expected: ["陰莖水泡", "破皮潰瘍", "刺痛", "皰疹", "梅毒", "只靠文字不能診斷或開藥", "不建議自己先擦藥膏", "吃剩下的抗生素", "伴侶", "檢查或篩檢", "發燒", "今天儘快就醫", "性病篩檢/治療門診", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先擦", "可以先吃", "自行買藥", "性病篩檢與治療需要依症狀、病灶與檢查結果由醫師判斷。不能只靠線上訊息診斷或開藥；建議預約門診"]
   },
@@ -113,7 +113,7 @@ const cases = [
   },
   {
     name: "prostate treatment preserves ejaculation catheter same-day boundary",
-    reply: answerProstateQuestion("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我爸爸 72 歲，夜尿很多、尿流很細，想問攝護腺肥大治療。Rezum 水蒸氣、Urolift、綠光雷射或雷射剜除哪個最好？可以保證保留射精、不用插尿管嗎？今天能不能直接做？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["攝護腺肥大", "雷射剜除", "水蒸氣消融", "綠光雷射", "Urolift", "醫師", "攝護腺大小", "症狀", "身體狀況", "不能直接線上判斷", "不能先保證", "保留射精", "不用插尿管", "今天", "直接手術", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "哪個最好", "可以保證", "不用評估", "可以直接做", "元"]
   },
@@ -133,7 +133,7 @@ const cases = [
   },
   {
     name: "acute urinary retention beats prostate procedure pricing",
-    reply: answerProstateQuestion("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我爸 78 歲，本來就攝護腺肥大，今天從早上開始幾乎尿不出來，下腹脹到很痛、一直冒冷汗。他想問可不可以撐到明天門診，順便直接做 Urolift 或水蒸氣消融？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["幾乎尿不出來", "下腹脹痛", "冒冷汗", "急性尿液滯留", "泌尿道阻塞", "光靠訊息無法診斷", "不建議撐到明天", "不能先安排 Urolift", "水蒸氣消融", "費用", "導尿", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "先預約泌尿科門診", "確認可評估時段", "可以撐到明天", "可以直接做", "元"]
   },
@@ -161,19 +161,19 @@ const cases = [
   },
   {
     name: "mounjaro thyroid pancreatitis history and weight loss promise stays bounded",
-    reply: answerWellnessWeightQuestion("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我 BMI 大概 29，想問猛健樂減重。我有在吃糖尿病藥，家人有甲狀腺癌病史，之前也曾經胰臟發炎。你們可以今天直接打一針嗎？能保證瘦幾公斤？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "BMI", "共病", "糖尿病藥", "甲狀腺癌", "胰臟炎", "確認風險", "不能保證", "瘦幾公斤", "費用", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以直接打一針", "保證瘦", "元"]
   },
   {
     name: "mounjaro postpartum breastfeeding leftover pen blocks dose advice",
-    reply: answerWellnessWeightQuestion("我產後還在餵母奶，朋友有剩下的猛健樂藥筆，我可以先自己打一點點試試看嗎？你們可以直接告訴我最低劑量嗎？"),
+    reply: await buildTestReply("我產後還在餵母奶，朋友有剩下的猛健樂藥筆，我可以先自己打一點點試試看嗎？你們可以直接告訴我最低劑量嗎？"),
     expected: ["猛健樂門診", "產後", "哺乳", "朋友剩下的藥筆", "不能直接施打", "不建議自行使用", "不能在線上告訴你最低劑量", "mg", "醫師評估後開立", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以今天直接打", "可以自行", "2.5 mg", "5 mg", "費用", "BMI", "共病", "不能保證會瘦幾公斤", "元"]
   },
   {
     name: "mounjaro post-injection vomiting abdominal pain blocks next dose",
-    reply: answerWellnessWeightQuestion("我上週打猛健樂後這幾天一直噁心，有吐兩次，肚子也悶痛。下一針還可以照打嗎？需要先回診嗎？"),
+    reply: await buildTestReply("我上週打猛健樂後這幾天一直噁心，有吐兩次，肚子也悶痛。下一針還可以照打嗎？需要先回診嗎？"),
     expected: ["猛健樂門診", "施打後", "噁心", "嘔吐", "腹痛", "下一針不要自行照打", "不要自行調劑量", "回診", "醫師評估", "延後", "調整或停用", "急診", "立即就醫", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "BMI", "共病", "體重管理輔助療法", "不能保證會瘦幾公斤", "可以照打", "自行調整劑量", "元"]
   },
@@ -203,7 +203,7 @@ const cases = [
   },
   {
     name: "anal wart hemorrhoid same-night procedure keeps boundary",
-    reply: answerAnalColorectalQuestion("我肛門附近長了幾顆小肉芽，會癢也有點痛，朋友說可能是菜花但我也怕是痔瘡。今天晚上可以直接看完就電燒或做痔瘡手術嗎？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我肛門附近長了幾顆小肉芽，會癢也有點痛，朋友說可能是菜花但我也怕是痔瘡。今天晚上可以直接看完就電燒或做痔瘡手術嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["肛門性病", "肛門直腸外科", "肛門菜花", "只靠文字不能確認", "當天直接電燒", "痔瘡", "手術", "不能先保證", "費用", "醫師評估", "今天晚上", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接電燒", "可以直接做", "元", "HPV 疫苗", "PEP", "72 小時"]
   },
@@ -217,13 +217,13 @@ const cases = [
   },
   {
     name: "anal bleeding pain hemorrhoid surgery routes to colorectal clinic",
-    reply: answerAnalColorectalQuestion("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我大便後看到鮮紅色血，肛門很痛，旁邊好像有一顆腫塊。這是不是痔瘡？你們可以直接做痔瘡微創手術嗎？今天要掛哪一科？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["肛門直腸外科", "痔瘡", "廔管", "肛裂", "痔瘡微創手術評估", "不一定只是痔瘡", "不能保證當天直接手術", "02-2511-9488", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是痔瘡", "可以直接做", "元", "PEP", "72 小時"]
   },
   {
     name: "anal abscess fever pus avoids generic hemorrhoid template",
-    reply: answerAnalColorectalQuestion("我肛門旁邊這兩天腫一顆，坐下會痛，今天好像有流一點膿又有點發燒。這是不是痔瘡？可以先擦痔瘡藥膏等明天嗎？還是要今天去看？"),
+    reply: await buildTestReply("我肛門旁邊這兩天腫一顆，坐下會痛，今天好像有流一點膿又有點發燒。這是不是痔瘡？可以先擦痔瘡藥膏等明天嗎？還是要今天去看？"),
     expected: ["肛門旁", "腫一顆", "坐下會痛", "流膿", "發燒", "不一定只是痔瘡", "肛門膿瘍", "感染", "廔管", "不建議", "痔瘡藥膏", "等到明天", "醫師實際檢查", "引流", "今天", "肛門直腸外科", "02-2511-9488", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "LINE 不能", "不能只用 LINE", "大便後鮮紅色血", "痔瘡微創手術評估", "不能保證當天直接手術", "可以先擦", "可以等明天"]
   },
