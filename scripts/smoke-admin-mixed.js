@@ -22,6 +22,12 @@ const cases = [
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "保證"]
   },
   {
+    name: "online registration late arrival answers counter flow without link",
+    message: "我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。",
+    expected: ["已線上掛號", "晚到", "不能先保證", "20 分鐘", "02-2511-9488", "通知並確認", "報到時間", "醫師門診狀況", "號碼/名額", "健保卡/身分證", "3 樓櫃台報到"],
+    forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "two patients should not assume one registration number",
     message: "我已經線上掛號了，但想陪我爸一起看，兩個人可以用同一個號嗎？還是要各自掛號？",
     expected: ["不要先假設", "共用同一個掛號號碼", "每位病人", "各自的掛號資料", "身分資料", "健保卡", "爸爸", "加掛另一位", "相近時段", "櫃台確認為準"],

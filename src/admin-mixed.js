@@ -28,6 +28,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksOnlineRegistrationLateArrival(normalized)) {
+    return [
+      "已線上掛號但可能晚到，不能先保證晚到 20 分鐘一定還看得到。",
+      `建議先電話 ${PHONE} 通知並確認；現場會由櫃台依報到時間、醫師門診狀況、號碼/名額安排。`,
+      "到診後仍請帶健保卡/身分證到 3 樓櫃台報到。"
+    ].join("\n");
+  }
+
   if (asksOutsideHospitalReportForVisit(normalized)) {
     return [
       "可以，別家醫院或外院做的紙本、影像或檢查報告，可以帶來門診給醫師評估。",
@@ -121,6 +129,14 @@ function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   const asksCheckinOrDocuments = /報到|到現場|現場|櫃台|櫃檯|健保卡|身分證|身份證|證件|要帶/.test(message);
 
   return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
+}
+
+function asksOnlineRegistrationLateArrival(message) {
+  const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsLateArrival = /晚到|遲到|會晚|可能晚|來不及|晚.*分鐘|遲.*分鐘|延誤|塞車/.test(message);
+  const asksCanStillBeSeenOrCall = /看得到|還能看|還可以看|能不能看|可不可以看|會不會過號|過號|打電話|先電話|通知|確認/.test(message);
+
+  return mentionsExistingRegistration && mentionsLateArrival && asksCanStillBeSeenOrCall;
 }
 
 function asksOutsideHospitalReportForVisit(message) {
