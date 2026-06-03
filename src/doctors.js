@@ -220,6 +220,12 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   const maleMenopauseDoctorChoiceReply = buildMaleMenopauseDoctorChoiceReply(message);
   if (maleMenopauseDoctorChoiceReply) return maleMenopauseDoctorChoiceReply;
 
+  const generalUrologyTimeChoiceReply = buildGeneralUrologyTimeChoiceReply(message, now);
+  if (generalUrologyTimeChoiceReply) return generalUrologyTimeChoiceReply;
+
+  const generalUrologySlotComparisonReply = buildGeneralUrologySlotComparisonReply(message, now);
+  if (generalUrologySlotComparisonReply) return generalUrologySlotComparisonReply;
+
   const comparisonReply = buildDoctorComparisonReply(message, doctor, conversationHistory);
   if (comparisonReply) return comparisonReply;
 
@@ -295,6 +301,59 @@ function buildGeneralUrologyDoctorChoiceReply(message, now) {
     `${scheduleNote}；也可以依一般門診時段與名額安排。`,
     "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
   ].join("");
+}
+
+function buildGeneralUrologySlotComparisonReply(message, now) {
+  if (!/一般泌尿|泌尿|頻尿|排尿/.test(message)) return null;
+  if (!/差在哪|差別|不同/.test(message)) return null;
+  if (!/誰|哪位|哪個醫師|哪個醫生|看哪位/.test(message)) return null;
+
+  const day = resolveRequestedDay(message, now);
+  const periods = resolveRequestedPeriods(message);
+  if (!day || periods.length === 0) return null;
+
+  const period = periods[0];
+  const clinic = FIXED_SCHEDULE[day]?.[period];
+  const slotDoctor = extractClinicDoctor(clinic);
+  if (!slotDoctor) return null;
+  if (!/院長|陳偉傑|陳醫師|陳醫生/.test(message)) return null;
+
+  const dayLabel = buildDayLabel(message, day);
+  return [
+    `${dayLabel}${period}一般泌尿是${slotDoctor}，${PERIOD_TIMES[period]}。`,
+    "院長是陳偉傑醫師。",
+    "簡單說：羅醫師可先看一般泌尿/排尿相關問題；陳院長除一般泌尿外，公開資料較多列男性私密/手術相關專長。",
+    "名額與臨時異動請電話或現場確認。"
+  ].join("\n");
+}
+
+function buildGeneralUrologyTimeChoiceReply(message, now) {
+  if (!/一般泌尿|泌尿|頻尿|排尿/.test(message)) return null;
+  if (!/掛誰|掛哪|比較適合|哪位|醫師|醫生/.test(message)) return null;
+  if (!/不要.*硬選|不要.*幫我.*選|不硬選|不幫.*硬選/.test(message)) return null;
+
+  const day = resolveRequestedDay(message, now);
+  const periods = resolveRequestedPeriods(message);
+  if (!day || periods.length < 2) return null;
+
+  const dayLabel = buildDayLabel(message, day);
+  const slotLines = periods
+    .map((period) => {
+      const clinic = FIXED_SCHEDULE[day]?.[period];
+      const doctor = extractClinicDoctor(clinic);
+      if (!doctor) return null;
+      const doctorText = doctor === "陳偉傑醫師" ? "院長陳偉傑醫師" : doctor;
+      return `${period}是${doctorText} ${PERIOD_TIMES[period]}`;
+    })
+    .filter(Boolean);
+  if (slotLines.length === 0) return null;
+
+  return [
+    `${dayLabel}${slotLines.join("；")}。`,
+    "頻尿/一般泌尿可先依自己能到的時段掛一般泌尿，不硬選某一位。",
+    "若有發燒、尿不出來、血尿明顯，請盡快就醫或先電話確認。",
+    "名額與臨時異動請電話或現場確認。"
+  ].join("\n");
 }
 
 function buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now) {
@@ -391,6 +450,11 @@ function buildDoctorAvailablePeriodsForDay(doctor, day) {
       return `${period}（${PERIOD_TIMES[period]}）`;
     })
     .filter(Boolean);
+}
+
+function extractClinicDoctor(clinic) {
+  if (!clinic || clinic === "手術" || clinic === "休診" || clinic.includes("肛門直腸外科")) return null;
+  return clinic.replace(/（.+?）/g, "");
 }
 
 function buildDoctorComparisonReply(message, doctor, conversationHistory) {

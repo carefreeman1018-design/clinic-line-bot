@@ -41,7 +41,7 @@ const DOCTOR_MISSPELLINGS = [
   }
 ];
 
-const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛錯|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約/;
+const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|一般泌尿|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛錯|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約|跑錯/;
 const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
 const WALK_IN_CONFIRMATION = "現場掛號可先到現場、也可先參考固定門診；但名額與臨時異動仍需以電話 02-2511-9488 或現場/線上掛號確認，不能保證一定掛得到。";
 
