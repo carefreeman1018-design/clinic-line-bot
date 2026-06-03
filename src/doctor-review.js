@@ -165,16 +165,12 @@ export async function closeDoctorReviewCase({ caseId, reviewerLineUserId, review
   return data ? normalizeCase(data) : null;
 }
 
-export function buildDoctorReviewNotification(reviewCase) {
+export function buildDoctorReviewNotification(reviewCase, { waitingReply = "" } = {}) {
   return [
     `#${reviewCase.id} 待醫師覆核`,
     "",
-    "【本次待覆核】",
-    "病人",
-    indentText(truncateText(reviewCase.userMessage, 900)),
-    "",
-    "【最近對話｜由舊到新】",
-    formatConversationTimeline(reviewCase),
+    "【對話紀錄｜由舊到新】",
+    formatConversationTimeline(reviewCase, { waitingReply }),
     "",
     "【bot 草稿】",
     indentText(truncateText(reviewCase.botDraft, 900)),
@@ -249,15 +245,35 @@ function summarizeConversation(conversationHistory) {
     .join("\n");
 }
 
-function formatConversationTimeline(reviewCase) {
-  const messages = Array.isArray(reviewCase.conversationSnapshot) ? reviewCase.conversationSnapshot : [];
+function formatConversationTimeline(reviewCase, { waitingReply = "" } = {}) {
+  const historyMessages = Array.isArray(reviewCase.conversationSnapshot) ? reviewCase.conversationSnapshot : [];
+  const messages = [
+    ...historyMessages.map((message) => ({
+      role: message.role,
+      label: message.role === "assistant" ? "bot" : "病人",
+      content: message.content
+    })),
+    {
+      role: "user",
+      label: "病人（本次待覆核）",
+      content: reviewCase.userMessage
+    }
+  ];
+
+  if (waitingReply) {
+    messages.push({
+      role: "assistant",
+      label: "bot（已回覆病人）",
+      content: waitingReply
+    });
+  }
+
   if (messages.length === 0) return reviewCase.conversationSummary || "無前文";
 
   return messages
     .map((message, index) => {
-      const roleLabel = message.role === "assistant" ? "bot" : "病人";
       const order = String(index + 1).padStart(2, "0");
-      return [`${order} ${roleLabel}`, indentText(truncateText(message.content ?? "", 220))].join("\n");
+      return [`${order} ${message.label}`, indentText(truncateText(message.content ?? "", 220))].join("\n");
     })
     .join("\n\n");
 }

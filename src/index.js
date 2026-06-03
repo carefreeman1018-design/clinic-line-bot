@@ -224,7 +224,7 @@ async function handleDoctorReviewRequest({ replyToken, userId, message, conversa
     relevantChunks,
     conversationHistory
   });
-  await notifyDoctorReviewTargets(reviewCase);
+  await notifyDoctorReviewTargets(reviewCase, { waitingReply });
   await safeReplyText(replyToken, waitingReply);
   await rememberConversationExchange(userId, message, waitingReply);
   return true;
@@ -300,8 +300,8 @@ function buildDoctorApprovedReply(reviewCase, command) {
   });
 }
 
-async function notifyDoctorReviewTargets(reviewCase) {
-  const notification = buildDoctorReviewNotification(reviewCase);
+async function notifyDoctorReviewTargets(reviewCase, options = {}) {
+  const notification = buildDoctorReviewNotification(reviewCase, options);
   const reviewTargetIds = await getReviewTargetIds();
   await Promise.all([...reviewTargetIds].map((targetId) => safePushText(targetId, notification)));
 }
