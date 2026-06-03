@@ -346,6 +346,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
   },
   {
+    name: "psa live-style report review does not mention bph procedures",
+    reply: answerReportResultQuestion("健檢說我 PSA 6.8 偏高，我很怕是不是攝護腺癌。津久可以幫我看報告嗎？需要直接做切片嗎？"),
+    expected: ["PSA", "不等於一定是攝護腺癌", "不能只用 LINE 判斷", "檢查報告", "切片", "醫師評估", "泌尿科門診", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "水蒸氣", "Urolift", "雷射", "攝護腺肥大治療", "費用", "保證", "直接做"]
+  },
+  {
     name: "psa report with enlarged prostate stays report routed",
     reply:
       answerReportResultQuestion("我健檢 PSA 4.8，超音波說攝護腺有點大，爸爸以前有攝護腺癌。這是不是代表我也癌症？這樣要不要回診看報告？") ||

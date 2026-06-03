@@ -40,11 +40,11 @@ function isPsaQuestion(message) {
 }
 
 function asksProstateProcedureInPsaContext(message) {
-  return /水蒸氣|Urolift|優立服|雷射|手術|消融|費用|價格|今天.*做|直接.*做|不要切片|不切片|跳過.*切片/.test(message);
+  return /水蒸氣|Urolift|優立服|雷射|消融|攝護腺肥大.*治療|前列腺肥大.*治療/.test(message);
 }
 
 function asksSurgeryBeforeReportReview(message) {
-  return /先不要.*手術|不要.*先.*手術|先掛.*泌尿|一般泌尿科|看報告|報告.*比較|被直接.*手術|直接安排手術|先.*報告/.test(message);
+  return /先不要.*手術|不要.*先.*手術|被直接.*手術|直接安排手術/.test(message);
 }
 
 function isPsaReportFollowUp(message, conversationHistory) {
