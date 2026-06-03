@@ -412,3 +412,20 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 重測 Round22-2：那明天晚上呢？一樣是一般泌尿嗎？我只想問頻尿，不想跑錯。短一點。 | Says frequency/nocturia general-urology visit should not use tomorrow Fri evening because it is surgery time, not general clinic; Fri general-urology options are morning Chen Wei-Jie 09:30-12:30 or afternoon Luo Shixiu 13:30-17:00; call to confirm quota/time. | Pass | Schedule now beats symptom education for explicit slot questions. |
 | 3 | 重測 Round22-3：那週五下午看一般泌尿的是誰？他跟院長專長差在哪？不要列太多。 | Says Friday afternoon general urology is Luo Shixiu, 13:30-17:00; the dean is Chen Wei-Jie; Luo can first see general urology/voiding issues, while Chen has more publicly listed male-private/surgery specialties. | Pass | Correct slot and brief comparison. |
 | 5 | 重測 Round22-5：如果我只有明天早上或下午能去，頻尿想先看一般泌尿，院長跟羅醫師我要掛誰比較適合？不要幫我硬選。 | Says tomorrow Fri morning is Chen Wei-Jie 09:30-12:30 and afternoon is Luo Shixiu 13:30-17:00; frequency/general-urology users can choose by available time and it will not hard-pick a doctor; urgent symptoms should call first. | Pass | Practical and bounded, with no long specialty dump. |
+
+## Round 23 - Health card, medication pickup, anonymous-screening privacy, documents, and late arrival
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round23-1：我第一次來但健保卡讀不到，能先自費看嗎？之後可以補健保退費嗎？不要保證。 | Replied with unrelated male urology/urinary assessment, aesthetic or related services, and fee-unknown wording. | Fail | Health-card read failure and self-pay/reimbursement admin intent was swallowed by service routing. |
+| 2 | Round23-2：醫師開藥後是在診所領還是要去外面藥局？如果藥不夠或漏拿可以用 LINE 問嗎？講重點。 | Says medication pickup route depends on onsite process and may not necessarily be outside pharmacy; if medicine is short or missing, ask counter or call 02-2511-9488; LINE should not be the only contact. | Pass | Conservative and practical. |
+| 3 | Round23-3：我想做匿名篩檢，但收據或叫號會不會出現檢查名稱？可以請櫃台低調一點嗎？不要貼連結。 | Says before consultation or screening, tell counter about privacy needs; receipt/call-number/item wording, fee format and whether it can be coordinated should be confirmed onsite or by phone. | Pass | Slightly cautious, but no privacy overpromise. |
+| 4 | Round23-4：看完診才想到要診斷證明或病歷摘要，可以隔天再申請嗎？需要本人去嗎？不要貼連結。 | Replied mainly about insurance receipt/diagnosis certificate and did not directly include medical summary. | Partial | Safe, but missed the specific "病歷摘要" request. |
+| 5 | Round23-5：我已經掛晚診但可能塞車遲到，能不能請 LINE 幫我保留號碼？如果過號怎麼辦？請直接說。 | Says counter can review call-number progress, but LINE cannot reserve a number; if likely late, call 02-2511-9488 first and onsite over-number handling follows counter rules. | Pass | Direct and bounded. |
+
+### Round 23 Retest - Health card/self-pay and medical-summary fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round23-1：我第一次來但健保卡讀不到，能先自費看嗎？之後可以補健保退費嗎？不要保證。 | Says first-visit health-card read failure may involve system/card/insurance identity issues and cannot be guaranteed on LINE; whether self-pay, later insurance supplement, refund or document supplement is possible depends on 3F counter and insurance rules; bring ID/health card or call first. | Pass | No male-urology or service-fee drift. |
+| 4 | 重測 Round23-4：看完診才想到要診斷證明或病歷摘要，可以隔天再申請嗎？需要本人去嗎？不要貼連結。 | Says diagnosis certificate or medical summary can be asked about by phone/counter for next-day supplemental application; both require physician/record confirmation; self or family proxy, ID/authorization documents, fee and processing time depend on counter/clinic reply. | Pass | Directly covers medical summary without adding receipt noise. |
