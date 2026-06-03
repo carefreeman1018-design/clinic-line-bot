@@ -7,6 +7,7 @@ import { loadKnowledge, retrieveRelevantChunks, shouldEscalate as shouldEscalate
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "../src/schedule.js";
 
 const DEFAULT_ROUNDS = 3;
+const UNNATURAL_LINE_MEDICAL_SOURCE_PATTERN = /LINE\s*(?:不能|不適合|無法).{0,12}(?:診斷|判斷|開藥|解讀|評估|排除|指定用藥)/;
 
 const OFFICIAL_SERVICE_TERMS = [
   "包皮槍",
@@ -479,6 +480,11 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     }
   }
 
+  const unnaturalLineMedicalSources = findUnnaturalLineMedicalSources(chunks);
+  for (const { source, line } of unnaturalLineMedicalSources) {
+    issues.push(formatIssue(round, `知識來源 ${source} 含不自然 LINE 醫療判斷語：「${line}」`));
+  }
+
   for (const question of buildGeneratedQuestionList()) {
     const languageIssue = validateTraditionalChineseTestQuestion(question);
     if (languageIssue) {
@@ -695,10 +701,31 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
       lineOverrideQuestions: LINE_OVERRIDE_QUESTIONS.length,
       expandedQuestionCases: caseResults.length,
       generatedQuestionLanguageChecks: buildGeneratedQuestionList().length,
-      generatedReplyChecks: buildGeneratedQuestionList().length
+      generatedReplyChecks: buildGeneratedQuestionList().length,
+      sourceStyleChecks: chunks.length
     },
     issues
   };
+}
+
+function findUnnaturalLineMedicalSources(chunks) {
+  const seen = new Set();
+  const matches = [];
+
+  for (const chunk of chunks) {
+    const lines = chunk.content.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!UNNATURAL_LINE_MEDICAL_SOURCE_PATTERN.test(trimmed)) continue;
+
+      const key = `${chunk.source}:${trimmed}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      matches.push({ source: chunk.source, line: trimmed });
+    }
+  }
+
+  return matches;
 }
 
 function buildServiceCases() {
