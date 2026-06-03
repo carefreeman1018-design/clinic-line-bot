@@ -376,3 +376,21 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 重測 Round20-3：我同一天想看泌尿科又順便問皮蛇疫苗，要分開掛號嗎？還是報到時先跟櫃台說？不要貼連結。 | Says to tell 3F counter at check-in that the patient wants urology and shingles vaccine; split registration, same-day handling, vaccine stock/fee and physician evaluation depend on onsite flow and doctor/counter confirmation; cannot guarantee same-day vaccination. | Pass | No vaccine-only drift. |
 | 4 | 重測 Round20-4：我快到診所才發現錢包忘了，健保卡和身分證都不在身上，還能先報到嗎？還是要改天？請講重點。 | Says it cannot guarantee check-in without health card/ID; missing documents affect identity verification, insurance status and payment; if already near, ask 3F counter or call to confirm supplement documents, self-pay or reschedule. | Pass | No address/route reply. |
 | 5 | 重測 Round20-5：我看診時會帶一個小孩和推車，診間或候診區放得下嗎？如果不方便，我可以請家人在外面等嗎？ | Says consulting room/waiting space for a stroller cannot be guaranteed on LINE; ask counter or call to confirm traffic flow and space; family waiting outside or entering the room depends on onsite arrangement and patient needs. | Pass | No doctor schedule list. |
+
+## Round 21 - LINE call-number notice, unavailable registration proof, receipt typo, family lookup privacy, and urine-test counter ask
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round21-1：如果快輪到我，診所會用 LINE 通知嗎？我可以先去附近等，叫到再回來嗎？請講重點。 | Says the user may wait nearby, but the clinic will not necessarily notify immediately by LINE; before leaving, tell the counter and keep track of call-number progress; avoid going too far if worried about missing the number. | Pass | Good queue-boundary answer. |
+| 2 | Round21-2：我手機快沒電，線上掛號的簡訊或截圖可能拿不出來，到櫃台還能查得到嗎？要報姓名還是電話？ | Replied with clinic phone plus online appointment URL. | Fail | Missed unavailable proof/check-in lookup flow and pasted a link. |
+| 3 | Round21-3：我剛結帳才發現收據抬頭打錯一個字，可以馬上請櫃台重開嗎？如果已經離開診所呢？ | Says receipt title/tax ID/format and reprint rules depend on counter confirmation; same-day counter correction is best, and after leaving requires record/rule confirmation by counter or phone but is not guaranteed. | Pass | Good receipt-format boundary. |
+| 4 | Round21-4：我先生去看診但手機沒接，我可以在 LINE 問他有沒有報到或看完了嗎？你們可以幫我查一下嗎？ | Replied with Chen Wei-Jie fixed clinic hours. | Fail | Doctor schedule routing swallowed privacy/status lookup question. |
+| 5 | Round21-5：我只是路過想先問尿液檢查流程和費用，不想留下資料或掛號，可以只問櫃台嗎？請短一點。 | Says the user can ask counter/staff about fee/payment and does not need to decide on a visit first, but misses the no-data/no-registration boundary. | Partial | Needed clearer distinction between asking and actually testing/reporting. |
+
+### Round 21 Retest - Registration proof, privacy lookup, and urine-test counter fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 2 | 重測 Round21-2：我手機快沒電，線上掛號的簡訊或截圖可能拿不出來，到櫃台還能查得到嗎？要報姓名還是電話？ | Says to go to 3F counter if phone/SMS/screenshot is unavailable; counter may use name, phone or identity data to help query, with health card/ID recommended; actual lookup depends on counter confirmation. | Pass | No appointment link. |
+| 4 | 重測 Round21-4：我先生去看診但手機沒接，我可以在 LINE 問他有沒有報到或看完了嗎？你們可以幫我查一下嗎？ | Says check-in or finish status is personal medical/visit information and cannot be looked up or disclosed to family on LINE; patient should contact the clinic, or family should use the clinic's identity confirmation/authorization flow by phone or onsite. | Pass | No doctor schedule and no status disclosure. |
+| 5 | 重測 Round21-5：我只是路過想先問尿液檢查流程和費用，不想留下資料或掛號，可以只問櫃台嗎？請短一點。 | Says the user can first ask counter or phone about urine-test flow/fee without necessarily registering, but actual testing, report, physician interpretation or record/payment may require registration and basic data; whether a pure no-data inquiry is possible depends on counter confirmation. | Pass | Clear ask-only vs service boundary. |
