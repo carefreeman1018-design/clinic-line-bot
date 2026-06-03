@@ -22,11 +22,26 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksCircumcisionCounterFeeBeforeVisit(normalized)) {
+    return [
+      `可以先到櫃台或電話 ${PHONE} 問割包皮/包皮槍的大概費用與流程，不一定今天看診。`,
+      "但實際費用會依項目、醫師評估與現場流程確認，LINE 或櫃台初問不能保證最後金額。",
+      "如果決定要看診，再依現場安排掛號。"
+    ].join("\n");
+  }
+
   if (asksFeePaymentAtCounterWithoutVisit(normalized)) {
     return [
       "可以先到櫃台或請診所人員詢問費用與付款方式，不一定要先決定看診。",
       "但實際費用會依項目、當天流程與是否需要醫師評估而定，不能在 LINE 直接保證金額。",
       `刷卡/付款方式目前沒有明確公開資訊，不能保證一定可刷卡；建議先電話 ${PHONE}，或到現場櫃台確認後再決定。`
+    ].join("\n");
+  }
+
+  if (asksGeneralPaymentMethod(normalized)) {
+    return [
+      "付款方式、是否可刷卡或行動支付，以及是否一定要先準備現金，目前不能在 LINE 直接保證。",
+      `請先電話 ${PHONE}，或到現場櫃台確認當天可用的付款方式後再決定。`
     ].join("\n");
   }
 
@@ -43,6 +58,14 @@ export function answerAdminMixedQuestion(message) {
       "如果已經線上掛號但忘記截圖，抵達後請先到 3 樓櫃台，請人員用姓名、電話或身分資料協助查詢並報到。",
       "建議帶健保卡；若是初診，也請帶身分證或其他證件，以及相關檢查資料或用藥資料。",
       "實際是否查得到掛號與能否完成報到，仍以櫃台現場確認為準。"
+    ].join("\n");
+  }
+
+  if (asksOnlineRegistrationDataCorrection(normalized)) {
+    return [
+      "線上掛號時生日或電話填錯，可能會影響櫃台查詢掛號資料。",
+      "到現場請帶健保卡/身分證到 3 樓櫃台核對，櫃台可協助查詢或修正資料，但不能保證一定找得到原本掛號。",
+      `也可以先電話 ${PHONE} 請櫃台確認。`
     ].join("\n");
   }
 
@@ -213,6 +236,15 @@ function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
 }
 
+function asksOnlineRegistrationDataCorrection(message) {
+  const mentionsOnlineRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsWrongData = /生日|出生|電話|手機|聯絡電話|資料/.test(message)
+    && /填錯|打錯|寫錯|輸入錯|key錯|錯了|不對|有誤/.test(message);
+  const asksCorrectionOrLookup = /現場|櫃台|櫃檯|修改|修正|更改|改資料|核對|查詢|找不到|查不到|報到/.test(message);
+
+  return mentionsOnlineRegistration && mentionsWrongData && asksCorrectionOrLookup;
+}
+
 function asksOnlineRegistrationFirstVisitMissingHealthCard(message) {
   const mentionsFirstVisit = /第一次去|第一次來|初診|第一次看/.test(message);
   const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
@@ -278,6 +310,25 @@ function asksFeePaymentAtCounterWithoutVisit(message) {
   const wantsBeforeVisitDecision = /不想看診|不看診|不用看診|還不想看|先問|先知道|只是想先問|只想先問|問完再決定|再決定|能不能.*問|可以.*問/.test(message);
 
   return asksFeeOrPayment && asksCounterOrStaff && wantsBeforeVisitDecision;
+}
+
+function asksCircumcisionCounterFeeBeforeVisit(message) {
+  const hasCircumcisionCue = /割包皮|包皮槍|包皮環切|包莖|包皮過長/.test(message);
+  const asksFeeOrProcess = /費用|價格|價錢|多少錢|報價|收費|大概|流程/.test(message);
+  const asksCounterOrPhone = /櫃台|櫃檯|電話|現場|到診所|診所人員|工作人員|先問|詢問/.test(message);
+  const wantsBeforeVisitDecision = /不一定.*看診|不想.*看診|不看診|不用看診|還不想看|先問|只是想先|只想先|問完再決定|再決定|看診再說|如果要看診/.test(message);
+
+  return hasCircumcisionCue && asksFeeOrProcess && asksCounterOrPhone && wantsBeforeVisitDecision;
+}
+
+function asksGeneralPaymentMethod(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+
+  const asksPaymentMethod = /付款方式|付費方式|支付方式|刷卡|信用卡|行動支付|電子支付|LINE\s*Pay|Apple\s*Pay|街口|現金|領錢|先去領錢/i.test(message);
+  const hasClinicContext = /看診|門診|掛號|診所|櫃台|櫃檯|打疫苗|疫苗|打針|檢查|篩檢|治療/.test(message);
+  const asksAvailability = /可以|可不可以|能不能|行不行|有沒有|是否|只能|需要|要不要|先去領錢/.test(message);
+
+  return asksPaymentMethod && hasClinicContext && asksAvailability;
 }
 
 function asksVaccineScreeningCounterProcessFee(message) {

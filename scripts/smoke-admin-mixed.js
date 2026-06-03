@@ -16,10 +16,22 @@ const cases = [
     forbidden: ["睪固酮", "男性荷爾蒙", "性功能", "勃起", "testosterone", "https://", "lin.ee", "官網介紹："]
   },
   {
+    name: "round19 general visit vaccine payment method avoids vaccine service routing",
+    message: "Round19-1：看診或打疫苗可以刷卡、行動支付嗎？如果只能現金我就先去領錢。不要貼連結。",
+    expected: ["付款方式", "刷卡", "行動支付", "現金", "不能在 LINE 直接保證", "02-2511-9488", "現場櫃台確認"],
+    forbidden: ["HPV", "皮蛇", "匿名篩檢", "疫苗庫存", "庫存", "備苗", "醫療評估", "醫師評估", "看診/評估", "https://", "lin.ee", "官網介紹："]
+  },
+  {
     name: "round14 mixed HPV vaccine anonymous screening keeps service names",
     message: "Round14-3：我想同一天問 HPV 疫苗跟匿名篩檢，可以先到櫃台問流程跟費用，不一定當天做嗎？不要保證，短一點。",
     expected: ["HPV 疫苗", "匿名篩檢", "櫃台", "02-2511-9488", "流程/費用", "不一定當天做", "是否同日可做", "看診/評估", "備苗", "篩檢流程", "醫師/櫃台確認為準", "不保證當天做或金額"],
     forbidden: ["付款方式", "刷卡", "信用卡", "https://", "lin.ee", "官網介紹：", "保證今天一定能做", "保證金額"]
+  },
+  {
+    name: "round19 circumcision counter fee asks admin flow without surgery risk",
+    message: "Round19-4：我只是想先到櫃台問割包皮大概費用，不一定今天看診，可以嗎？如果要看診再說也可以。",
+    expected: ["櫃台", "電話 02-2511-9488", "割包皮/包皮槍", "大概費用", "流程", "不一定今天看診", "實際費用", "依項目", "醫師評估", "現場流程確認", "LINE 或櫃台初問不能保證最後金額", "決定要看診", "現場安排掛號"],
+    forbidden: ["手術評估", "快速通關", "出血", "血栓", "抗凝血", "抗血小板", "自行停藥", "心血管病史", "當天看診後手術", "留下姓名", "方便時段", "https://", "lin.ee", "官網介紹："]
   },
   {
     name: "round16 monday night confirms general urology without appointment link",
@@ -59,6 +71,12 @@ const cases = [
     message: "我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？",
     expected: ["3 樓櫃台", "姓名", "電話", "身分資料", "報到", "健保卡", "初診", "現場確認為準"],
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "保證"]
+  },
+  {
+    name: "round19 online registration wrong birthday phone counter correction without link",
+    message: "Round19-3：我線上掛號時生日或電話好像填錯了，到現場可以改資料嗎？會不會找不到掛號？",
+    expected: ["線上掛號", "生日", "電話", "填錯", "影響櫃台查詢", "健保卡/身分證", "3 樓櫃台", "核對", "協助查詢或修正資料", "不能保證一定找得到", "02-2511-9488"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "可直接線上修改", "一定可找到", "一定查得到"]
   },
   {
     name: "round14 first visit registered missing health card checks in at counter",
