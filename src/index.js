@@ -28,7 +28,7 @@ import { loadKnowledge, shouldEscalate } from "./knowledge.js";
 import { pushText, replyText, verifyLineSignature } from "./line.js";
 import { applyResponseStyle } from "./response-style.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
-import { getBotEnabled, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
+import { getBotEnabled, getStringListSetting, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { answerSexualFunctionQuestion } from "./sexual-function.js";
 import { isVectorKnowledgeConfigured, retrieveHybridRelevantChunks } from "./vector-knowledge.js";
 import { answerVaccineQuestion } from "./vaccines.js";
@@ -57,18 +57,10 @@ const port = Number(process.env.PORT || 3000);
 const channelSecret = process.env.LINE_CHANNEL_SECRET;
 const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const debugToken = process.env.DEBUG_TEST_TOKEN;
-const adminUserIds = new Set(
-  (process.env.LINE_ADMIN_USER_IDS || "")
-    .split(",")
-    .map((userId) => userId.trim())
-    .filter(Boolean)
-);
-const reviewTargetIds = new Set(
-  (process.env.LINE_REVIEW_TARGET_IDS || "")
-    .split(",")
-    .map((targetId) => targetId.trim())
-    .filter(Boolean)
-);
+const envAdminUserIds = parseIdSet(process.env.LINE_ADMIN_USER_IDS);
+const envReviewTargetIds = parseIdSet(process.env.LINE_REVIEW_TARGET_IDS);
+const ADMIN_USER_IDS_SETTING_KEY = "line_admin_user_ids";
+const REVIEW_TARGET_IDS_SETTING_KEY = "line_review_target_ids";
 const pendingAssistanceByUser = new Map();
 const PENDING_ASSISTANCE_TTL_MS = 30 * 60 * 1000;
 const voomSyncEnabled = process.env.LINE_VOOM_SYNC_ENABLED !== "false";
@@ -92,6 +84,7 @@ app.get("/", (_req, res) => {
 
 app.get("/health", async (_req, res) => {
   const botEnabled = await getBotEnabled();
+  const reviewTargetIds = await getReviewTargetIds();
 
   res.json({
     ok: true,
@@ -100,7 +93,7 @@ app.get("/health", async (_req, res) => {
     vectorKnowledgeConfigured: isVectorKnowledgeConfigured(),
     conversationMemoryConfigured: isConversationMemoryConfigured(),
     settingsStoreConfigured: isSettingsStoreConfigured(),
-    doctorReviewConfigured: isDoctorReviewReady(),
+    doctorReviewConfigured: isDoctorReviewConfigured() && reviewTargetIds.size > 0,
     doctorReviewTargetCount: reviewTargetIds.size,
     lineVoomSyncEnabled: voomSyncEnabled,
     lineVoomSyncTime: voomSyncTime,
@@ -183,7 +176,7 @@ async function handleLineEvent(event) {
     const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
 
-    if (shouldCreateDoctorReviewCase(message)) {
+    if (await shouldCreateDoctorReviewCase(message)) {
       const handled = await handleDoctorReviewRequest({
         replyToken: event.replyToken,
         userId,
@@ -206,7 +199,7 @@ async function handleLineEvent(event) {
 }
 
 async function handleDoctorReviewRequest({ replyToken, userId, message, conversationHistory, chunks }) {
-  if (!userId || !isDoctorReviewReady()) return false;
+  if (!userId || !(await isDoctorReviewReady())) return false;
 
   const { reply: botDraft, relevantChunks } = await buildReplyAndMatches(message, chunks, conversationHistory);
   const reviewCase = await createDoctorReviewCase({
@@ -236,7 +229,7 @@ async function handleDoctorReviewCommand(event, command) {
   const userId = event.source?.userId;
   const sourceId = getLineSourceId(event.source);
 
-  if (!isDoctorReviewCommandAuthorized(userId, sourceId)) return;
+  if (!(await isDoctorReviewCommandAuthorized(userId, sourceId))) return;
 
   if (!isDoctorReviewConfigured()) {
     await safeReplyText(event.replyToken, "醫師覆核佇列尚未啟用，請確認 Supabase 與 DOCTOR_REVIEW_ENABLED。");
@@ -304,6 +297,7 @@ function buildDoctorApprovedReply(reviewCase, command) {
 
 async function notifyDoctorReviewTargets(reviewCase) {
   const notification = buildDoctorReviewNotification(reviewCase);
+  const reviewTargetIds = await getReviewTargetIds();
   await Promise.all([...reviewTargetIds].map((targetId) => safePushText(targetId, notification)));
 }
 
@@ -314,7 +308,7 @@ async function replyDoctorReviewCaseUnavailable(replyToken, caseId) {
 }
 
 async function handleBotAdminCommand(replyToken, userId, command) {
-  if (!isAdminUser(userId)) return;
+  if (!(await isAdminUser(userId))) return;
 
   if (command === "status") {
     const botEnabled = await getBotEnabled();
@@ -337,24 +331,46 @@ function parseBotAdminCommand(message) {
   return null;
 }
 
-function isAdminUser(userId) {
+async function isAdminUser(userId) {
+  const adminUserIds = await getAdminUserIds();
   return Boolean(userId && adminUserIds.has(userId));
 }
 
-function isDoctorReviewReady() {
+async function isDoctorReviewReady() {
+  const reviewTargetIds = await getReviewTargetIds();
   return isDoctorReviewConfigured() && reviewTargetIds.size > 0;
 }
 
-function shouldCreateDoctorReviewCase(message) {
-  return isDoctorReviewReady() && shouldEscalate(message);
+async function shouldCreateDoctorReviewCase(message) {
+  return (await isDoctorReviewReady()) && shouldEscalate(message);
 }
 
-function isDoctorReviewCommandAuthorized(userId, sourceId) {
-  return isAdminUser(userId) || Boolean(sourceId && reviewTargetIds.has(sourceId));
+async function isDoctorReviewCommandAuthorized(userId, sourceId) {
+  const reviewTargetIds = await getReviewTargetIds();
+  return (await isAdminUser(userId)) || Boolean(sourceId && reviewTargetIds.has(sourceId));
 }
 
 function getLineSourceId(source) {
   return source?.groupId || source?.roomId || source?.userId || null;
+}
+
+async function getAdminUserIds() {
+  if (envAdminUserIds.size > 0) return envAdminUserIds;
+  return new Set(await getStringListSetting(ADMIN_USER_IDS_SETTING_KEY, []));
+}
+
+async function getReviewTargetIds() {
+  if (envReviewTargetIds.size > 0) return envReviewTargetIds;
+  return new Set(await getStringListSetting(REVIEW_TARGET_IDS_SETTING_KEY, []));
+}
+
+function parseIdSet(value) {
+  return new Set(
+    String(value || "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean)
+  );
 }
 
 export async function buildReplyAndMatches(message, chunks, conversationHistory = []) {

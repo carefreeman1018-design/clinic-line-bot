@@ -153,6 +153,13 @@ LINE_REVIEW_TARGET_IDS=Cxxxxxxxx,Uxxxxxxxx
 
 `LINE_REVIEW_TARGET_IDS` 可放 LINE 管理群 groupId、roomId 或管理員 userId，多個用逗號分隔。功能啟用後，遇到個人症狀、報告、用藥、傷口或其他需要醫師判斷的問題時，bot 會先回覆病人「已轉請醫師或診所人員確認」，並把案件推送到管理群。
 
+若部署平台暫時不方便改環境變數，也可以在 `bot_settings` 放同樣設定；環境變數有值時優先使用環境變數：
+
+```json
+{ "key": "line_admin_user_ids", "value": { "ids": ["Uxxxxxxxx"] } }
+{ "key": "line_review_target_ids", "value": { "ids": ["Uxxxxxxxx"] } }
+```
+
 管理群可用指令：
 
 ```text

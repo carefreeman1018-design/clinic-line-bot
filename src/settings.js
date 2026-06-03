@@ -48,3 +48,24 @@ export async function setBotEnabled(enabled) {
 
   return enabled;
 }
+
+export async function getStringListSetting(key, fallback = []) {
+  if (!supabase) return fallback;
+
+  const { data, error } = await supabase
+    .from(SETTINGS_TABLE)
+    .select("value")
+    .eq("key", key)
+    .maybeSingle();
+
+  if (error) {
+    console.error(`Supabase setting load failed for ${key}:`, error);
+    return fallback;
+  }
+
+  const value = data?.value;
+  const ids = Array.isArray(value?.ids) ? value.ids : Array.isArray(value) ? value : null;
+  if (!ids) return fallback;
+
+  return ids.map((item) => String(item).trim()).filter(Boolean);
+}
