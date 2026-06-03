@@ -357,3 +357,22 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 1 | 重測 Round19-1：看診或打疫苗可以刷卡、行動支付嗎？如果只能現金我就先去領錢。不要貼連結。 | Says payment method, card/mobile payment and cash preparation cannot be guaranteed directly on LINE; call 02-2511-9488 or confirm at the counter before deciding. | Pass | No vaccine service or stock drift. |
 | 3 | 重測 Round19-3：我線上掛號時生日或電話好像填錯了，到現場可以改資料嗎？會不會找不到掛號？ | Says wrong birthday/phone may affect registration lookup; bring health card/ID to 3F counter for verification and possible correction, but original registration cannot be guaranteed found; phone confirmation is available. | Pass | No appointment link. |
 | 4 | 重測 Round19-4：我只是想先到櫃台問割包皮大概費用，不一定今天看診，可以嗎？如果要看診再說也可以。 | Says the user can first ask the counter or call 02-2511-9488 about approximate circumcision/stapler fee and process without necessarily seeing a doctor that day; actual amount depends on item and onsite process, and the initial ask cannot guarantee final price; arrange registration if deciding to see a doctor. | Pass | No surgical-risk or fast-pass pollution. |
+
+## Round 20 - Name mismatch, waiting estimate, same-day vaccine ask, missing IDs, and stroller space
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round20-1：我線上掛號時用暱稱，跟健保卡姓名不一樣，到現場會找不到嗎？可以請櫃台改嗎？ | Replied with official appointment entrance and appointment URL. | Fail | Missed name mismatch/data correction flow and pasted a link. |
+| 2 | Round20-2：我已經報到了，可以在 LINE 問現在大概要等多久嗎？還是一定要看現場叫號？請直接說。 | Says the user can ask on LINE, but wait time mostly depends on onsite counter/call-number progress and cannot be precisely known; if already checked in, the most accurate source is the counter or onsite call-number display. | Pass | Practical and bounded. |
+| 3 | Round20-3：我同一天想看泌尿科又順便問皮蛇疫苗，要分開掛號嗎？還是報到時先跟櫃台說？不要貼連結。 | Replied only that official services include shingles vaccination and suitability/stock/fee should be confirmed by phone/staff. | Fail | Dropped urology visit, split-registration and check-in flow. |
+| 4 | Round20-4：我快到診所才發現錢包忘了，健保卡和身分證都不在身上，還能先報到嗎？還是要改天？請講重點。 | Replied with clinic address, MRT route, and onsite queue wording. | Fail | Address/traffic routing swallowed missing ID/payment admin question. |
+| 5 | Round20-5：我看診時會帶一個小孩和推車，診間或候診區放得下嗎？如果不方便，我可以請家人在外面等嗎？ | Replied with Chen Wei-Jie fixed clinic times. | Fail | Doctor schedule routing swallowed stroller/space/family waiting admin question. |
+
+### Round 20 Retest - Admin routing fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round20-1：我線上掛號時用暱稱，跟健保卡姓名不一樣，到現場會找不到嗎？可以請櫃台改嗎？ | Says nickname/name mismatch may affect counter lookup; bring health card/ID to 3F counter for verification and possible correction, but original registration is not guaranteed found; can call 02-2511-9488 first. | Pass | No appointment link. |
+| 3 | 重測 Round20-3：我同一天想看泌尿科又順便問皮蛇疫苗，要分開掛號嗎？還是報到時先跟櫃台說？不要貼連結。 | Says to tell 3F counter at check-in that the patient wants urology and shingles vaccine; split registration, same-day handling, vaccine stock/fee and physician evaluation depend on onsite flow and doctor/counter confirmation; cannot guarantee same-day vaccination. | Pass | No vaccine-only drift. |
+| 4 | 重測 Round20-4：我快到診所才發現錢包忘了，健保卡和身分證都不在身上，還能先報到嗎？還是要改天？請講重點。 | Says it cannot guarantee check-in without health card/ID; missing documents affect identity verification, insurance status and payment; if already near, ask 3F counter or call to confirm supplement documents, self-pay or reschedule. | Pass | No address/route reply. |
+| 5 | 重測 Round20-5：我看診時會帶一個小孩和推車，診間或候診區放得下嗎？如果不方便，我可以請家人在外面等嗎？ | Says consulting room/waiting space for a stroller cannot be guaranteed on LINE; ask counter or call to confirm traffic flow and space; family waiting outside or entering the room depends on onsite arrangement and patient needs. | Pass | No doctor schedule list. |
