@@ -193,6 +193,10 @@ export function buildDoctorReviewWaitingReply(message = "") {
     ].join("\n");
   }
 
+  if (isReportReviewQuestion(message) && !hasSymptomCue(message)) {
+    return "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。";
+  }
+
   return [
     "這題我先幫你轉請醫師或診所人員確認，確認後會再回覆你。",
     "如果有劇烈疼痛、發燒、尿不出來、大量出血或明顯惡化，請不要等線上回覆，先立即就醫。"
@@ -205,6 +209,14 @@ function hasUrgentBleedingCue(message) {
     /流血|出血|血流|大量出血|一直.*血|血.*不停|停不下來|壓不住/.test(message) &&
     /停不下來|壓不住|一直|大量|很多|很痛|劇痛|疼痛/.test(message)
   );
+}
+
+function isReportReviewQuestion(message) {
+  return /報告|檢查結果|檢驗|數字|指數|PSA|攝護腺指數|超音波|切片|癌|癌症|腫瘤/.test(message);
+}
+
+function hasSymptomCue(message) {
+  return /痛|疼|發燒|流血|出血|血尿|尿血|尿不出|排不出尿|腫|膿|流膿|化膿|傷口|裂開|昏沉|嘔吐|畏寒|發冷|不舒服|惡化/.test(message);
 }
 
 export function parseDoctorReviewCommand(message) {

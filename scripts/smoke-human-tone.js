@@ -36,6 +36,15 @@ async function buildTestReply(message, conversationHistory = []) {
 
 const cases = [
   {
+    name: "doctor review report waiting reply does not add unrelated emergency warning",
+    reply: applyResponseStyle({
+      reply: buildDoctorReviewWaitingReply("我想問我的報告數字偏高，你可以直接幫我看是不是癌症嗎？"),
+      message: "我想問我的報告數字偏高，你可以直接幫我看是不是癌症嗎？"
+    }),
+    expected: ["轉請醫師或診所人員確認", "確認後會再回覆你"],
+    forbidden: ["劇烈疼痛", "發燒", "尿不出來", "大量出血", "明顯惡化", "立即就醫", "急診"]
+  },
+  {
     name: "pause message does not continue prior medical topic",
     reply: await buildTestReply("等等", [
       { role: "user", content: "我尿很痛，今天還有一點血尿，月經也晚了。" },
