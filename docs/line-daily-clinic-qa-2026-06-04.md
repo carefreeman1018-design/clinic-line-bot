@@ -135,3 +135,13 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 女性一直頻尿漏尿，是要掛泌尿科還是美磁波？差在哪？講重點。 | Explains urology visit is diagnostic evaluation for infection, overactive bladder, stress incontinence and related causes; magnetic pelvic-floor chair is adjunct pelvic-floor training, not a replacement for diagnosis. | Pass | Directly answers the difference. |
 | 4 | 那費用大概多少？可以先報一個範圍嗎？ | Stays on female urology/leakage and magnetic pelvic-floor context; says public knowledge has no fixed price/range and fee depends on assessment and service arrangement; gives phone/staff confirmation path. | Pass | No drift to HPV/anonymous screening. |
 | 5 | 我想順便問皮蛇疫苗和 HPV 疫苗，可以同一天打嗎？要帶什麼？ | Says same-day HPV plus shingles vaccination cannot be guaranteed and needs physician/staff assessment; bring health card/ID and vaccination record if available, and disclose allergy/rash/special conditions. | Pass | Same-day and document questions both answered. |
+
+## Round 8 - Reports, appointment changes, companions, and fuzzy admin follow-ups
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我只是要拿上次的檢查報告，不看診，可以請家人代拿嗎？要帶什麼？ | Says reports need doctor interpretation and LINE cannot directly provide personal report values. | Partial | Correct privacy/report boundary, but missed proxy pickup and document/admin flow. |
+| 2 | 我線上掛了明天早診，但臨時不能去，可以在 LINE 取消或改晚診嗎？不要貼連結。 | Says clinic may not be able to change via LINE and LINE cannot guarantee cancellation/change; can organize message for counter confirmation. | Pass | No link, no guarantee. |
+| 3 | 我陪我先生看診，可以一起進診間嗎？如果是私密問題會不會很尷尬？ | Replied with Li Chitai schedule. | Fail | Misread spouse term "先生" as doctor/name context and ignored companion/privacy intent. |
+| 4 | 週六下午或晚上有開嗎？我只想現場掛號，不要貼連結。 | Says Sat afternoon is surgery time, not general clinic; Sat evening is closed; onsite registration can ask counter but cannot guarantee availability. | Pass | Fixed schedule plus onsite caveat. |
+| 5 | 那可以刷卡嗎？ | Says card payment is not clearly public and cannot be guaranteed; can organize message or ask counter/phone to confirm onsite payment method. | Pass | Conservative fuzzy payment answer. |

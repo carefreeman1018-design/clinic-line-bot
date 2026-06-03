@@ -11,6 +11,15 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksReportPickupProxy(normalized)) {
+    return [
+      "檢查報告涉及個人醫療資料，能不能只領報告、能不能由家人代領，都要先由櫃台或診所人員確認，不能在 LINE 直接保證。",
+      `請病人或家人先電話 ${PHONE}，或到現場先問櫃台。`,
+      "若現場確認可代領，通常請先準備病人身分證/健保卡或影本、代領人身分證，以及診所要求的授權或關係資料；實際文件以櫃台流程為準。",
+      "如果報告需要醫師解釋，仍可能需要掛號回診或門診說明。"
+    ].join("\n");
+  }
+
   if (asksCertificateOrReceipt(normalized)) {
     return [
       "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明或收據。",
@@ -49,6 +58,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksCompanionPrivacyConsultRoom(normalized)) {
+    return [
+      "陪同進診間通常要看病人本人同意、醫師/現場人員安排，以及當下隱私需求。",
+      "抵達時請先跟櫃台或護理人員說你是陪先生看診；若有私密問題，診所可以視情況讓病人單獨說明，或請陪同者先在外面等。",
+      "不用覺得尷尬，私密問題是診所日常會處理的內容。"
+    ].join("\n");
+  }
+
   return null;
 }
 
@@ -61,6 +78,11 @@ function asksOnlineRegistrationChange(message) {
 function asksCertificateOrReceipt(message) {
   return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
+}
+
+function asksReportPickupProxy(message) {
+  return /報告|檢查結果|檢驗結果/.test(message)
+    && /拿|領|取|代拿|代領|家人|親友|本人|不看診|不用看診|只拿|只領|要帶什麼|帶什麼|證件|授權/.test(message);
 }
 
 function asksWheelchairElevatorAccess(message) {
@@ -84,4 +106,10 @@ function asksOnsiteNextStepForVaccineScreeningRegistration(message) {
     && /HPV\s*疫苗|HPV|九價|疫苗/i.test(message)
     && /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
     && /掛號|抽號|號碼牌|下一步|先做什麼|怎麼做|怎麼辦|先去哪|先問誰|不想看長文|長文|簡短/.test(message);
+}
+
+function asksCompanionPrivacyConsultRoom(message) {
+  return /陪|陪同|陪診|陪看|陪伴|一起進|進診間|陪.*看診/.test(message)
+    && /先生|老公|丈夫|太太|老婆|妻子|配偶|伴侶|另一半|男友|女友|家人|媽媽|爸爸/.test(message)
+    && /診間|看診|門診|私密|隱私|尷尬|單獨|外面等|一起進|陪同/.test(message);
 }
