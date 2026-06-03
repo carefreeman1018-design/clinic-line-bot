@@ -4,6 +4,14 @@ export function answerAdminMixedQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
   if (!normalized) return null;
 
+  if (asksFirstVisitHealthCardReadFailureSelfPay(normalized)) {
+    return [
+      "第一次看診若健保卡讀不到，可能是系統、卡片或健保身分確認問題，不能在 LINE 先保證能怎麼處理。",
+      "能否先自費看診、之後補健保、退費或補件，要由 3 樓櫃台依現場健保身分與規定確認。",
+      `建議帶身分證/健保卡到現場；不確定可先電話 ${PHONE} 問櫃台。`
+    ].join("\n");
+  }
+
   if (asksTestosteroneBloodDrawOnly(normalized)) {
     return [
       "不能先保證不看醫師就能直接抽血。",
@@ -199,15 +207,16 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksCertificateOrReceipt(normalized)) {
     if (asksCertificateOrReceiptAfterVisit(normalized)) {
+      const requestedDocuments = buildRequestedDocumentList(normalized);
       return [
-        `看完才想到要保險收據或診斷證明，可先電話 ${PHONE} 或問櫃台能否補開。`,
-        "診斷證明通常需醫師/病歷確認；能否隔天、本人或家人代辦、要帶證件或委託文件，都以診所回覆為準。"
+        `看完才想到要${requestedDocuments}，可先電話 ${PHONE} 或問櫃台能否隔天補申請/補開。`,
+        `${requestedDocuments}通常需醫師/病歷或櫃台資料確認；本人或家人代辦、要帶證件或委託文件、費用與處理時間，都以櫃台/診所回覆為準。`
       ].join("\n");
     }
 
     return [
-      "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明或收據。",
-      "診斷證明需由醫師依實際看診內容評估後開立。",
+      "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明、病歷摘要或收據。",
+      "診斷證明與病歷摘要需由醫師/病歷依實際看診內容確認。",
       "費用、格式、能否補開，請讓櫃台現場或電話確認。"
     ].join("\n");
   }
@@ -267,6 +276,23 @@ export function answerAdminMixedQuestion(message) {
   }
 
   return null;
+}
+
+function buildRequestedDocumentList(message) {
+  const documents = [];
+  if (/保險收據|收據|醫療收據|費用收據|發票/.test(message)) documents.push("收據");
+  if (/診斷證明|診斷書|證明書|就醫證明/.test(message)) documents.push("診斷證明");
+  if (/病歷摘要|病摘|病歷資料/.test(message)) documents.push("病歷摘要");
+
+  return documents.length > 0 ? documents.join("或") : "診斷證明或收據";
+}
+
+function asksFirstVisitHealthCardReadFailureSelfPay(message) {
+  const mentionsFirstVisit = /第一次去|第一次來|初診|第一次看/.test(message);
+  const mentionsHealthCardReadFailure = /健保卡.*讀不到|健保卡.*不能讀|健保卡.*讀不出|健保卡.*刷不過|讀不到.*健保卡|讀不出.*健保卡|卡片.*問題/.test(message);
+  const asksSelfPayOrReimbursement = /自費|補健保|退費|補件|補卡|健保退費|補.*退費|能先|可以先|之後/.test(message);
+
+  return mentionsFirstVisit && mentionsHealthCardReadFailure && asksSelfPayOrReimbursement;
 }
 
 function asksOnlineRegistrationChange(message) {
@@ -368,13 +394,13 @@ function asksSharedRegistrationForTwoPatients(message) {
 }
 
 function asksCertificateOrReceipt(message) {
-  return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
+  return /診斷證明|診斷書|證明書|就醫證明|病歷摘要|病摘|病歷資料|收據|醫療收據|費用收據|發票/.test(message)
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
 }
 
 function asksCertificateOrReceiptAfterVisit(message) {
   return /隔天|明天|補開|補申請|才想到|本人|家人|代辦|委託/.test(message)
-    && /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票|保險/.test(message);
+    && /診斷證明|診斷書|證明書|就醫證明|病歷摘要|病摘|病歷資料|收據|醫療收據|費用收據|發票|保險/.test(message);
 }
 
 function asksFeePaymentAtCounterWithoutVisit(message) {

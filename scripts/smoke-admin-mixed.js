@@ -142,6 +142,12 @@ const cases = [
     forbidden: ["女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "費用目前知識庫", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   },
   {
+    name: "round23 first visit health card read failure stays counter admin",
+    message: "Round23-1：我第一次來但健保卡讀不到，能先自費看嗎？之後可以補健保退費嗎？不要保證。",
+    expected: ["第一次看診", "健保卡讀不到", "系統", "卡片", "健保身分確認問題", "不能在 LINE 先保證", "先自費看診", "補健保", "退費", "補件", "3 樓櫃台", "現場健保身分與規定確認", "身分證/健保卡", "02-2511-9488"],
+    forbidden: ["男性泌尿", "退尿", "美磁波", "磁波鍛肌椅", "女性泌尿", "漏尿", "公開費用未知", "費用目前知識庫", "知識庫沒有公開", "醫療療程", "療程", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "online registration late arrival answers counter flow without link",
     message: "我已經線上掛號早診，但可能會晚到 20 分鐘，還看得到嗎？要不要先打電話？請講重點。",
     expected: ["已線上掛號", "晚到", "不能先保證", "20 分鐘", "02-2511-9488", "通知並確認", "報到時間", "醫師門診狀況", "號碼/名額", "健保卡/身分證", "3 樓櫃台報到"],
@@ -168,8 +174,14 @@ const cases = [
   {
     name: "round14 certificate receipt after visit gives short admin boundary",
     message: "Round14-5：如果我看完才想到要保險收據和診斷證明，可以隔天補開嗎？要本人去嗎？不要講太長。",
-    expected: ["保險收據", "診斷證明", "電話 02-2511-9488", "櫃台", "補開", "醫師/病歷確認", "隔天", "本人", "家人代辦", "證件", "委託文件", "診所回覆為準"],
+    expected: ["收據", "診斷證明", "電話 02-2511-9488", "櫃台", "補申請/補開", "醫師/病歷", "資料確認", "隔天", "本人", "家人代辦", "證件", "委託文件", "診所回覆為準"],
     forbidden: ["女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "醫療診斷"]
+  },
+  {
+    name: "round23 diagnosis certificate medical summary after visit includes both",
+    message: "Round23-4：看完診才想到要診斷證明或病歷摘要，可以隔天再申請嗎？需要本人去嗎？不要貼連結。",
+    expected: ["診斷證明", "病歷摘要", "電話 02-2511-9488", "櫃台", "隔天補申請/補開", "醫師/病歷", "資料確認", "本人", "家人代辦", "證件", "委託文件", "費用", "處理時間", "櫃台/診所回覆為準"],
+    forbidden: ["保險收據", "女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "男性泌尿", "退尿", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "官網介紹："]
   },
   {
     name: "round15 wheelchair dropoff avoids guaranteed parking or entrance",
