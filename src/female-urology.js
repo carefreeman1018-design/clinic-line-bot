@@ -3,6 +3,7 @@ const PHONE = "02-2511-9488";
 export function answerFemaleUrologyQuestion(message) {
   if (hasExplicitMaleSelfCue(message)) return null;
   if (hasMaleSpecificUrologyCue(message)) return null;
+  if (!hasFemaleSpecificCue(message) && hasUpperUrinaryEmergencyCue(message)) return null;
   if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message)) return null;
   if (!asksSuitabilityPriceOrNextStep(message)) return null;
 
@@ -37,6 +38,14 @@ function hasExplicitMaleSelfCue(message) {
 
 function hasMaleSpecificUrologyCue(message) {
   return /攝護腺|前列腺|射精|精液|精子|睪丸|陰囊|龜頭|陰莖|包皮/.test(message);
+}
+
+function hasFemaleSpecificCue(message) {
+  return /我是女生|我是女性|我是女的|我.*女生|我.*女性|女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|鍛肌椅|高密度磁波|懷孕|月經|產後|哺乳/.test(message);
+}
+
+function hasUpperUrinaryEmergencyCue(message) {
+  return hasPositiveBloodUrineCue(message) && hasPositiveBackPainCue(message) && hasPositiveFeverCue(message);
 }
 
 function asksSuitabilityPriceOrNextStep(message) {
@@ -112,7 +121,7 @@ function hasPositiveUrinationPainCue(message) {
 
 function hasPositiveFeverCue(message) {
   if (/沒有發燒|沒發燒|無發燒|不發燒|沒有高燒|沒高燒|無高燒/.test(message)) return false;
-  return /發燒|高燒/.test(message);
+  return /發燒|高燒|體溫\s*3[89](?:\.\d)?|燒到\s*3[89](?:\.\d)?|38(?:\.\d)?|39(?:\.\d)?/.test(message);
 }
 
 function hasPositiveBackPainCue(message) {

@@ -267,7 +267,7 @@ const cases = [
   },
   {
     name: "wart ointment duration avoids online prescription",
-    reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？我在外面不方便看長文，先講重點。"),
+    reply: await buildTestReply("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？我在外面不方便看長文，先講重點。"),
     expected: ["菜花", "HPV", "光靠文字不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以自己買", "擦 7 天", "擦七天", "擦兩週", "元"]
   },
@@ -293,7 +293,7 @@ const cases = [
   },
   {
     name: "pep condom broke at 60 hours gives urgent next step and anonymous screening",
-    reply: answerStdTreatmentQuestion("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我昨天晚上保險套破掉，現在大概過了 60 小時，我是不是要吃 PEP？可以直接去拿藥嗎？我也想匿名驗性病，我現在有點慌，先跟我說該怎麼做。"),
     expected: ["60 小時", "72 小時", "今天盡快", "不能只靠訊息判斷或開藥", "匿名篩檢", "護理人員安排篩檢", "先讓醫師評估 PEP 較優先", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "可以直接去拿藥", "可以直接拿藥", "不用看診", "性病篩檢與治療需要依症狀"]
   },
@@ -311,7 +311,7 @@ const cases = [
   },
   {
     name: "pep after 80 hours acknowledges missed window and blocks prep rescue",
-    reply: answerStdTreatmentQuestion("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我上週六晚上保險套破掉，現在大概已經過了 80 小時，很擔心 HIV。這樣還能吃 PEP 嗎？如果超過時間，可以改吃 PrEP 補救嗎？我今晚能不能直接拿藥，順便做匿名篩檢？我有點緊張，先跟我說下一步。"),
     expected: ["80 小時", "已超過", "PEP 黃金 72 小時", "醫師判斷", "PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能只靠訊息判斷或開藥", "不能保證今晚直接拿藥", "匿名篩檢", "護理人員安排篩檢", "02-2511-9488", "儘速就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "官方 LINE", "80 小時仍在", "可以改吃 PrEP 補救", "可以直接拿藥", "可以今晚直接拿藥", "今晚可以直接拿藥", "不用看診"]
   },
@@ -330,7 +330,7 @@ const cases = [
   },
   {
     name: "prep does not replace condoms or post-exposure pep",
-    reply: answerStdTreatmentQuestion("我最近想開始吃 PrEP，是不是吃了就不用戴套，也不會得梅毒、淋病或菜花？如果昨天已經無套了，吃 PrEP 可以補救嗎？我現在有點慌，先跟我說該怎麼做。"),
+    reply: await buildTestReply("我最近想開始吃 PrEP，是不是吃了就不用戴套，也不會得梅毒、淋病或菜花？如果昨天已經無套了，吃 PrEP 可以補救嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["PrEP 是暴露前預防", "不是已發生暴露後的補救", "不能預防梅毒、淋病、菜花", "PEP", "72 小時", "今天盡快", "不能只靠訊息判斷或開藥", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "吃了就不用戴套", "可以補救", "菜花 HPV 相關篩檢與治療評估"]
   },
@@ -390,7 +390,7 @@ const cases = [
   },
   {
     name: "psa report cancer biopsy question avoids diagnosis",
-    reply: answerReportResultQuestion("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？我在外面不方便看長文，先講重點。"),
+    reply: await buildTestReply("我健檢 PSA 偏高，這樣是不是攝護腺癌？要不要馬上切片？今天能看嗎？我在外面不方便看長文，先講重點。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只靠訊息判斷", "切片", "醫師評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "立即急診", "尿不出來", "大量出血"]
   },
@@ -424,7 +424,7 @@ const cases = [
   },
   {
     name: "psa live-style report review does not mention bph procedures",
-    reply: answerReportResultQuestion("健檢說我 PSA 6.8 偏高，我很怕是不是攝護腺癌。津久可以幫我看報告嗎？需要直接做切片嗎？"),
+    reply: await buildTestReply("健檢說我 PSA 6.8 偏高，我很怕是不是攝護腺癌。津久可以幫我看報告嗎？需要直接做切片嗎？"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只靠訊息判斷", "檢查報告", "切片", "醫師評估", "泌尿科門診", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "水蒸氣", "Urolift", "雷射", "攝護腺肥大治療", "費用", "保證", "直接做"]
   },
@@ -438,9 +438,7 @@ const cases = [
   },
   {
     name: "psa report with bph procedure request blocks skipping biopsy",
-    reply:
-      answerReportResultQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？我有點緊張，先跟我說下一步。") ||
-      answerProstateQuestion("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我健檢 PSA 5.2，超音波說攝護腺有點大，爸爸有攝護腺癌病史。這是不是代表我也癌症？我可以今天直接做水蒸氣消融或 Urolift，順便不要切片嗎？費用多少？我有點緊張，先跟我說下一步。"),
     expected: ["PSA", "不等於一定是攝護腺癌", "不能只靠訊息判斷", "病史", "切片", "醫師評估", "水蒸氣消融", "Urolift", "不能用來取代", "癌症風險評估", "不能用來保證跳過必要切片", "費用", "門診評估", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "就是癌症", "不是癌症", "可以今天直接做", "可以不用切片", "元"]
   },
@@ -498,7 +496,7 @@ const cases = [
   },
   {
     name: "hematuria flank pain fever prioritizes er over clinic schedule",
-    reply: answerMaleUtiUrgentQuestion("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？我現在有點慌，先跟我說該怎麼辦。", new Date("2026-06-02T08:00:00+08:00")),
+    reply: await buildTestReply("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？我現在有點慌，先跟我說該怎麼辦。"),
     expected: ["血尿", "右腰", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "光靠訊息無法判斷", "不建議", "止痛藥", "撐到明天", "不要自行吃抗生素", "急診", "立即就醫", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "可先參考", "門診", "李齊泰醫師", "18:00-20:30", "可以先吃止痛藥", "可以撐到明天"]
   },
@@ -688,7 +686,7 @@ const cases = [
   },
   {
     name: "female urology hematuria fever back pain urgent boundary",
-    reply: answerFemaleUrologyQuestion("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？我有點緊張，先跟我說下一步。"),
+    reply: await buildTestReply("我是女生，這兩天尿尿會痛、尿有一點血，今天腰也痠痛好像有發燒，但我本來也有漏尿。可以今天直接坐美磁波鍛肌椅嗎？我有點緊張，先跟我說下一步。"),
     expected: ["尿痛", "血尿", "腰痠", "發燒", "光靠訊息無法診斷", "先不要坐美磁波鍛肌椅", "漏尿或療程問題先延後", "醫師評估", "適合用藥", "02-2511-9488", "急診", "立即就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以直接坐", "可以今天直接", "保證", "元", "費用目前知識庫沒有公開明確數字"]
   },
