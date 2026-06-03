@@ -243,6 +243,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "術後", "水腫", "前 2 週", "不要碰水", "換藥方式", "擦 7 天", "擦兩週"]
   },
   {
+    name: "partner wart leftover ointment and same-day cautery stay bounded",
+    reply: answerStdTreatmentQuestion("我男友前幾天被說是菜花，我自己陰道口也摸到小肉芽。可以先擦他剩下的藥膏嗎？今天去能不能直接電燒？"),
+    expected: ["菜花", "HPV", "看病灶", "LINE 不能診斷", "不要自行買藥", "自己擦", "伴侶剩下的藥膏", "伴侶", "檢查或篩檢", "電燒", "醫師確認後安排", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "可以先擦", "可以直接電燒", "保證", "元"]
+  },
+  {
     name: "wart topic that negates pep does not trigger pep answer",
     reply: answerStdTreatmentQuestion("我剛剛不是問 PEP 了，現在換問另一件事：私密處長小肉芽，朋友說可能是菜花。只看文字可以判斷嗎？藥膏要擦幾天、能不能自己買？伴侶要不要一起檢查？我有點緊張，先跟我說下一步。"),
     expected: ["菜花", "HPV", "LINE 不能診斷", "藥膏要擦幾天", "自行買藥", "伴侶", "醫師", "02-2511-9488"],
