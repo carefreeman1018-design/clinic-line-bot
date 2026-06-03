@@ -81,6 +81,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃止痛藥", "觀察到明天", "先預約門診", "不用急診"]
   },
   {
+    name: "adult sudden testicular pain preserves stated age",
+    reply: answerTesticularTorsionQuestion("我 28 歲，今天下午突然左邊睪丸很痛，走路會痛，陰囊有點腫。可以先吃止痛藥睡一晚明天再看嗎？"),
+    expected: ["28 歲", "突然單側睪丸痛", "陰囊腫", "走路受影響", "睪丸扭轉", "急性陰囊", "LINE 不能直接診斷", "不建議", "止痛藥", "拖到隔天", "缺血風險", "急診", "立即就醫", "02-2511-9488"],
+    forbidden: ["16 歲", "十六歲", "官網介紹：", "https://", "lin.ee", "可以先吃止痛藥", "睡一晚", "明天再看", "先預約門診", "不用急診"]
+  },
+  {
     name: "priapism after erectile medication gives urgent boundary",
     reply:
       answerPriapismQuestion("我昨晚吃了朋友給的威而鋼，現在已經勃起快 5 個小時還退不下來，陰莖很痛。我可以先冰敷或睡一覺等它退嗎？你們今天能不能直接幫我處理？我有點緊張，先跟我說下一步。") ||
