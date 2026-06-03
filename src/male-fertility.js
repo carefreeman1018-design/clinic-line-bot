@@ -18,7 +18,7 @@ export function answerMaleFertilityQuestion(message) {
 }
 
 function isMaleFertilityQuestion(message) {
-  return /備孕|不孕|懷孕.*成功|沒.*懷孕|精液報告|精液檢查|精蟲|精子|活動力|精索靜脈曲張/.test(message);
+  return /備孕|不孕|懷孕.*成功|精液報告|精液檢查|精蟲|精子|活動力|精索靜脈曲張/.test(message);
 }
 
 function isVaricoceleQuestion(message) {

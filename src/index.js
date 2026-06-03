@@ -428,6 +428,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
   const testicularTorsionReply = answerTesticularTorsionQuestion(message);
   if (testicularTorsionReply) return { reply: testicularTorsionReply, relevantChunks: [] };
 
+  const maleFertilityReply = answerMaleFertilityQuestion(message);
+  if (maleFertilityReply) return { reply: maleFertilityReply, relevantChunks: [] };
+
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
 
@@ -454,9 +457,6 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const hematospermiaReply = answerHematospermiaQuestion(message);
   if (hematospermiaReply) return { reply: hematospermiaReply, relevantChunks: [] };
-
-  const maleFertilityReply = answerMaleFertilityQuestion(message);
-  if (maleFertilityReply) return { reply: maleFertilityReply, relevantChunks: [] };
 
   const reportResultReply = answerReportResultQuestion(message, conversationHistory);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
