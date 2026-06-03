@@ -49,6 +49,12 @@ const cases = [
     forbidden: ["已線上掛號", "不能直接幫你改", "請用原本線上掛號系統", "https://", "lin.ee"]
   },
   {
+    name: "round18 near lunch clinic end asks counter deadline not doctor schedule",
+    message: "Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。",
+    expected: ["不能先保證", "壓線", "一定看得到", "17:00 後", "等加號", "午診 13:30-17:00", "診間時段", "最晚報到", "能否加號或候補", "電話", "現場櫃台確認", "快到診所", "3 樓櫃台", "02-2511-9488"],
+    forbidden: ["固定門診", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "可先參考固定門診", "https://", "lin.ee"]
+  },
+  {
     name: "online registration forgot screenshot answers check-in without link",
     message: "我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？",
     expected: ["3 樓櫃台", "姓名", "電話", "身分資料", "報到", "健保卡", "初診", "現場確認為準"],
@@ -106,6 +112,12 @@ const cases = [
     name: "round15 company receipt title tax id before checkout",
     message: "Round15-5：公司報帳要收據抬頭或統編，可以看完才請櫃台開嗎？還是掛號時要先說？",
     expected: ["公司報帳", "收據", "抬頭", "統編", "格式", "能否補開", "櫃台確認", "掛號或結帳前先說", "結帳後格式不能改", "看完才想到", "02-2511-9488", "不能保證可改或補開"],
+    forbidden: ["診斷證明", "醫師/病歷確認", "本人", "家人代辦", "委託文件", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
+    name: "round18 lost receipt reprint and tax id after checkout stays admin",
+    message: "Round18-4：上次看診的收據不見了，可以補印嗎？如果公司要統編，能不能後來再補上？請不要貼連結。",
+    expected: ["收據", "補印", "公司報帳", "統編", "補上", "格式", "能否補開", "櫃台確認", "收據不見", "事後能否補上統編", "就診/結帳資料", "規定確認", "掛號或結帳前先說", "不能保證可改或補開"],
     forbidden: ["診斷證明", "醫師/病歷確認", "本人", "家人代辦", "委託文件", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   },
   {

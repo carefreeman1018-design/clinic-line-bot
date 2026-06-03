@@ -4,6 +4,14 @@ export function answerAdminMixedQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
   if (!normalized) return null;
 
+  if (asksTestosteroneBloodDrawOnly(normalized)) {
+    return [
+      "不能先保證不看醫師就能直接抽血。",
+      "睪固酮/男性荷爾蒙檢查通常要由醫師或診所人員先確認檢驗項目、是否需看診/開單，以及採血安排。",
+      `要不要空腹、是否建議早上抽、費用與當天能不能抽，請先電話 ${PHONE} 或到現場確認。`
+    ].join("\n");
+  }
+
   if (asksVaccineScreeningCounterProcessFee(normalized)) {
     const vaccineItems = asksSkinShinglesVaccine(normalized)
       ? "HPV 疫苗、皮蛇疫苗與匿名篩檢"
@@ -51,6 +59,14 @@ export function answerAdminMixedQuestion(message) {
       "已線上掛號但可能晚到，不能先保證晚到 20 分鐘一定還看得到。",
       `建議先電話 ${PHONE} 通知並確認；現場會由櫃台依報到時間、醫師門診狀況、號碼/名額安排。`,
       "到診後仍請帶健保卡/身分證到 3 樓櫃台報到。"
+    ].join("\n");
+  }
+
+  if (asksCheckinDeadlineOrAddOnNearClose(normalized)) {
+    return [
+      "不能先保證壓線到就一定看得到，也不能保證 17:00 後還能等加號。",
+      "午診 13:30-17:00 是診間時段；最晚報到、能否加號或候補，要立刻電話或現場櫃台確認。",
+      `如果已經快到診所，先到 3 樓櫃台問；也可先電話 ${PHONE}。`
     ].join("\n");
   }
 
@@ -103,9 +119,10 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksCompanyReceiptTitleTaxId(normalized)) {
     return [
-      "公司報帳收據的抬頭、統編、格式與能否補開，請以櫃台確認為準。",
+      "公司報帳收據的抬頭、統編、格式、收據補印與能否補開，請以櫃台確認為準。",
+      "收據不見能否補印、事後能否補上統編或改格式，都要由櫃台依就診/結帳資料與規定確認。",
       "最好掛號或結帳前先說，避免結帳後格式不能改。",
-      `看完才想到也可以先問櫃台或電話 ${PHONE}，但不能保證可改或補開。`
+      `看完才想到、收據遺失或想事後補資料，也可以先問櫃台或電話 ${PHONE}，但不能保證可改或補開。`
     ].join("\n");
   }
 
@@ -179,6 +196,15 @@ function asksOnlineRegistrationChange(message) {
     && /今天|今晚|晚上|晚診|夜診/.test(message);
 }
 
+function asksTestosteroneBloodDrawOnly(message) {
+  const hasTestosteroneCue = /睪固酮|睾固酮|男性荷爾蒙|低睪/.test(message);
+  const hasBloodDrawCue = /抽血|採血|驗血|血液檢查|檢驗|檢查/.test(message);
+  const asksDirectWithoutVisit = /只抽血|直接抽|先抽|不想.*看醫師|不想.*看醫生|不看醫師|不看醫生|不用看診|不想先看|可以.*抽|能不能.*抽|可不可以.*抽/.test(message);
+  const asksTimingOrPrep = /空腹|早上|上午|幾點|當天|今天|費用|多少錢|需要.*準備|要不要/.test(message);
+
+  return hasTestosteroneCue && hasBloodDrawCue && (asksDirectWithoutVisit || asksTimingOrPrep);
+}
+
 function asksOnlineRegistrationForgotScreenshotCheckin(message) {
   const mentionsOnlineRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|剛剛.*掛號/.test(message);
   const mentionsMissingScreenshot = /忘記截圖|沒截圖|沒有截圖|截圖.*忘|截圖.*不見|截圖.*遺失|截圖.*沒|沒拍照|沒有拍照/.test(message);
@@ -202,6 +228,14 @@ function asksOnlineRegistrationLateArrival(message) {
   const asksCanStillBeSeenOrCall = /看得到|還能看|還可以看|能不能看|可不可以看|會不會過號|過號|打電話|先電話|通知|確認/.test(message);
 
   return mentionsExistingRegistration && mentionsLateArrival && asksCanStillBeSeenOrCall;
+}
+
+function asksCheckinDeadlineOrAddOnNearClose(message) {
+  const mentionsArrivalOrCheckin = /快到|快到了|快到診所|到診所|在路上|快結束|要結束|報到|掛號|現場/.test(message);
+  const asksDeadlineOrAddOn = /最晚|幾點前|幾點以前|截止|壓線|過號|加號|候補|等加號|還能等|還可以等|超過/.test(message);
+  const hasClinicTimeCue = /午診|下午|17:00|5:00|五點|診所/.test(message);
+
+  return mentionsArrivalOrCheckin && asksDeadlineOrAddOn && hasClinicTimeCue;
 }
 
 function asksOnlineRegistrationCancellation(message) {
@@ -286,8 +320,8 @@ function asksDoctorPreferenceOrDesignation(message) {
 
 function asksCompanyReceiptTitleTaxId(message) {
   return /公司|報帳|報銷|核銷|抬頭|統編|統一編號/.test(message)
-    && /抬頭|統編|統一編號|格式|補開|結帳|掛號/.test(message)
-    && /收據|發票|開/.test(message);
+    && /抬頭|統編|統一編號|格式|補開|補印|補上|補加|結帳|掛號/.test(message)
+    && /收據|發票|開|補印/.test(message);
 }
 
 function asksWheelchairDropoffAccess(message) {
