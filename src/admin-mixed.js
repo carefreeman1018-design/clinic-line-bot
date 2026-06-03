@@ -90,6 +90,22 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksDoctorPreferenceOrDesignation(normalized)) {
+    return [
+      "可以先告知想指定醫師或偏好男醫師。",
+      "但能否指定、當天是否由指定醫師看、是否可改掛/等候，要依門診表、名額與櫃台確認。",
+      "當天只有其他醫師時，可先向櫃台詢問再決定；不能保證一定改到。"
+    ].join("\n");
+  }
+
+  if (asksCompanyReceiptTitleTaxId(normalized)) {
+    return [
+      "公司報帳收據的抬頭、統編、格式與能否補開，請以櫃台確認為準。",
+      "最好掛號或結帳前先說，避免結帳後格式不能改。",
+      `看完才想到也可以先問櫃台或電話 ${PHONE}，但不能保證可改或補開。`
+    ].join("\n");
+  }
+
   if (asksCertificateOrReceipt(normalized)) {
     if (asksCertificateOrReceiptAfterVisit(normalized)) {
       return [
@@ -102,6 +118,14 @@ export function answerAdminMixedQuestion(message) {
       "看診時或結帳前，先跟櫃台或醫師說明需要診斷證明或收據。",
       "診斷證明需由醫師依實際看診內容評估後開立。",
       "費用、格式、能否補開，請讓櫃台現場或電話確認。"
+    ].join("\n");
+  }
+
+  if (asksWheelchairDropoffAccess(normalized)) {
+    return [
+      "不能保證門口可臨停或下車，要依現場交通與大樓入口狀況。",
+      `若想先讓家人到入口或請櫃台協助，建議先電話 ${PHONE} 確認。`,
+      "診所所在大樓可搭電梯到 3 樓；入口或電梯位置不確定，也可先電話詢問。"
     ].join("\n");
   }
 
@@ -243,6 +267,28 @@ function asksReportPickupProxy(message) {
     || /(?:拿|領|取).{0,12}(?:報告|檢查結果|檢驗結果)/.test(message);
 
   return hasReportCue && asksPickupOrProxy;
+}
+
+function asksDoctorPreferenceOrDesignation(message) {
+  const asksUrologyOrVisit = /泌尿|一般泌尿|看診|門診|醫師|醫生/.test(message);
+  const asksPreference = /指定|男醫師|男性醫師|男醫生|偏好.*男|想找.*男|指定.*醫師|指定.*醫生/.test(message);
+  const asksCounterDecision = /櫃台|櫃檯|當天|別的醫師|其他醫師|改掛|等候|名額|先問|再決定/.test(message);
+
+  return asksUrologyOrVisit && asksPreference && asksCounterDecision;
+}
+
+function asksCompanyReceiptTitleTaxId(message) {
+  return /公司|報帳|報銷|核銷|抬頭|統編|統一編號/.test(message)
+    && /抬頭|統編|統一編號|格式|補開|結帳|掛號/.test(message)
+    && /收據|發票|開/.test(message);
+}
+
+function asksWheelchairDropoffAccess(message) {
+  const hasMobilityCue = /輪椅|行動不便|行動不方便|走路不方便|長輩|老人家|爸爸|爸|媽媽|媽/.test(message);
+  const hasDropoffCue = /門口|臨停|下車|停車|入口|電梯|先讓.*下|先在.*下/.test(message);
+  const hasUncertaintyCue = /可以|可不可以|能不能|好找|不要保證|不保證|先電話|確認/.test(message);
+
+  return hasMobilityCue && hasDropoffCue && hasUncertaintyCue;
 }
 
 function asksWheelchairElevatorAccess(message) {

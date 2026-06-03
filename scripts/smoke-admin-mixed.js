@@ -64,6 +64,24 @@ const cases = [
     forbidden: ["女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "醫療診斷"]
   },
   {
+    name: "round15 wheelchair dropoff avoids guaranteed parking or entrance",
+    message: "Round15-1：我爸坐輪椅，我可以先在門口讓他下車再去停車嗎？電梯入口好找嗎？不要保證。",
+    expected: ["不能保證門口可臨停或下車", "現場交通", "大樓入口狀況", "家人到入口", "櫃台協助", "02-2511-9488", "搭電梯到 3 樓", "入口或電梯位置不確定", "電話詢問"],
+    forbidden: ["保證可停", "保證可以停", "一定可以臨停", "一定可臨停", "一定可下車", "https://", "lin.ee", "官網介紹："]
+  },
+  {
+    name: "round15 doctor designation preference asks counter before deciding",
+    message: "Round15-3：我看泌尿問題可以指定男醫師嗎？如果當天只有別的醫師，可以先問櫃台再決定嗎？短一點。",
+    expected: ["想指定醫師", "偏好男醫師", "能否指定", "當天是否由指定醫師看", "是否可改掛/等候", "門診表", "名額", "櫃台確認", "其他醫師", "先向櫃台詢問再決定", "不能保證一定改到"],
+    forbidden: ["固定門診表目前有", "想查哪位的時段", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "https://", "lin.ee", "官網介紹："]
+  },
+  {
+    name: "round15 company receipt title tax id before checkout",
+    message: "Round15-5：公司報帳要收據抬頭或統編，可以看完才請櫃台開嗎？還是掛號時要先說？",
+    expected: ["公司報帳", "收據", "抬頭", "統編", "格式", "能否補開", "櫃台確認", "掛號或結帳前先說", "結帳後格式不能改", "看完才想到", "02-2511-9488", "不能保證可改或補開"],
+    forbidden: ["診斷證明", "醫師/病歷確認", "本人", "家人代辦", "委託文件", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "friday surgery schedule keeps counter fee question",
     message: "我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。",
     routedOnly: true,
