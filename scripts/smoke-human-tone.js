@@ -462,6 +462,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "可以先吃", "可以自行"]
   },
   {
+    name: "explicit male uti fever does not use female pregnancy route",
+    reply: await buildTestReply("我是男生，這兩天尿尿很痛，今天右邊腰也痛，還有點發燒發冷。家裡有之前剩的抗生素，可以先吃一顆觀察到明天嗎？"),
+    expected: ["尿痛", "發燒", "LINE 不能判斷", "不要自行", "抗生素", "02-2511-9488", "急診", "立即就醫"],
+    forbidden: ["懷孕", "月經", "孕期感染", "女性泌尿", "美磁波", "可以先吃", "觀察到明天"]
+  },
+  {
     name: "hematuria flank pain fever prioritizes er over clinic schedule",
     reply: answerMaleUtiUrgentQuestion("我今天尿尿有血，右邊腰很痛，剛剛量體溫 38.5。可是我明天才有空，可以先吃止痛藥撐到明天再去嗎？我現在有點慌，先跟我說該怎麼辦。", new Date("2026-06-02T08:00:00+08:00")),
     expected: ["血尿", "右腰", "發燒", "腎臟", "輸尿管", "感染", "結石合併感染", "LINE 不能判斷", "不建議", "止痛藥", "撐到明天", "不要自行吃抗生素", "急診", "立即就醫", "02-2511-9488"],

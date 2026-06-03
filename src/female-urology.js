@@ -1,6 +1,7 @@
 const PHONE = "02-2511-9488";
 
 export function answerFemaleUrologyQuestion(message) {
+  if (hasExplicitMaleSelfCue(message)) return null;
   if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message)) return null;
   if (!asksSuitabilityPriceOrNextStep(message)) return null;
 
@@ -27,6 +28,10 @@ export function answerFemaleUrologyQuestion(message) {
 
 function isFemaleUrologyQuestion(message) {
   return /女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|鍛肌椅|高密度磁波/.test(message);
+}
+
+function hasExplicitMaleSelfCue(message) {
+  return /我是男生|我是男性|我是男的|我.*男生|我.*男性|我.*男的/.test(message);
 }
 
 function asksSuitabilityPriceOrNextStep(message) {
@@ -72,9 +77,13 @@ function answerFemaleUtiUrgentQuestion(message) {
   if (/腰痛|腰.*痛|腰.*痠/.test(message)) symptoms.push("腰痠/腰痛");
   if (/發燒|高燒/.test(message)) symptoms.push("發燒");
 
-  const pregnancyNote = /懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕/.test(message)
+  const hasPregnancyCue = /懷孕|月經.*晚|月經.*沒來|不確定有沒有孕|可能有孕/.test(message);
+  const pregnancyNote = hasPregnancyCue
     ? "加上月經晚或不確定是否懷孕，要先當成可能泌尿道感染或孕期感染風險；"
     : "要先評估是否為泌尿道感染；";
+  const medicationAssessment = hasPregnancyCue
+    ? "感染、是否懷孕與適合用藥"
+    : "感染與適合用藥";
 
   const treatmentDelay = /漏尿|美磁波|鍛肌椅|高密度磁波|療程/.test(message)
     ? "今天先不要坐美磁波鍛肌椅；漏尿或療程問題先延後，"
@@ -82,7 +91,7 @@ function answerFemaleUtiUrgentQuestion(message) {
 
   return [
     `${symptoms.join("、")}，${pregnancyNote}LINE 不能診斷。`,
-    `${treatmentDelay}不要自行吃家裡剩的抗生素；現在要由醫師評估感染、是否懷孕與適合用藥。`,
+    `${treatmentDelay}不要自行吃家裡剩的抗生素；現在要由醫師評估${medicationAssessment}。`,
     `請現在電話 ${PHONE} 確認最快可評估時段；若高燒、腰痛加劇、血尿變多、明顯不舒服、尿不出來或診所無法即時安排，請直接急診/立即就醫。`
   ].join("");
 }
