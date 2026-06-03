@@ -12,6 +12,22 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksMedicationBagRefillWithoutVisit(normalized)) {
+    return [
+      "不能先保證不用看診就能直接拿藥，也不能保證會開一樣的藥。",
+      "可以帶上次藥袋、健保卡/身分證先到櫃台，請人員和醫師確認是否適合續拿或需要看診調整。",
+      `若症狀變嚴重、發燒、劇烈疼痛、尿不出來、血尿變多或很不舒服，請不要只補藥，應由醫師評估；也可先電話 ${PHONE} 確認流程。`
+    ].join("\n");
+  }
+
+  if (asksOnlineRegistrationForgotScreenshotCheckin(normalized)) {
+    return [
+      "如果已經線上掛號但忘記截圖，抵達後請先到 3 樓櫃台，請人員用姓名、電話或身分資料協助查詢並報到。",
+      "建議帶健保卡；若是初診，也請帶身分證或其他證件，以及相關檢查資料或用藥資料。",
+      "實際是否查得到掛號與能否完成報到，仍以櫃台現場確認為準。"
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationChange(normalized)) {
     return [
       "已線上掛號但想改今天晚上，不能只靠 LINE 訊息直接保證改成功。",
@@ -83,6 +99,14 @@ function asksOnlineRegistrationChange(message) {
     && /今天|今晚|晚上|晚診|夜診/.test(message);
 }
 
+function asksOnlineRegistrationForgotScreenshotCheckin(message) {
+  const mentionsOnlineRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|剛剛.*掛號/.test(message);
+  const mentionsMissingScreenshot = /忘記截圖|沒截圖|沒有截圖|截圖.*忘|截圖.*不見|截圖.*遺失|截圖.*沒|沒拍照|沒有拍照/.test(message);
+  const asksCheckinOrDocuments = /報到|到現場|現場|櫃台|櫃檯|健保卡|身分證|身份證|證件|要帶/.test(message);
+
+  return mentionsOnlineRegistration && mentionsMissingScreenshot && asksCheckinOrDocuments;
+}
+
 function asksCertificateOrReceipt(message) {
   return /診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)
     && /開|申請|需要|要先|先跟誰說|找誰|補開|拿|領|可以/.test(message);
@@ -94,6 +118,14 @@ function asksFeePaymentAtCounterWithoutVisit(message) {
   const wantsBeforeVisitDecision = /不想看診|不看診|不用看診|還不想看|先問|先知道|只是想先問|只想先問|問完再決定|再決定|能不能.*問|可以.*問/.test(message);
 
   return asksFeeOrPayment && asksCounterOrStaff && wantsBeforeVisitDecision;
+}
+
+function asksMedicationBagRefillWithoutVisit(message) {
+  const hasMedicationCue = /藥袋|藥吃完|吃完藥|上次.*藥|之前.*藥|原本.*藥|一樣的藥|同樣的藥|續藥|補藥|拿藥|取藥|開藥/.test(message);
+  const asksDirectRefill = /直接拿|只拿|拿一樣|開一樣|不用看診|不看診|不用回診|不回診|可以.*拿|能不能.*拿|可不可以.*拿/.test(message);
+  const asksCounterPath = /櫃台|櫃檯|藥袋|健保卡|身分證|身份證|等一下|等等|現場|到診所|給.*看/.test(message);
+
+  return hasMedicationCue && asksDirectRefill && asksCounterPath;
 }
 
 function asksReportPickupProxy(message) {

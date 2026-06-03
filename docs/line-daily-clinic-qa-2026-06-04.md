@@ -170,3 +170,13 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 重測：那明天晚上呢？我還是想看頻尿，不想掛錯。 | Says tomorrow Fri evening is surgery time, not general clinic; suggests Fri morning Chen Weijie and Fri afternoon Luo Shixiu, with phone/onsite/online confirmation. | Pass | Schedule follow-up now beats generic urinary symptom guidance. |
 | 3 | 重測：我想看男性更年期或睪固酮低下，是要找院長還是羅醫師？差在哪？講重點。 | Says male menopause/suspected low testosterone should be evaluated in urology/men's health; symptoms and blood values need physician assessment; public data does not require one specific doctor; choose by general urology time or preference. | Pass | No broad unrelated specialty dump or treatment guarantee. |
 | 4 | 重測：如果只是想先問費用跟能不能刷卡，不想看診，可以到櫃台問嗎？ | Says the user can ask counter/staff about fee and payment first, but exact fee depends on item/process/evaluation; card payment is not publicly guaranteed; call or ask onsite before deciding. | Pass | Admin/payment intent now overrides previous service context. |
+
+## Round 10 - Parking, online check-in, photo triage, refills, and pronoun schedule
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我開車去方便嗎？附近有特約停車或停車場嗎？不要貼連結，講重點。 | Lists nearby parking lots, but phrasing says "附近的附近停車場" and does not clearly say whether they are affiliated/discount parking. | Partial | Useful parking info, but tone/data should clarify no known special contract if not documented. |
+| 2 | 我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？ | Replied with an online appointment link and says the website has a reservation entrance. | Fail | Did not answer forgotten screenshot, counter check-in, or health card; violates "no unnecessary link" style. |
+| 3 | 我可以先傳照片給你看是不是菜花嗎？如果看起來像，再決定要不要掛號。 | Says clinic provides HPV/wart evaluation, warts need exam and results; text alone cannot diagnose; do not change meds; call for appointment. | Partial | Safe, but should explicitly say photos/LINE cannot confirm diagnosis and a doctor must evaluate in person. |
+| 4 | 我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？ | Replied with Chen Weijie fixed schedule. | Fail | Medication/refill admin-safety intent was misrouted to doctor schedule. |
+| 5 | 院長是誰？他今天晚上有診嗎？不要列一堆，直接說。 | Says Chen Weijie is the director and today Thu evening has Chen clinic; also adds a short specialty phrase and confirmation note. | Pass | Direct answer; minor extra specialty text is acceptable but could be shorter. |
