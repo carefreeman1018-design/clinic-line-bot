@@ -94,21 +94,26 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   if (!day) return null;
 
   const dayLabel = buildDayLabel(message, day);
+  const staleStopAnnouncementNote = buildStaleStopAnnouncementNote(message);
+  const temporaryChangeConfirmation = staleStopAnnouncementNote
+    ? "當週是否臨時異動可電話 02-2511-9488 確認。"
+    : TEMPORARY_CHANGE_CONFIRMATION;
   const contextNotes = [
+    staleStopAnnouncementNote,
     buildPastAnnouncementNote(message, now),
   ].filter(Boolean);
   const routeNote = asksRouteInScheduleQuestion(message) ? buildMrtRouteNote() : null;
   const walkInNote = asksWalkInRegistration(message) ? WALK_IN_CONFIRMATION : null;
 
   if (!FIXED_SCHEDULE[day]) {
-    return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。`, walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION, routeNote]);
+    return compactLines([...contextNotes, `${dayLabel}固定門診表沒有一般門診時段。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
   }
 
   if (!period && doctor) {
     return compactLines([
       ...contextNotes,
       buildDoctorDayAvailabilityReply(doctor, day, dayLabel),
-      `名額與臨時異動請電話 02-2511-9488 確認。`,
+      staleStopAnnouncementNote ? temporaryChangeConfirmation : `名額與臨時異動請電話 02-2511-9488 確認。`,
       routeNote
     ]);
   }
@@ -118,16 +123,16 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
       return compactLines([
         ...contextNotes,
         buildAvailableGeneralClinicTimesReply(day),
-        walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+        walkInNote ?? temporaryChangeConfirmation,
         routeNote
       ]);
     }
 
-    return compactLines([...contextNotes, buildFullDayReply(day, dayLabel, walkInNote), routeNote]);
+    return compactLines([...contextNotes, buildFullDayReply(day, dayLabel, walkInNote ?? temporaryChangeConfirmation), routeNote]);
   }
 
   if (periods.length > 1) {
-    return compactLines([...contextNotes, buildSelectedPeriodsReply(day, dayLabel, periods, walkInNote), routeNote]);
+    return compactLines([...contextNotes, buildSelectedPeriodsReply(day, dayLabel, periods, walkInNote ?? temporaryChangeConfirmation), routeNote]);
   }
 
   const clinic = FIXED_SCHEDULE[day][period];
@@ -137,7 +142,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([
       ...contextNotes,
       buildRequestedDoctorPeriodReply(dayLabel, period, time, clinic, requestedDoctors),
-      walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+      walkInNote ?? temporaryChangeConfirmation,
       routeNote
     ]);
   }
@@ -148,12 +153,12 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${dayLabel}${period}（${time}）休診。`,
         buildAvailableClinicTimesReply(day),
-        walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+        walkInNote ?? temporaryChangeConfirmation,
         routeNote
       ]);
     }
 
-    return compactLines([...contextNotes, `${dayLabel}${period}（${time}）休診。`, walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION, routeNote]);
+    return compactLines([...contextNotes, `${dayLabel}${period}（${time}）休診。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
   }
 
   if (clinic === "手術") {
@@ -162,7 +167,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${dayLabel}${period}（${time}）是手術時段，不是一般門診。`,
         buildAvailableGeneralClinicTimesReply(day),
-        walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+        walkInNote ?? temporaryChangeConfirmation,
         routeNote
       ]);
     }
@@ -182,7 +187,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
         ...contextNotes,
         `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。`,
         buildAvailableGeneralClinicTimesReply(day),
-        walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION,
+        walkInNote ?? temporaryChangeConfirmation,
         routeNote
       ]);
     }
@@ -190,7 +195,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     return compactLines([...contextNotes, `${prefix}${dayLabel}${period}（${time}）是${clinic}，不是一般泌尿科門診。想看泌尿科請換個時段。`, walkInNote, routeNote]);
   }
 
-  return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。`, walkInNote ?? TEMPORARY_CHANGE_CONFIRMATION, routeNote]);
+  return compactLines([...contextNotes, `${dayLabel}${period}（${time}）是${clinic}門診。`, walkInNote ?? temporaryChangeConfirmation, routeNote]);
 }
 
 export function answerPepVisitScheduleFollowUp(message, now = new Date(), conversationHistory = []) {
@@ -492,6 +497,15 @@ function buildPastAnnouncementNote(message, now) {
   if (pastDates.length === 0) return null;
 
   return `${pastDates.join(" 到 ")} 是過去 LINE VOOM 公告，不能直接當成這週或之後的門診狀態。`;
+}
+
+function buildStaleStopAnnouncementNote(message) {
+  if (!/LINE\s*VOOM|VOOM|公告/i.test(message)) return null;
+  if (!/以前|之前|過去|舊|以前說|之前說/.test(message)) return null;
+  if (!/停診|休診|停/.test(message)) return null;
+  if (!/每週|每個|固定|都沒有|都停|長期|以後|是不是.*都/.test(message)) return null;
+
+  return "不是。舊 LINE VOOM 停診公告通常是單次/臨時異動，不能當成每週都停診。";
 }
 
 function extractRequestedMonthDays(text) {
