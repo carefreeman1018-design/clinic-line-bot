@@ -169,16 +169,17 @@ export function buildDoctorReviewNotification(reviewCase) {
   return [
     `#${reviewCase.id} 待醫師覆核`,
     "",
-    "病人問題：",
-    truncateText(reviewCase.userMessage, 900),
+    "【本次待覆核】",
+    "病人",
+    indentText(truncateText(reviewCase.userMessage, 900)),
     "",
-    "最近對話：",
-    reviewCase.conversationSummary || "無前文",
+    "【最近對話｜由舊到新】",
+    formatConversationTimeline(reviewCase),
     "",
-    "bot 草稿：",
-    truncateText(reviewCase.botDraft, 900),
+    "【bot 草稿】",
+    indentText(truncateText(reviewCase.botDraft, 900)),
     "",
-    "可用指令：",
+    "【可用指令】",
     `核准 ${reviewCase.id}`,
     `回覆 ${reviewCase.id} 內容...`,
     `關閉 ${reviewCase.id}`
@@ -245,6 +246,26 @@ function summarizeConversation(conversationHistory) {
       const roleLabel = message.role === "assistant" ? "bot" : "病人";
       return `${roleLabel}：${truncateText(message.content ?? "", 180)}`;
     })
+    .join("\n");
+}
+
+function formatConversationTimeline(reviewCase) {
+  const messages = Array.isArray(reviewCase.conversationSnapshot) ? reviewCase.conversationSnapshot : [];
+  if (messages.length === 0) return reviewCase.conversationSummary || "無前文";
+
+  return messages
+    .map((message, index) => {
+      const roleLabel = message.role === "assistant" ? "bot" : "病人";
+      const order = String(index + 1).padStart(2, "0");
+      return [`${order} ${roleLabel}`, indentText(truncateText(message.content ?? "", 220))].join("\n");
+    })
+    .join("\n\n");
+}
+
+function indentText(text) {
+  return String(text ?? "")
+    .split("\n")
+    .map((line) => `  ${line}`)
     .join("\n");
 }
 
