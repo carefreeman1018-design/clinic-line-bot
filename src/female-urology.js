@@ -2,6 +2,7 @@ const PHONE = "02-2511-9488";
 
 export function answerFemaleUrologyQuestion(message) {
   if (hasExplicitMaleSelfCue(message)) return null;
+  if (hasMaleSpecificUrologyCue(message)) return null;
   if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message)) return null;
   if (!asksSuitabilityPriceOrNextStep(message)) return null;
 
@@ -32,6 +33,10 @@ function isFemaleUrologyQuestion(message) {
 
 function hasExplicitMaleSelfCue(message) {
   return /我是男生|我是男性|我是男的|我.*男生|我.*男性|我.*男的/.test(message);
+}
+
+function hasMaleSpecificUrologyCue(message) {
+  return /攝護腺|前列腺|射精|精液|精子|睪丸|陰囊|龜頭|陰莖|包皮/.test(message);
 }
 
 function asksSuitabilityPriceOrNextStep(message) {
