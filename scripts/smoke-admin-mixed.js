@@ -79,6 +79,30 @@ const cases = [
     forbidden: ["https://", "appointment", "預約掛號", "立即預約", "可直接線上修改", "一定可找到", "一定查得到"]
   },
   {
+    name: "round20 online registration nickname mismatch counter correction without link",
+    message: "Round20-1：我線上掛號時用暱稱，跟健保卡姓名不一樣，到現場會找不到嗎？可以請櫃台改嗎？",
+    expected: ["線上掛號", "暱稱", "健保卡姓名", "不一樣", "影響櫃台查詢", "健保卡/身分證", "3 樓櫃台", "核對", "協助查詢或修正資料", "不能保證一定找得到", "02-2511-9488"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "可直接線上修改", "一定可找到", "一定查得到", "地址", "捷運", "固定門診", "醫師專長"]
+  },
+  {
+    name: "round20 same day urology and shingles vaccine asks counter before vaccine routing",
+    message: "Round20-3：我同一天想看泌尿科又順便問皮蛇疫苗，要分開掛號嗎？還是報到時先跟櫃台說？不要貼連結。",
+    expected: ["報到", "3 樓櫃台", "同一天想看泌尿科", "詢問皮蛇疫苗", "是否需要分開掛號", "能不能同日處理", "疫苗庫存/費用", "醫師評估", "現場流程", "醫師/櫃台確認", "不能先保證同一天可以施打"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "只要確認庫存", "建議電話確認庫存", "官網列出", "適合性", "醫師專長", "固定門診"]
+  },
+  {
+    name: "round20 missing wallet health card id near clinic avoids route answer",
+    message: "Round20-4：我快到診所才發現錢包忘了，健保卡和身分證都不在身上，還能先報到嗎？還是要改天？請講重點。",
+    expected: ["不能先保證", "健保卡/身分證", "可報到", "身份核對", "健保身分確認", "付款流程", "快到現場", "3 樓櫃台", "02-2511-9488", "補件", "改自費", "改天"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "地址", "捷運", "行天宮", "4 號出口", "現場排號", "固定門診", "醫師專長"]
+  },
+  {
+    name: "round20 child stroller space family waiting avoids doctor schedule",
+    message: "Round20-5：我看診時會帶一個小孩和推車，診間或候診區放得下嗎？如果不方便，我可以請家人在外面等嗎？",
+    expected: ["診間", "候診區", "推車", "不能在 LINE 先保證", "到場先問櫃台", "02-2511-9488", "當天動線與空間", "家人", "外面等", "陪進診間", "現場安排", "病人需求", "需要協助", "告知櫃台"],
+    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "地址", "捷運", "固定門診", "陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師", "醫師專長", "疫苗庫存"]
+  },
+  {
     name: "round14 first visit registered missing health card checks in at counter",
     message: "Round14-1：我第一次去，已經線上掛號，但健保卡忘在家，只有身分證，可以先報到看診嗎？講重點。",
     expected: ["第一次", "已經線上掛號", "3 樓櫃台", "報到", "健保卡忘帶", "櫃台現場核對為準", "健保身分", "自費", "補件", "身分證", "02-2511-9488"],

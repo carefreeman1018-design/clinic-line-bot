@@ -22,6 +22,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksSameDayUrologyAndVaccineCounter(normalized)) {
+    return [
+      "報到時先到 3 樓櫃台說：同一天想看泌尿科，也想詢問皮蛇疫苗。",
+      "是否需要分開掛號、能不能同日處理、疫苗庫存/費用與是否需要醫師評估，都要依現場流程與醫師/櫃台確認。",
+      "不能先保證同一天可以施打。"
+    ].join("\n");
+  }
+
   if (asksCircumcisionCounterFeeBeforeVisit(normalized)) {
     return [
       `可以先到櫃台或電話 ${PHONE} 問割包皮/包皮槍的大概費用與流程，不一定今天看診。`,
@@ -53,11 +61,27 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksMissingWalletIdsNearClinic(normalized)) {
+    return [
+      "不能先保證沒有健保卡/身分證就一定可報到。",
+      "證件不在身上會影響身份核對、健保身分確認與付款流程。",
+      `如果已經快到現場，先到 3 樓櫃台或電話 ${PHONE} 確認能否補件、改自費或改天。`
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationForgotScreenshotCheckin(normalized)) {
     return [
       "如果已經線上掛號但忘記截圖，抵達後請先到 3 樓櫃台，請人員用姓名、電話或身分資料協助查詢並報到。",
       "建議帶健保卡；若是初診，也請帶身分證或其他證件，以及相關檢查資料或用藥資料。",
       "實際是否查得到掛號與能否完成報到，仍以櫃台現場確認為準。"
+    ].join("\n");
+  }
+
+  if (asksOnlineRegistrationNameMismatch(normalized)) {
+    return [
+      "線上掛號用暱稱、跟健保卡姓名不一樣，可能會影響櫃台查詢掛號資料。",
+      "到現場請帶健保卡/身分證到 3 樓櫃台核對，櫃台可協助查詢或修正資料，但不能保證一定找得到原本掛號。",
+      `也可以先電話 ${PHONE} 請櫃台確認。`
     ].join("\n");
   }
 
@@ -210,6 +234,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksChildStrollerSpaceOrFamilyWaiting(normalized)) {
+    return [
+      "診間或候診區放不放得下推車，不能在 LINE 先保證。",
+      `建議到場先問櫃台，或先電話 ${PHONE} 確認當天動線與空間。`,
+      "家人是否在外面等、是否陪進診間，可依現場安排與病人需求告知櫃台；需要協助也可以先說。"
+    ].join("\n");
+  }
+
   return null;
 }
 
@@ -243,6 +275,15 @@ function asksOnlineRegistrationDataCorrection(message) {
   const asksCorrectionOrLookup = /現場|櫃台|櫃檯|修改|修正|更改|改資料|核對|查詢|找不到|查不到|報到/.test(message);
 
   return mentionsOnlineRegistration && mentionsWrongData && asksCorrectionOrLookup;
+}
+
+function asksOnlineRegistrationNameMismatch(message) {
+  const mentionsOnlineRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
+  const mentionsNameMismatch = /暱稱|綽號|小名|姓名|名字|本名|健保卡姓名/.test(message)
+    && /不一樣|不同|不一致|對不上|不是本名|用暱稱|寫暱稱/.test(message);
+  const asksCorrectionOrLookup = /現場|櫃台|櫃檯|修改|修正|更改|改資料|核對|查詢|找不到|查不到|報到/.test(message);
+
+  return mentionsOnlineRegistration && mentionsNameMismatch && asksCorrectionOrLookup;
 }
 
 function asksOnlineRegistrationFirstVisitMissingHealthCard(message) {
@@ -341,6 +382,22 @@ function asksSkinShinglesVaccine(message) {
   return /皮蛇疫苗|帶狀皰疹疫苗/.test(message);
 }
 
+function asksSameDayUrologyAndVaccineCounter(message) {
+  const hasUrologyCue = /泌尿科|泌尿|一般泌尿|看診|門診/.test(message);
+  const hasVaccineCue = /皮蛇疫苗|帶狀皰疹疫苗|疫苗/.test(message);
+  const asksSameDayOrRegistration = /同一天|同日|順便|一起|分開掛號|分開.*掛|報到|櫃台|櫃檯|先跟/.test(message);
+
+  return hasUrologyCue && hasVaccineCue && asksSameDayOrRegistration;
+}
+
+function asksMissingWalletIdsNearClinic(message) {
+  const mentionsMissingWalletOrIds = /錢包.*忘|忘.*錢包|健保卡.*不在|身分證.*不在|身份證.*不在|沒帶健保卡|沒有帶健保卡|沒帶身分證|沒帶身份證|證件.*不在/.test(message);
+  const mentionsBothIdConcern = /健保卡|身分證|身份證|證件|錢包/.test(message);
+  const asksCheckinOrReschedule = /報到|看診|先報到|改天|補件|自費|快到|快到了|到現場|現場|櫃台|櫃檯/.test(message);
+
+  return mentionsMissingWalletOrIds && mentionsBothIdConcern && asksCheckinOrReschedule;
+}
+
 function asksMedicationBagRefillWithoutVisit(message) {
   const hasMedicationCue = /藥袋|藥吃完|吃完藥|上次.*藥|之前.*藥|原本.*藥|一樣的藥|同樣的藥|續藥|補藥|拿藥|取藥|開藥/.test(message);
   const asksDirectRefill = /直接拿|只拿|拿一樣|開一樣|不用看診|不看診|不用回診|不回診|可以.*拿|能不能.*拿|可不可以.*拿/.test(message);
@@ -410,4 +467,12 @@ function asksCompanionPrivacyConsultRoom(message) {
   return /陪|陪同|陪診|陪看|陪伴|一起進|進診間|陪.*看診/.test(message)
     && /先生|老公|丈夫|太太|老婆|妻子|配偶|伴侶|另一半|男友|女友|家人|媽媽|爸爸/.test(message)
     && /診間|看診|門診|私密|隱私|尷尬|單獨|外面等|一起進|陪同/.test(message);
+}
+
+function asksChildStrollerSpaceOrFamilyWaiting(message) {
+  const hasChildOrStroller = /小孩|孩子|嬰兒|幼兒|推車|嬰兒車/.test(message);
+  const hasSpaceCue = /診間|候診區|放得下|空間|方便|不方便|外面等|家人|陪進|陪同|等候/.test(message);
+  const asksArrangement = /可以|可不可以|能不能|會不會|如果|不方便|協助/.test(message);
+
+  return hasChildOrStroller && hasSpaceCue && asksArrangement;
 }
