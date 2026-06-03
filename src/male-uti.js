@@ -10,6 +10,15 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
   if (urethralDischargeReply) return urethralDischargeReply;
 
+  if (isChronicProstatitisLikeQuestion(message)) {
+    return [
+      "會陰或下腹悶痛、尿尿不太順、射精後酸痛，可能和慢性攝護腺炎、骨盆疼痛症候群或其他泌尿問題有關，但不能只靠訊息診斷。",
+      "不建議自行吃之前剩的抗生素；是否需要抗生素、止痛或其他治療，要由醫師依尿液檢查、症狀與必要檢查評估。",
+      "這不等於一定是癌症；但若症狀持續幾週，建議掛泌尿科門診評估。",
+      `以你描述若沒有高燒、尿不出來、血尿變多或劇烈疼痛，通常不需要先急診；可先電話 ${PHONE} 確認可評估時段。若上述症狀出現或明顯很不舒服，請急診/立即就醫。`
+    ].join("");
+  }
+
   if (isScheduleOnlyUrologyQuestion(message)) {
     const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);
     if (requestedScheduleReply) return cleanScheduleReply(requestedScheduleReply, message);
@@ -61,7 +70,7 @@ function buildSymptomSummary(message) {
 }
 
 function isUtiQuestion(message) {
-  return /尿尿.*痛|尿痛|排尿.*痛|小便.*痛|尿道炎|膀胱炎|泌尿道感染|攝護腺炎|頻尿|尿急/.test(message);
+  return /尿尿.*痛|尿痛|排尿.*痛|小便.*痛|尿道炎|膀胱炎|泌尿道感染|攝護腺炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
 }
 
 function hasUrgentOrMedicationConcern(message) {
@@ -82,6 +91,13 @@ function hasPainlessGrossHematuriaCancerConcern(message) {
   const hasCancerOrSmokingRisk = /癌|腫瘤|抽菸|抽煙|菸|煙|5[0-9]\s*歲|6[0-9]\s*歲|7[0-9]\s*歲/.test(message);
 
   return hasGrossHematuria && hasPainlessCue && hasCancerOrSmokingRisk;
+}
+
+function isChronicProstatitisLikeQuestion(message) {
+  const hasPelvicOrProstateCue = /攝護腺炎|會陰|骨盆|射精.*痛|射精.*酸|陰囊.*悶|睪丸.*悶/.test(message);
+  const hasChronicOrMedicationCue = /幾週|幾個禮拜|一陣子|慢性|悶痛|酸痛|抗生素|癌|急診|尿不太順/.test(message);
+
+  return hasPelvicOrProstateCue && hasChronicOrMedicationCue;
 }
 
 function isScheduleOnlyUrologyQuestion(message) {
