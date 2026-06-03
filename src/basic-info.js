@@ -21,12 +21,8 @@ export function answerBasicInfoQuestion(message) {
     return "津久診所院長是陳偉傑醫師；羅詩修醫師是執行院長。";
   }
 
-  if (/停車|開車|車位|停車場/.test(normalized)) {
-    return [
-      "開車可參考官網列出的附近停車場：",
-      "台灣聯通停車場－將捷二場（停車塔）：台北市中山區松江路 336 號。",
-      "聯邦佳佳大樓停車場（地下平面停車場）：台北市中山區松江路 235 巷 22 號。"
-    ].join("\n");
+  if (asksParkingInfo(normalized)) {
+    return buildParkingReply();
   }
 
   if (asksBasicInfoBundle(normalized)) {
@@ -99,6 +95,18 @@ export function answerBasicInfoQuestion(message) {
 
 function asksMrtAccess(message) {
   return /行天宮|捷運|MRT|4\s*號出口|四號出口|步行|走路|交通/.test(message) && /多久|幾分|怎麼去|出口|步行|走路|交通/.test(message);
+}
+
+function asksParkingInfo(message) {
+  return /停車|開車|車位|停車場|特約停車|停車優惠/.test(message);
+}
+
+function buildParkingReply() {
+  return [
+    "開車可參考官網列出的附近停車場，但診所公開資料沒有明確確認特約停車或診所停車優惠，不能當作一定有停車折抵。",
+    "台灣聯通停車場－將捷二場（停車塔）：台北市中山區松江路 336 號。",
+    "聯邦佳佳大樓停車場（地下平面停車場）：台北市中山區松江路 235 巷 22 號。"
+  ].join("\n");
 }
 
 function asksClinicAccess(message) {

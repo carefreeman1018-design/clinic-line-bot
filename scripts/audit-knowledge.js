@@ -229,18 +229,23 @@ const BASIC_INFO_CASES = [
 ];
 
 const BASIC_INFO_REPLY_CASES = [
-  ["我人在松江路附近，診所地址的郵遞區號是 104091 嗎？", ["104091", "松江路 276 號 3 樓"]],
-  ["如果從行天宮站 4 號出口出來，官網說步行大約多久？", ["行天宮站", "4 號出口", "步行約 40 秒"]],
-  ["開車去附近可以停哪裡？", ["台灣聯通停車場", "聯邦佳佳大樓停車場"]],
-  ["H24-11 如果我開車去津久診所，官網列出的兩個附近停車場名稱和地址是什麼？", ["台灣聯通停車場－將捷二場", "松江路 336 號", "聯邦佳佳大樓停車場", "松江路 235 巷 22 號"]],
-  ["坐公車要在哪一站下車？", ["捷運行天宮站", "松江新村", "民權松江路口"]],
-  ["診所英文識別 UroMe 是不是官方資料裡寫的？", ["UroMe", "英文識別"]],
-  ["掛號系統在哪", ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"]],
-  ["如何預約手術", ["https://appointment.uromeeme.inncom.cloud/", "留下姓名", "02-2511-9488"]],
-  ["官網首頁和線上掛號網址是同一個網站嗎？請不要混在一起。", ["https://uromeeme.com/", "https://appointment.uromeeme.inncom.cloud/", "不同"]],
-  ["官方 LINE ID、加好友連結、電話各是什麼？", ["@455twnga", "https://lin.ee/qDUYijn", "02-2511-9488"]],
-  ["請問津久診所的地址、電話、官方 LINE ID 和線上掛號連結分別是什麼？", ["松江路 276 號 3 樓", "02-2511-9488", "@455twnga", "https://appointment.uromeeme.inncom.cloud/"]],
-  ["官方 LINE ID 是 @455twnga，VOOM 貼文又寫 @uromeeme，客服該怎麼回答？", ["@455twnga", "https://lin.ee/qDUYijn", "@uromeeme"]]
+  { question: "我人在松江路附近，診所地址的郵遞區號是 104091 嗎？", expectedTerms: ["104091", "松江路 276 號 3 樓"] },
+  { question: "如果從行天宮站 4 號出口出來，官網說步行大約多久？", expectedTerms: ["行天宮站", "4 號出口", "步行約 40 秒"] },
+  { question: "開車去附近可以停哪裡？", expectedTerms: ["沒有明確確認特約停車", "不能當作一定有停車折抵", "台灣聯通停車場", "聯邦佳佳大樓停車場"] },
+  {
+    question: "我開車去方便嗎？附近有特約停車或停車場嗎？不要貼連結，講重點。",
+    expectedTerms: ["沒有明確確認特約停車", "不能當作一定有停車折抵", "台灣聯通停車場－將捷二場", "聯邦佳佳大樓停車場"],
+    forbiddenTerms: ["附近的附近停車場", "https://"]
+  },
+  { question: "H24-11 如果我開車去津久診所，官網列出的兩個附近停車場名稱和地址是什麼？", expectedTerms: ["台灣聯通停車場－將捷二場", "松江路 336 號", "聯邦佳佳大樓停車場", "松江路 235 巷 22 號"] },
+  { question: "坐公車要在哪一站下車？", expectedTerms: ["捷運行天宮站", "松江新村", "民權松江路口"] },
+  { question: "診所英文識別 UroMe 是不是官方資料裡寫的？", expectedTerms: ["UroMe", "英文識別"] },
+  { question: "掛號系統在哪", expectedTerms: ["https://appointment.uromeeme.inncom.cloud/", "預約掛號"] },
+  { question: "如何預約手術", expectedTerms: ["https://appointment.uromeeme.inncom.cloud/", "留下姓名", "02-2511-9488"] },
+  { question: "官網首頁和線上掛號網址是同一個網站嗎？請不要混在一起。", expectedTerms: ["https://uromeeme.com/", "https://appointment.uromeeme.inncom.cloud/", "不同"] },
+  { question: "官方 LINE ID、加好友連結、電話各是什麼？", expectedTerms: ["@455twnga", "https://lin.ee/qDUYijn", "02-2511-9488"] },
+  { question: "請問津久診所的地址、電話、官方 LINE ID 和線上掛號連結分別是什麼？", expectedTerms: ["松江路 276 號 3 樓", "02-2511-9488", "@455twnga", "https://appointment.uromeeme.inncom.cloud/"] },
+  { question: "官方 LINE ID 是 @455twnga，VOOM 貼文又寫 @uromeeme，客服該怎麼回答？", expectedTerms: ["@455twnga", "https://lin.ee/qDUYijn", "@uromeeme"] }
 ];
 
 const PROCEDURE_RETRIEVAL_CASES = [
@@ -603,9 +608,12 @@ async function runRound({ round, clinicInfo, doctorSchedule, doctorSpecialties, 
     caseResults.push(checkRetrievalCase({ round, type: "basic-info", chunks, issues, ...testCase }));
   }
 
-  for (const [question, expectedTerms] of BASIC_INFO_REPLY_CASES) {
+  for (const testCase of BASIC_INFO_REPLY_CASES) {
+    const { question, expectedTerms, forbiddenTerms = [] } = Array.isArray(testCase)
+      ? { question: testCase[0], expectedTerms: testCase[1] }
+      : testCase;
     const reply = answerBasicInfoQuestion(question);
-    caseResults.push(checkReplyCase({ round, type: "basic-info-reply", question, reply, expectedTerms, issues }));
+    caseResults.push(checkReplyCase({ round, type: "basic-info-reply", question, reply, expectedTerms, forbiddenTerms, issues }));
   }
 
   for (const testCase of PROCEDURE_RETRIEVAL_CASES) {

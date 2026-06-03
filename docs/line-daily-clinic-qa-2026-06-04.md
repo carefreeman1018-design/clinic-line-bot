@@ -180,3 +180,11 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 3 | 我可以先傳照片給你看是不是菜花嗎？如果看起來像，再決定要不要掛號。 | Says clinic provides HPV/wart evaluation, warts need exam and results; text alone cannot diagnose; do not change meds; call for appointment. | Partial | Safe, but should explicitly say photos/LINE cannot confirm diagnosis and a doctor must evaluate in person. |
 | 4 | 我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？ | Replied with Chen Weijie fixed schedule. | Fail | Medication/refill admin-safety intent was misrouted to doctor schedule. |
 | 5 | 院長是誰？他今天晚上有診嗎？不要列一堆，直接說。 | Says Chen Weijie is the director and today Thu evening has Chen clinic; also adds a short specialty phrase and confirmation note. | Pass | Direct answer; minor extra specialty text is acceptable but could be shorter. |
+
+### Round 10 Retest - Admin check-in, photo triage, and refill
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測：我剛剛線上掛號了但忘記截圖，到現場怎麼報到？要帶健保卡嗎？ | Says to go to the 3F counter, ask staff to look up/check in by name, phone, or identity data, bring health card and first-visit/medication/exam documents, and use counter confirmation as final. | Pass | No appointment link dump; answers the check-in/document question directly. |
+| 2 | 重測：我可以先傳照片給你看是不是菜花嗎？如果看起來像，再決定要不要掛號。 | Says photos or LINE messages cannot confirm wart/HPV, diagnosis needs in-person physician assessment and possibly testing; avoid self-medicating; call to book/confirm time. | Pass | Explicitly closes the photo-triage gap. |
+| 3 | 重測：我上次的藥吃完了，等一下只拿藥袋給櫃台看，可以不看診直接拿一樣的藥嗎？ | Says direct refill/same medicine without a visit cannot be guaranteed; bring medication bag and health card/ID to counter; staff/doctor confirm whether refill or visit adjustment is needed; worse symptoms need evaluation. | Pass | No doctor schedule misroute. |
