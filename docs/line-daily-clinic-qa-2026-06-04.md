@@ -75,3 +75,12 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 4 | 我在外面，不想看長文，想問匿名篩檢跟 HPV，要先抽號嗎？ | Replied with generic anonymous screening service, flow/fee confirmation, and phone. | Fail | Missed onsite short next step and queue/registration wording. |
 | 5 | 那可以直接刷卡嗎？ | Says payment method is not clearly public, cannot guarantee card, confirm onsite or by phone. | Pass | Follow-up payment context is conservative enough. |
 | 6 | 如果我不要貼連結，只想知道明天下午誰看診？ | Says tomorrow Fri afternoon is Luo clinic and no URL, with confirmation reminder. | Pass | Short schedule answer; no link pasted. |
+
+## Round 4 Retest - After natural follow-up fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 先換個問題。我朋友說院長比較會看，我只是頻尿，今天晚上一定要掛他嗎？不要推薦唯一醫師。 | Says general frequency/urology issues do not have to be booked only with the director; tonight director clinic may be referenced, and general clinics can be chosen by slot/quota; includes red flags. | Pass | No unique-doctor recommendation. |
+| 2 | 那羅醫師明天呢？ | Says Luo Shi-Xiu has Friday afternoon clinic 13:30-17:00 and reminds to confirm quota/changes by phone. | Pass | Direct doctor/day follow-up. |
+| 3 | 他主要看什麼？ | Answers Luo Shi-Xiu main specialties. | Pass | Pronoun now follows the last user-mentioned doctor. |
+| 4 | 我在外面，不想看長文，想問匿名篩檢跟 HPV，要先抽號嗎？ | Tells patient to go to 3F counter/nursing station; queue/registration, quota, stock, flow and fee are confirmed onsite; cannot guarantee same-day completion. | Pass | Short onsite admin answer. |
