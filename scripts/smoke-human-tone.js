@@ -5,6 +5,7 @@ import { answerBasicInfoQuestion } from "../src/basic-info.js";
 import { answerFemaleUrologyQuestion } from "../src/female-urology.js";
 import { answerFournierGangreneQuestion } from "../src/fournier-gangrene.js";
 import { answerHematospermiaQuestion } from "../src/hematospermia.js";
+import { answerMaleFertilityQuestion } from "../src/male-fertility.js";
 import { answerMalePrivateSurgeryQuestion } from "../src/male-private.js";
 import { answerMaleUtiUrgentQuestion } from "../src/male-uti.js";
 import { answerParaphimosisQuestion } from "../src/paraphimosis.js";
@@ -380,6 +381,14 @@ const cases = [
       answerReportResultQuestion("我這兩次射精都有一點紅紅的，好像精液有血，尿尿沒有痛。這是不是癌症？可以先觀察嗎？"),
     expected: ["精液有血", "血精", "不等於一定是癌症", "LINE", "不能直接排除", "感染", "發炎", "攝護腺", "不只一次", "泌尿科門診", "血尿", "尿痛", "發燒", "疼痛", "排尿困難", "02-2511-9488"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "不是癌症", "就是癌症", "不用看診", "可以放心"]
+  },
+  {
+    name: "varicocele fertility report blocks direct surgery pricing",
+    reply:
+      answerMaleFertilityQuestion("我備孕一年都沒成功，精液報告活動力偏低，醫師說可能有精索靜脈曲張。你們可以直接手術嗎？費用大概多少？") ||
+      answerReportResultQuestion("我備孕一年都沒成功，精液報告活動力偏低，醫師說可能有精索靜脈曲張。你們可以直接手術嗎？費用大概多少？"),
+    expected: ["備孕一年未成功", "精液活動力偏低", "精索靜脈曲張", "泌尿科", "精液報告", "理學檢查", "陰囊超音波", "顯微精索靜脈曲張手術", "不能只用 LINE", "單一報告", "直接安排手術", "保證改善受孕", "費用", "評估後確認", "伴侶端", "婦產科", "生殖醫學", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "檢查報告需要醫師搭配病史", "可以直接手術", "直接報費用", "保證懷孕", "元"]
   },
   {
     name: "psa live-style report review does not mention bph procedures",

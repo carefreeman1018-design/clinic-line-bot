@@ -22,6 +22,7 @@ import { answerCircumcisionFastPassQuestion } from "./surgery.js";
 import { answerFemaleUrologyQuestion } from "./female-urology.js";
 import { answerFournierGangreneQuestion } from "./fournier-gangrene.js";
 import { answerHematospermiaQuestion } from "./hematospermia.js";
+import { answerMaleFertilityQuestion } from "./male-fertility.js";
 import { answerMalePrivateSurgeryQuestion } from "./male-private.js";
 import { answerVasectomyQuestion } from "./vasectomy.js";
 import { answerMaleUtiUrgentQuestion } from "./male-uti.js";
@@ -249,6 +250,9 @@ export async function buildReplyAndMatches(message, chunks, conversationHistory 
 
   const hematospermiaReply = answerHematospermiaQuestion(message);
   if (hematospermiaReply) return { reply: hematospermiaReply, relevantChunks: [] };
+
+  const maleFertilityReply = answerMaleFertilityQuestion(message);
+  if (maleFertilityReply) return { reply: maleFertilityReply, relevantChunks: [] };
 
   const reportResultReply = answerReportResultQuestion(message, conversationHistory);
   if (reportResultReply) return { reply: reportResultReply, relevantChunks: [] };
