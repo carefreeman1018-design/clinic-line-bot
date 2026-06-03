@@ -6,7 +6,9 @@ export function answerWellnessWeightQuestion(message) {
   if (isMounjaroQuestion(message)) {
     const hasPregnancyOrBreastfeeding = /懷孕|備孕|哺乳|餵奶|母奶|產後|月經.*晚|可能.*孕|pregnan|breastfeeding|postpartum/i.test(message);
     const asksSelfUseOrDose = /朋友|剩下|剩的|自己.*打|自行.*打|自己.*用|自行.*用|劑量|最低劑量|幾.*mg|多少.*mg|dose|leftover|lowest dose|myself/i.test(message);
-    const hasPostInjectionSideEffects = /打.*後|打完|上週.*打|已經.*打|下一針|下次.*打/i.test(message) && /噁心|想吐|嘔吐|吐|肚子痛|肚子.*悶|腹痛|胃痛|拉肚子|腹瀉|脫水|吃不下/i.test(message);
+    const hasPostInjectionCue = /打.*後|打完|上週.*打|已經.*打|下一針|下次.*打/i.test(message);
+    const hasMildPostInjectionSideEffects = hasPostInjectionCue && /噁心|想吐|食慾.*差|胃口.*差|吃不下/i.test(message);
+    const hasSignificantPostInjectionSideEffects = hasPostInjectionCue && hasPositiveSignificantSideEffectCue(message);
 
     if (hasPregnancyOrBreastfeeding && asksSelfUseOrDose) {
       return [
@@ -16,11 +18,19 @@ export function answerWellnessWeightQuestion(message) {
       ].join("");
     }
 
-    if (hasPostInjectionSideEffects) {
+    if (hasSignificantPostInjectionSideEffects) {
       return [
         "診所有猛健樂門診。你已經施打後有持續噁心、嘔吐或腹痛，下一針不要自行照打，也不要自行調劑量。",
         "需先回診或電話確認，由醫師評估是否要延後、調整或停用；若腹痛明顯加劇、持續吐到喝不下、發燒、脫水或冒冷汗，請直接急診/立即就醫。",
         `下一步請先電話 ${PHONE} 確認可回診評估時段，並帶目前用藥與施打日期。`
+      ].join("");
+    }
+
+    if (hasMildPostInjectionSideEffects) {
+      return [
+        "診所有猛健樂門診。施打後有點噁心或食慾變差，下一針不要先自行照打或自行調劑量。",
+        "以你描述沒有嘔吐、肚子痛或發燒，通常不需要先急診；但仍建議先電話或回診確認，讓醫師評估是否需要延後、調整或觀察。",
+        `若之後出現腹痛明顯加劇、持續吐到喝不下、發燒、脫水或冒冷汗，請急診/立即就醫。下一步請電話 ${PHONE} 確認可回診評估時段，並帶目前藥物與施打日期。`
       ].join("");
     }
 
@@ -59,4 +69,17 @@ function isWellnessWeightQuestion(message) {
 
 function isMounjaroQuestion(message) {
   return /猛健樂|Mounjaro|Tirzepatide|減重|體重管理|瘦瘦筆|BMI/i.test(message);
+}
+
+function hasPositiveSignificantSideEffectCue(message) {
+  const hasNegatedVomiting = /沒有吐|沒吐|無嘔吐|沒有嘔吐|沒有一直吐|沒一直吐/.test(message);
+  const hasNegatedAbdominalPain = /沒有肚子痛|沒肚子痛|肚子不痛|沒有腹痛|沒腹痛|腹部不痛|沒有胃痛|沒胃痛/.test(message);
+  const hasNegatedFever = /沒有發燒|沒發燒|無發燒|不發燒/.test(message);
+
+  const hasVomiting = !hasNegatedVomiting && /嘔吐|吐|一直吐|吐到|喝不下/.test(message);
+  const hasAbdominalPain = !hasNegatedAbdominalPain && /肚子痛|腹痛|胃痛|肚子.*悶/.test(message);
+  const hasFever = !hasNegatedFever && /發燒|高燒/.test(message);
+  const hasDehydration = /脫水|冒冷汗|喝不下/.test(message);
+
+  return hasVomiting || hasAbdominalPain || hasFever || hasDehydration;
 }

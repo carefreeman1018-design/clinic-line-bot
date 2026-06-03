@@ -191,6 +191,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "費用", "BMI", "共病", "體重管理輔助療法", "不能保證會瘦幾公斤", "可以照打", "自行調整劑量", "元"]
   },
   {
+    name: "mounjaro nausea negated vomiting pain avoids emergency overstatement",
+    reply: await buildTestReply("我上週第一次打猛健樂後有點噁心，但沒有吐、沒有肚子痛，也沒有發燒，只是食慾變差。下一針可以照打嗎？需要急診嗎？"),
+    expected: ["猛健樂門診", "噁心", "食慾變差", "下一針不要先自行照打", "自行調劑量", "沒有嘔吐", "肚子痛", "發燒", "通常不需要先急診", "電話", "回診確認", "延後", "調整", "觀察", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "持續噁心、嘔吐或腹痛", "已經施打後有持續噁心、嘔吐或腹痛", "請直接急診", "下一針可以照打", "可以自行調劑量", "可以自行調整劑量"]
+  },
+  {
     name: "wellness drip beats vaccine memory follow-up",
     reply:
       answerWellnessWeightQuestion("我最近熬夜很累、喝酒也比較多，想打那種護肝跟免疫提升的點滴。你們可以保證打完就恢復精神嗎？今天能不能直接打？費用多少？我有點緊張，先跟我說下一步。") ||
