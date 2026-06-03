@@ -340,3 +340,20 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 1 | 重測 Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。 | Says it cannot guarantee late arrival or add-on after 17:00; lunch clinic 13:30-17:00 is clinic time; check-in deadline and add-on/waitlist require immediate phone or 3F counter confirmation. | Pass | No fixed-doctor schedule drift. |
 | 3 | 重測 Round18-3：我想只抽血驗睪固酮，不想先看醫師，可以直接抽嗎？需要空腹或早上去嗎？不要講太長。 | Says direct blood draw without seeing a doctor cannot be guaranteed; testosterone/male hormone testing needs staff/doctor confirmation of test item, visit/order and draw arrangement; fasting, morning draw, fee and same-day availability require phone/onsite confirmation. | Pass | Directly answers lab logistics without doctor-specialty dump. |
 | 4 | 重測 Round18-4：上次看診的收據不見了，可以補印嗎？如果公司要統編，能不能後來再補上？請不要貼連結。 | Says receipt reprint, company title/tax ID, format and later changes require counter confirmation based on visit/checkout record and rules; best to state tax ID before checkout, and late changes/reprint are not guaranteed. | Pass | Covers both lost receipt and later tax-ID edit. |
+
+## Round 19 - Payment methods, waiting after check-in, registration data typo, and fee-only counter ask
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | Round19-1：看診或打疫苗可以刷卡、行動支付嗎？如果只能現金我就先去領錢。不要貼連結。 | Replied with HPV/shingles vaccine availability, suitability, stock and fee confirmation by phone/staff. | Fail | Payment-method intent was swallowed by vaccine routing. |
+| 2 | Round19-2：如果我現場報到後等很久，可以先出去買東西再回來嗎？會不會過號？請講重點。 | Says the user may step out but could be called or passed; best to tell the counter before leaving and ask staff to keep the current queue status. | Pass | Practical and concise. |
+| 3 | Round19-3：我線上掛號時生日或電話好像填錯了，到現場可以改資料嗎？會不會找不到掛號？ | Replied with clinic phone plus online appointment URL. | Fail | Missed wrong birthday/phone lookup and correction flow; violated no-link expectation. |
+| 4 | Round19-4：我只是想先到櫃台問割包皮大概費用，不一定今天看診，可以嗎？如果要看診再說也可以。 | Says the clinic provides circumcision/stapler circumcision evaluation, mentions appointment/evaluation and broad safety context. | Partial | Safe but too surgical; should be a short admin fee-only answer. |
+
+### Round 19 Retest - Payment, registration data correction, and circumcision fee-only admin fixes
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 重測 Round19-1：看診或打疫苗可以刷卡、行動支付嗎？如果只能現金我就先去領錢。不要貼連結。 | Says payment method, card/mobile payment and cash preparation cannot be guaranteed directly on LINE; call 02-2511-9488 or confirm at the counter before deciding. | Pass | No vaccine service or stock drift. |
+| 3 | 重測 Round19-3：我線上掛號時生日或電話好像填錯了，到現場可以改資料嗎？會不會找不到掛號？ | Says wrong birthday/phone may affect registration lookup; bring health card/ID to 3F counter for verification and possible correction, but original registration cannot be guaranteed found; phone confirmation is available. | Pass | No appointment link. |
+| 4 | 重測 Round19-4：我只是想先到櫃台問割包皮大概費用，不一定今天看診，可以嗎？如果要看診再說也可以。 | Says the user can first ask the counter or call 02-2511-9488 about approximate circumcision/stapler fee and process without necessarily seeing a doctor that day; actual amount depends on item and onsite process, and the initial ask cannot guarantee final price; arrange registration if deciding to see a doctor. | Pass | No surgical-risk or fast-pass pollution. |
