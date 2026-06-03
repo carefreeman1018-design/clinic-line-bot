@@ -273,6 +273,12 @@ const cases = [
     forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "門診是", "尿痛合併疑似血尿", "請不要自行服藥", "可以先多喝水觀察"]
   },
   {
+    name: "post cystoscopy pink urine negated red flags avoids chills invention",
+    reply: await buildTestReply("我做完膀胱鏡後尿有一點粉紅色，但沒有發燒、沒有血塊，也尿得出來。可以先多喝水觀察嗎？需要急診嗎？"),
+    expected: ["膀胱鏡後", "少量粉紅尿", "血絲", "沒有發燒", "血塊", "尿得出來", "通常不需要先急診", "補充水分", "觀察變化", "血尿變多", "急診", "立即就醫", "02-2511-9488", "回診確認"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "你提到發冷", "尿尿刺痛", "不建議只多喝水觀察", "尿痛合併疑似血尿", "請現在先量體溫", "今天晚上", "晚診"]
+  },
+  {
     name: "wart ointment duration avoids online prescription",
     reply: answerStdTreatmentQuestion("我覺得可能是菜花，藥膏要擦幾天？可以自己買來擦嗎？我在外面不方便看長文，先講重點。"),
     expected: ["菜花", "HPV", "光靠文字不能診斷", "藥膏要擦幾天", "自行買藥", "醫師確認", "02-2511-9488"],
