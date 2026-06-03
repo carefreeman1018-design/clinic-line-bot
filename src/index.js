@@ -34,6 +34,7 @@ import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
 import { answerStoneQuestion } from "./stone-treatment.js";
 import { answerTesticularTorsionQuestion } from "./testicular-torsion.js";
+import { answerUrologyProcedureAftercareQuestion } from "./urology-procedure-aftercare.js";
 import { answerWellnessWeightQuestion } from "./wellness-weight.js";
 import { answerWoundCareQuestion } from "./wound-care.js";
 
@@ -229,6 +230,9 @@ export async function buildReplyAndMatches(message, chunks, conversationHistory 
 
   const woundCareReply = answerWoundCareQuestion(message);
   if (woundCareReply) return { reply: woundCareReply, relevantChunks: [] };
+
+  const procedureAftercareReply = answerUrologyProcedureAftercareQuestion(message);
+  if (procedureAftercareReply) return { reply: procedureAftercareReply, relevantChunks: [] };
 
   const surgeryReply = answerCircumcisionFastPassQuestion(message, conversationHistory);
   if (surgeryReply) return { reply: surgeryReply, relevantChunks: [] };

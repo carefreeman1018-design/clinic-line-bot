@@ -19,6 +19,7 @@ import { answerCircumcisionFastPassQuestion } from "../src/surgery.js";
 import { answerStdTreatmentQuestion } from "../src/std-treatment.js";
 import { answerStoneQuestion } from "../src/stone-treatment.js";
 import { answerTesticularTorsionQuestion } from "../src/testicular-torsion.js";
+import { answerUrologyProcedureAftercareQuestion } from "../src/urology-procedure-aftercare.js";
 import { answerVasectomyQuestion } from "../src/vasectomy.js";
 import { answerVaccineQuestion } from "../src/vaccines.js";
 import { answerWellnessWeightQuestion } from "../src/wellness-weight.js";
@@ -244,6 +245,14 @@ const cases = [
       answerCircumcisionFastPassQuestion("我割包皮第 3 天，釘子附近黃黃的、龜頭有點腫，紗布也有一點血。這是不是感染？我可以今天洗澡、自己多擦藥膏嗎？我現在有點慌，先跟我說該怎麼做。"),
     expected: ["術後第 3 天", "LINE 不能直接判斷", "感染", "前 2 週", "不要碰水", "不要自行加量", "拍清楚照片", "02-2511-9488", "盡快就醫"],
     forbidden: ["官網介紹：", "https://", "lin.ee", "快速通關", "當天看診後手術", "手術評估", "實際費用", "可以洗澡", "自己多擦"]
+  },
+  {
+    name: "post cystoscopy chills avoids generic uti schedule",
+    reply:
+      answerUrologyProcedureAftercareQuestion("我今天早上做完膀胱鏡，現在尿尿很刺痛，尿裡有血絲，剛剛有點發冷。這樣正常嗎？可以先多喝水觀察嗎？") ||
+      answerMaleUtiUrgentQuestion("我今天早上做完膀胱鏡，現在尿尿很刺痛，尿裡有血絲，剛剛有點發冷。這樣正常嗎？可以先多喝水觀察嗎？", new Date("2026-06-03T10:11:00+08:00")),
+    expected: ["膀胱鏡後", "尿尿刺痛", "尿中血絲", "發冷", "感染", "發燒風險", "不建議只多喝水觀察", "量體溫", "02-2511-9488", "回診確認", "發燒", "畏寒", "血尿變多", "血塊", "尿不出來", "疼痛加劇", "急診", "立即就醫"],
+    forbidden: ["官網介紹：", "https://", "lin.ee", "今天晚上", "晚診", "門診是", "尿痛合併疑似血尿", "請不要自行服藥", "可以先多喝水觀察"]
   },
   {
     name: "wart ointment duration avoids online prescription",
