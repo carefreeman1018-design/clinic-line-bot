@@ -340,17 +340,17 @@ function asksTomorrowFridayAfternoonUrologyForReportVaccineOnly(message) {
   const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
   const asksDoctorOrUrology = /哪位醫師|哪位醫生|誰看|掛一般泌尿|一般泌尿|泌尿/.test(message);
   const hasReportAndVaccine = /報告/.test(message) && /HPV\s*疫苗|HPV|九價|疫苗/i.test(message);
-  const saysNoTreatmentOrShort = /不想做治療|只是問|只問|短一點|講重點/.test(message);
+  const asksRegistrationFit = /掛|看|可以嗎|可不可以|能不能|要不要|怎麼掛|怎麼看|不想做治療|只是問|只問|短一點|講重點/.test(message);
 
-  return asksTomorrowAfternoon && asksDoctorOrUrology && hasReportAndVaccine && saysNoTreatmentOrShort;
+  return asksTomorrowAfternoon && asksDoctorOrUrology && hasReportAndVaccine && asksRegistrationFit;
 }
 
 function asksTomorrowFridayAfternoonClinicDoctorOnly(message) {
   const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
   const asksTimeAndDoctor = /門診時間|時間|哪位醫師|哪位醫生|醫師|醫生|誰看/.test(message);
-  const wantsDirectOnly = /請直接回答|直接回答|只是想確認|跟前面.*無關|無關/.test(message);
+  const asksOnlyClinicFact = /幾點|哪位|哪個|確認|先不管|跟前面.*無關|無關|請直接回答|直接回答|只是想確認/.test(message);
 
-  return asksTomorrowAfternoon && asksTimeAndDoctor && wantsDirectOnly;
+  return asksTomorrowAfternoon && asksTimeAndDoctor && asksOnlyClinicFact;
 }
 
 function asksFirstVisitHealthCardReadFailureSelfPay(message) {
