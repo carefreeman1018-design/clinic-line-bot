@@ -310,6 +310,7 @@ function normalizePage(page) {
     excerpt: cleanText(page.excerpt?.rendered),
     headings: extractHeadings(content),
     contentHighlights: extractContentHighlights(content),
+    faqs: extractFaqItems(content),
     keywords: extractKeywords([page.title?.rendered, page.excerpt?.rendered, content].join(" "))
   };
 }
@@ -393,6 +394,7 @@ function renderTreatmentServiceEntry({ service, pages, homepageCards, homepageFo
     service.defaultDescription
   ]);
   const highlights = uniqueCompact(matchedPages.flatMap((page) => page.contentHighlights)).slice(0, 8);
+  const faqs = uniqueFaqs(matchedPages.flatMap((page) => page.faqs)).slice(0, 8);
   const headings = uniqueCompact(matchedPages.flatMap((page) => page.headings)).slice(0, 14);
   const keywords = uniqueCompact([
     ...service.aliases,
@@ -408,6 +410,7 @@ function renderTreatmentServiceEntry({ service, pages, homepageCards, homepageFo
     `- 首頁短描述：${homepageDescriptions.join(" / ")}`,
     headings.length ? `- 對應服務頁段落：${headings.join("、")}` : null,
     highlights.length ? renderHighlights("對應服務頁重點摘要", highlights) : null,
+    faqs.length ? renderFaqs("對應服務頁常見問題", faqs) : null,
     renderList("適合回答的問題類型", service.suitableQuestions),
     `- 需要轉人工/門診/電話確認的邊界：${service.escalationBoundary}`,
     ""
@@ -550,6 +553,7 @@ function renderPageEntry(page) {
     page.excerpt ? `- 官網摘要：${page.excerpt}` : null,
     page.headings.length ? `- 頁面段落：${page.headings.join("、")}` : null,
     page.contentHighlights.length ? renderHighlights("頁面內容重點", page.contentHighlights) : null,
+    page.faqs.length ? renderFaqs("頁面常見問題", page.faqs) : null,
     page.keywords.length ? `- 相關關鍵字：${page.keywords.join("、")}` : null,
     ""
   ]
@@ -624,6 +628,59 @@ function extractContentHighlights(html = "") {
   return highlights;
 }
 
+function extractFaqItems(html = "") {
+  const cleanedHtml = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ");
+  const headingMatches = [...cleanedHtml.matchAll(/<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/gi)]
+    .map((match) => ({
+      index: match.index ?? 0,
+      end: (match.index ?? 0) + match[0].length,
+      level: Number(match[0].match(/^<h([2-4])/i)?.[1] ?? 0),
+      text: cleanText(match[1])
+    }))
+    .filter((heading) => heading.text);
+
+  const faqs = [];
+  const seen = new Set();
+
+  for (let index = 0; index < headingMatches.length; index += 1) {
+    const heading = headingMatches[index];
+    if (!isFaqQuestionHeading(heading.text)) continue;
+
+    const nextHeading = headingMatches
+      .slice(index + 1)
+      .find((candidate) => candidate.level <= heading.level);
+    const answerHtml = cleanedHtml.slice(heading.end, nextHeading?.index ?? cleanedHtml.length);
+    const answer = cleanText(
+      answerHtml
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/<\/(p|div|li)>/gi, " ")
+    );
+    if (!answer || isBoilerplate(answer)) continue;
+
+    const question = normalizeFaqQuestion(heading.text);
+    const key = `${question}\n${answer}`.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    faqs.push({
+      question,
+      answer: truncateHighlight(answer)
+    });
+  }
+
+  return faqs.slice(0, 12);
+}
+
+function isFaqQuestionHeading(text) {
+  return /^(?:Q|Ｑ)\s*\d+[\s.．、:：-]/i.test(text) || /[？?]$/.test(text);
+}
+
+function normalizeFaqQuestion(text) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
 function isUsefulHighlight(text) {
   if (text.length < 24) return false;
   if (text.length > 900) return false;
@@ -640,6 +697,30 @@ function truncateHighlight(text) {
 
 function renderHighlights(label, highlights) {
   return [`- ${label}：`, ...highlights.map((highlight) => `  - ${highlight}`)].join("\n");
+}
+
+function renderFaqs(label, faqs) {
+  return [
+    `- ${label}：`,
+    ...faqs.flatMap((faq) => [
+      `  - 問：${faq.question}`,
+      `    答：${faq.answer}`
+    ])
+  ].join("\n");
+}
+
+function uniqueFaqs(faqs) {
+  const seen = new Set();
+  const deduped = [];
+
+  for (const faq of faqs) {
+    const key = `${faq.question}\n${faq.answer}`.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(faq);
+  }
+
+  return deduped;
 }
 
 function extractKeywords(text) {

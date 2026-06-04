@@ -386,6 +386,7 @@ function findLastMentionedDoctor(conversationHistory) {
 
 function resolveFollowUpDoctor(message, conversationHistory) {
   if (/診斷證明|診斷書|證明書|就醫證明|收據|醫療收據|費用收據|發票/.test(message)) return null;
+  if (hasCompetingMedicalTopic(message)) return null;
   if (!/門診|時間|時段|看診|哪時|什麼時候|幾點/.test(message)) return null;
   return findLastMentionedDoctor(conversationHistory);
 }

@@ -86,7 +86,9 @@ function asksCircumcisionDoctorRecommendation(message) {
 }
 
 function asksToCheckCircumcisionDoctorSchedule(message) {
-  return /^(好|好的|可以|麻煩|幫我|好 幫|好，幫|ok|OK)|幫我查|查一下|查時段|查門診|今天.*時段|明天.*時段|哪天.*時段|什麼時段|門診時段|看診時段|早午晚|早上.*下午.*晚上|早診.*午診.*晚診|分別.*找誰/.test(message.trim());
+  const normalized = message.trim();
+  if (/^(好|好的|可以|麻煩|幫我|好 幫|好，幫|ok|OK)[。！!.\s]*$/.test(normalized)) return true;
+  return /幫我查|查一下|查時段|查門診|今天.*時段|明天.*時段|哪天.*時段|什麼時段|門診時段|看診時段|早午晚|早上.*下午.*晚上|早診.*午診.*晚診|分別.*找誰/.test(normalized);
 }
 
 function hasCompetingNonCircumcisionTopic(message) {
