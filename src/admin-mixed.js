@@ -60,8 +60,8 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksGeneralReportNotificationPrivacy(normalized)) {
     return [
-      "檢查報告通知方式要依檢查項目與診所流程確認，不能先保證一定用簡訊或 LINE 通知。",
-      `如果只想知道報告好了沒、不要在 LINE 說明檢查內容，可以看診或報到時先跟櫃台/護理人員說；也可電話 ${PHONE} 詢問。`,
+      "檢查報告通知方式會依檢查項目、送檢流程和身分核對方式安排。",
+      `如果只想知道報告好了沒、不希望在 LINE 說明檢查內容，可以看診或報到時先跟櫃台/護理人員說；也可電話 ${PHONE} 詢問。`,
       "查詢或領取報告前仍需要核對身分；若結果需要說明，會依診所安排由醫師解釋。"
     ].join("\n");
   }

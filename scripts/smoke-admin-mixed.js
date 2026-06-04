@@ -510,8 +510,8 @@ const cases = [
     name: "general report notification privacy avoids report interpretation wrapper",
     message: "如果醫師開檢查，報告好了可以只傳簡訊通知我嗎？不要在 LINE 講內容可以嗎？",
     doctorReviewReportBypass: true,
-    expected: ["檢查報告通知方式", "檢查項目", "診所流程", "不能先保證", "簡訊", "LINE", "不要在 LINE 說明檢查內容", "櫃台/護理人員", "02-2511-9488", "核對身分", "醫師解釋"],
-    forbidden: ["檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "這題我先幫你請醫師或診所人員確認", "確認後會再回覆你", "https://", "appointment"]
+    expected: ["檢查報告通知方式", "檢查項目", "送檢流程", "身分核對方式", "LINE", "不希望在 LINE 說明檢查內容", "櫃台/護理人員", "02-2511-9488", "核對身分", "醫師解釋"],
+    forbidden: ["不能先保證", "檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "這題我先幫你請醫師或診所人員確認", "確認後會再回覆你", "https://", "appointment"]
   },
   {
     name: "family online registration contact phone answers checkin documents",
