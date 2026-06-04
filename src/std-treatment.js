@@ -6,16 +6,16 @@ export function answerStdTreatmentQuestion(message) {
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
   if (urethralDischargeReply) return urethralDischargeReply;
 
-  if (isAnonymousScreeningPrivacyQuestion(message)) {
-    return answerAnonymousScreeningQuestion(message);
-  }
-
   if (shouldPrioritizeWartQuestion(message)) {
     return answerWartQuestion(message);
   }
 
   if (isPepQuestion(message)) {
     return answerPepQuestion(message);
+  }
+
+  if (isAnonymousScreeningPrivacyQuestion(message)) {
+    return answerAnonymousScreeningQuestion(message);
   }
 
   if (isPrepQuestion(message)) {
@@ -159,7 +159,7 @@ function answerPepQuestion(message) {
   return [
     prepClarification,
     hivInfectionBoundary,
-    `${prefix}請今天盡快聯絡診所或到門診/急診由醫師評估；不能只靠訊息判斷或開藥，也不能保證今晚直接拿藥。`,
+    `${prefix}越早越好，請今天盡快聯絡診所或到門診/急診由醫師評估；不能只靠訊息判斷或開藥，也不能保證今晚直接拿藥。`,
     anonymousScreening,
     `下一步：先電話 ${PHONE} 確認最快可評估時段；若診所無法即時安排，請儘速就醫。`
   ].join("");

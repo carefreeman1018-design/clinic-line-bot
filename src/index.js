@@ -348,9 +348,19 @@ async function isDoctorReviewReady() {
 }
 
 async function shouldCreateDoctorReviewCase(message) {
+  if (shouldBypassDoctorReviewForAnonymousScreeningLogistics(message)) return false;
   if (shouldBypassDoctorReviewForReportLogistics(message)) return false;
   if (shouldBypassDoctorReviewForRoutineAdmin(message)) return false;
   return (await isDoctorReviewReady()) && shouldEscalate(message);
+}
+
+export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) {
+  const hasAnonymousScreening = /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message);
+  const asksNotificationOrPrivacy = /報告.*出來|結果.*通知|通知|打電話|電話|講.*內容|檢查內容|家人|隱私|保密|流程/.test(message);
+  const asksMedicalInterpretation = /陽性|陰性|數值|正常|不正常|判讀|確診|是不是/.test(message);
+  const hasExposureOrTreatmentRisk = /PEP|PrEP|HIV|愛滋|暴露|無套|高風險|淋病|梅毒|披衣菌|症狀|水泡|潰瘍|流膿|發燒|睪丸痛|下腹痛/i.test(message);
+
+  return hasAnonymousScreening && asksNotificationOrPrivacy && !asksMedicalInterpretation && !hasExposureOrTreatmentRisk;
 }
 
 export function shouldBypassDoctorReviewForReportLogistics(message) {

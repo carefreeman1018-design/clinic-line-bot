@@ -118,6 +118,45 @@ const cases = [
     forbidden: ["陳偉傑醫師", "羅詩修醫師", "門診時間", "早診", "午診", "晚診", "固定門診", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   },
   {
+    name: "natural anonymous screening notification privacy avoids review tail",
+    message: "我想做匿名篩檢，如果報告出來你們會打電話通知嗎？電話裡會講檢查內容嗎？",
+    expected: ["匿名篩檢", "隱私", "報告通知方式", "電話", "檢查內容", "現場人員", "篩檢項目", "不會因為你在 LINE 問", "主動把檢查內容告知家人", "護理人員", "02-2511-9488"],
+    forbidden: ["這題我先幫你轉醫師或診所人員確認", "這題我先幫你請醫師或診所人員確認", "確認後會再回覆你", "陽性", "陰性", "確診", "https://", "appointment"]
+  },
+  {
+    name: "anonymous screening with exposure risk does not use logistics bypass",
+    message: "匿名篩檢流程怎麼做？我昨天無套高風險，需要 PEP 嗎？",
+    routedOnly: true,
+    expected: ["PEP", "72 小時", "越早越好", "醫師評估", "匿名篩檢"],
+    forbidden: ["不會因為你在 LINE 問", "主動把檢查內容告知家人", "報告通知方式", "電話裡會不會說明檢查內容"]
+  },
+  {
+    name: "natural vaccine stock fee counter asks stock not only payment",
+    message: "我月底要出國，想先問 HPV 或皮蛇疫苗有沒有庫存、大概多少錢，可以直接到櫃台問嗎？",
+    expected: ["櫃台", "電話 02-2511-9488", "HPV/皮蛇疫苗", "庫存", "費用", "可施打時段", "不一定要先決定施打", "實際費用", "是否適合施打", "出國前時程", "當天能否安排"],
+    forbidden: ["不能在 LINE 直接保證金額", "付款方式目前沒有明確公開資訊", "一定可刷卡", "匿名篩檢", "https://", "appointment"]
+  },
+  {
+    name: "vaccine pregnancy suitability beats stock fee admin",
+    message: "我懷孕可以打 HPV 疫苗嗎？也想問櫃台費用多少。",
+    routedOnly: true,
+    expected: ["不能只靠訊息判斷", "懷孕/備孕", "個人狀況", "庫存", "醫師或診所人員"],
+    forbidden: ["可以先到櫃台或電話 02-2511-9488 詢問 HPV/皮蛇疫苗庫存", "不一定要先決定施打"]
+  },
+  {
+    name: "vaccine allergy suitability beats stock fee admin",
+    message: "我之前打疫苗過敏，皮蛇疫苗適合我嗎？可以先電話問庫存費用嗎？",
+    routedOnly: true,
+    expected: ["不能只靠訊息判斷", "過敏史", "疫苗反應", "庫存", "醫師或診所人員"],
+    forbidden: ["可以先到櫃台或電話 02-2511-9488 詢問 HPV/皮蛇疫苗庫存", "不一定要先決定施打"]
+  },
+  {
+    name: "natural vasectomy consult with luo adds counter path",
+    message: "朋友說結紮要找院長，我明天下午如果只有羅醫師的診，可以先去問結紮諮詢嗎？",
+    expected: ["明天（週五）", "午診/下午", "13:30-17:00", "羅詩修醫師", "一般泌尿門診", "結紮諮詢", "3 樓櫃台", "想諮詢男性結紮", "能否當天評估", "是否需改掛或另約", "費用", "不一定只能找院長", "電話 02-2511-9488"],
+    forbidden: ["主要看精雕微創包皮槍手術", "男性私密整形/陰莖增大手術", "臨時異動請以 LINE VOOM", "https://", "appointment"]
+  },
+  {
     name: "round18 near lunch clinic end asks counter deadline not doctor schedule",
     message: "Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。",
     expected: ["不能先保證", "壓線", "一定看得到", "17:00 後", "等加號", "午診 13:30-17:00", "診間時段", "最晚報到", "能否加號或候補", "電話", "現場櫃台確認", "快到診所", "3 樓櫃台", "02-2511-9488"],

@@ -43,6 +43,29 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksAnonymousScreeningReportNotificationPrivacy(normalized)) {
+    return [
+      "匿名篩檢會重視隱私；報告通知方式、多久可知道結果，以及電話裡會不會說明檢查內容，要由現場人員依篩檢項目說明。",
+      "診所不會因為你在 LINE 問，就主動把檢查內容告知家人；但電話、身分資料與通知流程，建議到場時先跟護理人員說清楚你的隱私需求。",
+      `也可以先電話 ${PHONE} 確認匿名篩檢流程。`
+    ].join("\n");
+  }
+
+  if (asksVaccineStockFeeCounterOnly(normalized)) {
+    return [
+      `可以先到櫃台或電話 ${PHONE} 詢問 HPV/皮蛇疫苗庫存、費用與可施打時段，不一定要先決定施打。`,
+      "但庫存、實際費用、是否適合施打、出國前時程與當天能否安排，都要以診所人員/醫師現場確認為準。"
+    ].join("\n");
+  }
+
+  if (asksTomorrowAfternoonVasectomyConsultWithLuo(normalized)) {
+    return [
+      "明天（週五）午診/下午 13:30-17:00 是羅詩修醫師的一般泌尿門診。",
+      "想先問結紮諮詢，可以到 3 樓櫃台說明：想諮詢男性結紮；能否當天評估、是否需改掛或另約、費用與後續安排，仍以醫師/櫃台確認為準。",
+      `不一定只能找院長；到診前也可先電話 ${PHONE} 確認名額與時段。`
+    ].join("\n");
+  }
+
   if (asksTestosteroneBloodDrawOnly(normalized)) {
     return [
       "不能先保證不看醫師就能直接抽血。",
@@ -369,6 +392,36 @@ function asksPostVisitBloodUrineTestFlow(message) {
   return hasAfterVisitOrDoctorOrder && hasBloodOrUrineTest && asksTimingOrFlow;
 }
 
+function asksAnonymousScreeningReportNotificationPrivacy(message) {
+  const hasAnonymousScreening = /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message);
+  const asksNotification = /報告.*出來|報告|結果|通知|打電話|電話|講.*內容|檢查內容|家人|隱私|保密/.test(message);
+  const asksFlowNotDiagnosis = !/陽性|陰性|數值|正常|不正常|判讀|確診|是不是/.test(message);
+  const hasExposureOrTreatmentRisk = /PEP|PrEP|HIV|愛滋|暴露|無套|高風險|淋病|梅毒|披衣菌|症狀|水泡|潰瘍|流膿|發燒|睪丸痛|下腹痛/i.test(message);
+
+  return hasAnonymousScreening && asksNotification && asksFlowNotDiagnosis && !hasExposureOrTreatmentRisk;
+}
+
+function asksVaccineStockFeeCounterOnly(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+  if (/懷孕|備孕|過敏|起疹|疹子|慢性病|免疫|吃藥|用藥|適合|能不能打|可不可以打|禁忌|副作用|不舒服|發燒/.test(message)) return false;
+
+  const hasVaccineCue = /HPV\s*疫苗|HPV|九價|皮蛇疫苗|帶狀皰疹疫苗|疫苗/i.test(message);
+  const asksStockAndFee = /庫存|有貨|現貨|備苗|費用|價格|價錢|多少錢|大概/.test(message);
+  const asksCounterOrPhone = /櫃台|櫃檯|電話|現場|到診所|診所人員|工作人員|護理人員|先問|詢問/.test(message);
+  const noImmediateShot = !/今天.*直接.*打|馬上.*打|立刻.*打/.test(message);
+
+  return hasVaccineCue && asksStockAndFee && asksCounterOrPhone && noImmediateShot;
+}
+
+function asksTomorrowAfternoonVasectomyConsultWithLuo(message) {
+  const asksTomorrowAfternoon = /明天.*(下午|午診)|(?:下午|午診).*明天/.test(message);
+  const hasVasectomyCue = /結紮|輸精管|避孕手術/.test(message);
+  const hasLuoOrDirectorCue = /羅醫師|羅醫生|羅詩修|院長|陳偉傑|只有羅|找院長/.test(message);
+  const asksConsult = /諮詢|先問|問.*結紮|可以.*問|能不能.*問|掛|看/.test(message);
+
+  return asksTomorrowAfternoon && hasVasectomyCue && hasLuoOrDirectorCue && asksConsult;
+}
+
 function asksRegistrationPatientSwitch(message) {
   const hasRegistrationCue = /掛號|預約|線上掛號|網路掛號|同一筆|同一個號|同一號/.test(message);
   const hasPatientSwitchCue = /幫爸爸|幫爸|幫媽媽|幫媽|幫家人|爸爸掛號|媽媽掛號|換成我要看|改成我要看|換人看|改名字|改姓名|改成.*名字|不同就診者/.test(message);
@@ -486,11 +539,19 @@ function asksCertificateOrReceiptAfterVisit(message) {
 }
 
 function asksFeePaymentAtCounterWithoutVisit(message) {
+  if (isVaccineSuitabilityQuestion(message)) return false;
+
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
   const wantsBeforeVisitDecision = /不想看診|不看診|不用看診|還不想看|先問|先知道|只是想先問|只想先問|問完再決定|再決定|能不能.*問|可以.*問/.test(message);
 
   return asksFeeOrPayment && asksCounterOrStaff && wantsBeforeVisitDecision;
+}
+
+function isVaccineSuitabilityQuestion(message) {
+  const hasVaccineCue = /HPV\s*疫苗|HPV|九價|子宮頸癌疫苗|皮蛇疫苗|帶狀皰疹疫苗|疫苗/i.test(message);
+  const hasSuitabilityCue = /懷孕|備孕|過敏|起疹|疹子|慢性病|免疫|吃藥|用藥|藥物|適合|能不能打|可不可以打|可以打|禁忌|副作用|不舒服|發燒/.test(message);
+  return hasVaccineCue && hasSuitabilityCue;
 }
 
 function asksCircumcisionCounterFeeBeforeVisit(message) {
