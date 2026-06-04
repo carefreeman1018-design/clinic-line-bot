@@ -19,6 +19,9 @@ export function answerCircumcisionFastPassQuestion(message, conversationHistory 
 
   if (!hasDirectCircumcisionQuestion) return null;
 
+  const officialFaqReply = answerOfficialCircumcisionFaq(message);
+  if (officialFaqReply) return officialFaqReply;
+
   if (asksCircumcisionDoctorRecommendation(message)) {
     return answerCircumcisionDoctorRecommendation();
   }
@@ -52,6 +55,54 @@ function answerCircumcisionDoctorRecommendation() {
     "哪位最適合仍要看可掛時段與術前評估，不在線上直接指定唯一人選。",
     `如果要查時段，可先電話 ${PHONE} 確認，或直接告訴我想查今天、明天還是哪一天。`
   ].join("");
+}
+
+function answerOfficialCircumcisionFaq(message) {
+  if (/恢復|上班|上學|休息|多久.*工作|幾天.*工作/.test(message)) {
+    return "大部分割包皮患者術後隔天可正常上學、上班；如果工作需要走動、搬重物或容易流汗，建議休息數天後再返回職場。";
+  }
+
+  if (/健保|給付|自費|包皮槍.*費用|包皮槍.*錢/.test(message)) {
+    return "包皮槍屬於自費耗材，健保沒有給付；實際費用仍需依手術方式與門診評估確認。";
+  }
+
+  if (/痛|疼痛|麻醉/.test(message) && !/舒眠/.test(message)) {
+    return "割包皮手術前會先打局部麻醉，入針當下難免有一定程度不適，但手術過程不會痛。";
+  }
+
+  if (/發炎|龜頭炎|包皮炎|糖尿病|血糖|體重|過重|減重/.test(message)) {
+    return "若龜頭或包皮有嚴重發炎，通常會先在門診開抗生素控制，等發炎穩定後再手術；若體重過重、血糖控制較差或有糖尿病，也建議先減重或把血糖控制好，再由醫師全面評估是否適合手術。";
+  }
+
+  if (/舒眠|睡著|全身麻醉/.test(message)) {
+    return "割包皮手術可以選擇舒眠麻醉；若不恐懼手術，官網建議局部麻醉即可。舒眠麻醉會先以靜脈注射讓患者睡著，再施打局部麻醉，可減少對陰莖打麻醉的恐懼，但費用會比局部麻醉高一些。";
+  }
+
+  if (/照顧|傷口|洗澡|擦澡|碰水|換藥/.test(message)) {
+    return "割包皮術後會提供包紮換藥影片，也會提供藥品和泌尿科護理包方便自行換藥。術後前 7 天請擦澡；之後只要能讓患處碰不到水，例如用保鮮膜包覆患處，即可洗澡。";
+  }
+
+  if (/回診|回幾次|幾次/.test(message)) {
+    return "割包皮術後原則上回診 3 次：術後第 2 天、第 9 天，以及約 1 個月左右。官網強烈建議盡量回診，讓雙主治醫師追蹤傷口癒合與術後狀況。";
+  }
+
+  if (/騎車|機車|開車|駕駛|交通工具|回家/.test(message)) {
+    return "割包皮手術當天建議盡量搭大眾交通工具或計程車往返；若路程不長、約 30 分鐘內且路面平順，可自行斟酌騎車。平常有騎車需求者，通常手術隔天可開始騎機車。若當天採舒眠麻醉，術後絕對不要自行開車或騎車離開。";
+  }
+
+  if (/運動|慢跑|籃球|健身|重訓|深蹲/.test(message)) {
+    return "割包皮術後 1 個月內建議不要做會摩擦到小兄弟的激烈運動，例如慢跑、籃球等；較不會摩擦的運動，例如負重深蹲，可在傷口癒合良好的前提下開始。";
+  }
+
+  if (/釘子|釘書針|脫落|掉/.test(message)) {
+    return "只要好好照顧傷口，包皮槍釘子平均約 3–4 週會全數自然脫落；若滿 4 週後還沒掉光，可回診由雙主治醫師處理。";
+  }
+
+  if (/性生活|性行為|開機|自慰|DIY/.test(message)) {
+    return "割包皮術後建議等傷口完全恢復，滿 1 個月之後再重啟性生活。";
+  }
+
+  return null;
 }
 
 function answerCircumcisionDoctorSchedule(now) {
