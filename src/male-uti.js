@@ -4,7 +4,7 @@ import { answerUrethralDischargeStdQuestion } from "./std-treatment.js";
 const PHONE = "02-2511-9488";
 
 export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
-  if (!isUtiQuestion(message)) return null;
+  if (!isUtiQuestion(message) && !hasUpperUrinaryEmergency(message)) return null;
   if (isLikelyHematospermiaQuestion(message)) return null;
   if (isNonExclusiveDoctorChoiceQuestion(message)) {
     return [
@@ -19,6 +19,12 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
     const requestedScheduleReply = answerFixedScheduleQuestion(message, now, []);
     if (requestedScheduleReply) return cleanScheduleReply(requestedScheduleReply, message);
   }
+
+  if (!hasUrgentOrMedicationConcern(message)) {
+    const officialReply = answerOfficialMaleUtiQuestion(message);
+    if (officialReply) return officialReply;
+  }
+
   if (!hasUrgentOrMedicationConcern(message)) return null;
 
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
@@ -82,8 +88,64 @@ function buildSymptomSummary(message) {
   return "尿痛、頻尿或急尿可能有不同原因，需要由醫師評估。";
 }
 
+function answerOfficialMaleUtiQuestion(message) {
+  if (/抗生素|吃藥|藥物|藥/.test(message)) {
+    return "男性泌尿道感染或發炎是否需要抗生素、消炎藥、用哪一種與療程多久，都需要醫師依症狀與檢查判斷；不建議自行服藥、停藥或只靠訊息決定用藥。";
+  }
+
+  if (/檢查|尿液|X光|超音波|膀胱鏡/.test(message)) {
+    return "男性泌尿道症狀可由泌尿科進一步檢查，例如尿液檢查、X 光檢查尿結石、超音波檢查腎臟發炎或積水，必要時也可能安排膀胱鏡；實際需要哪些檢查需由醫師依症狀評估。";
+  }
+
+  if (/尿道炎/.test(message) && /原因|為什麼|怎麼|造成/.test(message)) {
+    return "男性尿道炎常見於下泌尿道感染發炎，可能和不安全性行為、淋菌、非淋菌感染或其他細菌感染有關；實際原因需由醫師檢查判斷。";
+  }
+
+  if (/尿道炎/.test(message) && /症狀|會怎樣|表現/.test(message)) {
+    return "男性尿道炎可能出現排尿灼熱疼痛、陰莖發癢或灼熱感、精液或尿液有血絲、陰莖分泌物或膿狀異物。";
+  }
+
+  if (/膀胱炎/.test(message) && /症狀|會怎樣|表現/.test(message)) {
+    return "膀胱炎通常與細菌感染有關，可能有頻尿、尿急、下腹部不適、排尿疼痛或灼熱感，嚴重時可能出現血尿。";
+  }
+
+  if (/睪丸炎|副睪丸炎/.test(message) && /原因|為什麼|怎麼|造成/.test(message)) {
+    return "急性睪丸炎或副睪丸炎可能與性行為接觸感染、尿道炎延伸、自身尿路感染，或攝護腺發炎延伸有關；需要醫師實際檢查確認。";
+  }
+
+  if (/睪丸炎|副睪丸炎/.test(message) && /症狀|會怎樣|表現|痛|腫/.test(message)) {
+    return "睪丸炎或副睪丸炎可能出現睪丸紅腫灼熱感、睪丸脹痛、陰囊腫脹、發燒、發冷與全身無力；若急性睪丸疼痛或陰囊腫脹，請盡快就醫。";
+  }
+
+  if (/睪丸炎|副睪丸炎/.test(message) && /是什麼|差別|同一|一起/.test(message)) {
+    return "睪丸炎是睪丸發炎，副睪丸炎是副睪丸發炎；官網提到睪丸炎通常可能合併副睪丸發炎，是否是哪一種需由醫師檢查判斷。";
+  }
+
+  if (/攝護腺炎/.test(message) && /分類|分哪|幾種|種類|類型/.test(message)) {
+    return "攝護腺炎通常分為急性攝護腺炎、慢性細菌性攝護腺炎，以及非細菌性攝護腺炎，也稱慢性骨盆疼痛症候群 CPPS。";
+  }
+
+  if (/攝護腺炎/.test(message) && /症狀|會怎樣|表現/.test(message)) {
+    return "攝護腺炎症狀可能包含發燒、頻尿、尿急、排尿疼痛、尿液滴瀝、排尿不順、感染部位疼痛、夜尿或射精疼痛等；症狀有時和其他泌尿疾病相似，需由醫師檢查確認。";
+  }
+
+  if (/攝護腺炎/.test(message) && /細菌|感染|原因|為什麼/.test(message)) {
+    return "攝護腺炎不一定都是同一原因；官網提到可分為急性、慢性細菌性與非細菌性攝護腺炎，細菌感染可能由尿道或血流傳播至攝護腺，實際類型需檢查評估。";
+  }
+
+  if (/男性|男生|男/.test(message) && /泌尿道感染|尿道炎|膀胱炎|攝護腺炎|睪丸炎|副睪丸炎/.test(message) && /常見|哪些|有什麼|問題/.test(message)) {
+    return "男性泌尿道感染相關常見問題包含攝護腺炎、睪丸炎、副睪丸炎、膀胱炎、尿道炎與泌尿道感染發炎；可由泌尿科依症狀評估。";
+  }
+
+  if (/男性|男生|男/.test(message) && /泌尿道|尿路/.test(message) && /症狀|困擾|有哪些/.test(message)) {
+    return "男性泌尿道感染或發炎常見困擾包含頻尿、夜尿、小便無力、排尿疼痛、排尿困難，以及睪丸或私密處反覆疼痛；原因可能不同，需由醫師評估。";
+  }
+
+  return null;
+}
+
 function isUtiQuestion(message) {
-  return hasPositiveUrinationPainCue(message) || /尿道炎|膀胱炎|泌尿道感染|攝護腺炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
+  return hasPositiveUrinationPainCue(message) || /尿道炎|膀胱炎|泌尿道感染|攝護腺炎|睪丸炎|副睪丸炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
 }
 
 function hasUrgentOrMedicationConcern(message) {
