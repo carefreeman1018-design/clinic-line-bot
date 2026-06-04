@@ -544,6 +544,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
     if (prostateReply) return { reply: prostateReply, relevantChunks: [] };
   }
 
+  const priorityStdTreatmentReply = answerStdTreatmentQuestion(message);
+  if (priorityStdTreatmentReply) return { reply: priorityStdTreatmentReply, relevantChunks: [] };
+
   const adminMixedReply = answerAdminMixedQuestion(message);
   if (adminMixedReply) return { reply: adminMixedReply, relevantChunks: [] };
 
