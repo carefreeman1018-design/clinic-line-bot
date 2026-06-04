@@ -59,6 +59,10 @@ function answerOfficialUtiInfoQuestion(message) {
 function answerOfficialMagneticChairFaq(message) {
   if (!/美磁波|磁波|鍛肌椅|高密度磁波/.test(message)) return null;
 
+  if (/原理|是什麼|怎麼|如何|作用/.test(message)) {
+    return "高密度磁波治療是透過鍛肌椅的雙感應線圈產生超高密度磁場，使體內產生渦電流引發神經去極化，讓肌肉收縮、放鬆，以改善骨盆底與患處循環，重建骨盆底肌與制尿系統的力量和耐力。";
+  }
+
   if (/自我評估|哪些.*困擾|什麼.*困擾|適合.*評估|漏尿|尿失禁|夜尿|骨盆底肌/.test(message)) {
     return [
       "高密度磁波治療可評估的骨盆底肌相關困擾包含：女性產後或未生產但咳嗽、打噴嚏、大笑會漏尿/尿失禁，夜尿影響睡眠，泌尿或生殖系統反覆感染，或私密處不適影響親密關係與生活。",
