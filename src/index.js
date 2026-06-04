@@ -160,14 +160,16 @@ async function handleLineEvent(event) {
     const botEnabled = await getBotEnabled();
     if (!botEnabled) return;
 
-    const followUpReply = buildAssistanceFollowUpReply(userId, message);
+    const patientMessage = normalizePatientQuestionForRouting(message);
+
+    const followUpReply = buildAssistanceFollowUpReply(userId, patientMessage);
     if (followUpReply) {
       await safeReplyText(event.replyToken, followUpReply);
       await rememberConversationExchange(userId, message, followUpReply);
       return;
     }
 
-    const simpleReply = buildSimpleReply(message);
+    const simpleReply = buildSimpleReply(patientMessage);
     if (simpleReply) {
       await safeReplyText(event.replyToken, simpleReply);
       await rememberConversationExchange(userId, message, simpleReply);
@@ -177,19 +179,19 @@ async function handleLineEvent(event) {
     const conversationHistory = await loadConversationHistory(userId);
     const chunks = await loadKnowledge();
 
-    if (await shouldCreateDoctorReviewCase(message)) {
+    if (await shouldCreateDoctorReviewCase(patientMessage)) {
       const handled = await handleDoctorReviewRequest({
         replyToken: event.replyToken,
         userId,
-        message,
+        message: patientMessage,
         conversationHistory,
         chunks
       });
       if (handled) return;
     }
 
-    const { reply } = await buildReplyAndMatches(message, chunks, conversationHistory);
-    rememberAssistanceIfNeeded(userId, message);
+    const { reply } = await buildReplyAndMatches(patientMessage, chunks, conversationHistory);
+    rememberAssistanceIfNeeded(userId, patientMessage);
 
     await safeReplyText(event.replyToken, reply);
     await rememberConversationExchange(userId, message, reply);
@@ -427,16 +429,38 @@ function parseIdSet(value) {
 }
 
 export async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
-  const result = await buildRawReplyAndMatches(message, chunks, conversationHistory);
+  const patientMessage = normalizePatientQuestionForRouting(message);
+  const patientConversationHistory = normalizeConversationHistoryForRouting(conversationHistory);
+  const result = await buildRawReplyAndMatches(patientMessage, chunks, patientConversationHistory);
   return {
     ...result,
     reply: applyResponseStyle({
       reply: result.reply,
-      message,
+      message: patientMessage,
       relevantChunks: result.relevantChunks,
-      conversationHistory
+      conversationHistory: patientConversationHistory
     })
   };
+}
+
+function normalizeConversationHistoryForRouting(conversationHistory = []) {
+  return conversationHistory.map((item) => ({
+    ...item,
+    content: item.role === "user"
+      ? normalizePatientQuestionForRouting(item.content ?? "")
+      : item.content
+  }));
+}
+
+function normalizePatientQuestionForRouting(message) {
+  return String(message || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^(?:第[一二三四五六七八九十\d]+次)?\s*重測(?:一|二|三|四|五|\d+)?\s*[：:、-]?\s*/u, "")
+    .replace(/^Round\s*\d+(?:[-_]\d+)?\s*[：:、-]\s*/iu, "")
+    .replace(/^R\s*\d+(?:[-_]\d+)?\s*[：:、-]\s*/iu, "")
+    .replace(/^(?:第三次|第二次|第一次)?\s*重測\s*Round\s*\d+(?:[-_]\d+)?\s*[：:、-]\s*/iu, "")
+    .trim();
 }
 
 async function buildRawReplyAndMatches(message, chunks, conversationHistory = []) {

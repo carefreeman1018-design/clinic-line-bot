@@ -492,7 +492,7 @@ function buildFeePaymentCounterNote(message) {
   const wantsCounterOnly = /櫃台|櫃檯|電話|先問|詢問|只想.*問|只是.*問|只去.*問|問費用|問.*付款|問.*刷卡|問完再決定/.test(message);
   if (!asksFeeOrPayment || !wantsCounterOnly) return null;
 
-  return "只想先問費用或付款方式，可以先電話 02-2511-9488 或到櫃台詢問；但實際費用會依項目、評估與流程確認，LINE 不能保證價格或一定可刷卡。";
+  return "只想先問費用或付款方式，可以先電話 02-2511-9488 或到櫃台詢問；實際費用和付款方式會依項目、評估與現場流程確認。";
 }
 
 function asksWrongRegistrationConcern(message) {

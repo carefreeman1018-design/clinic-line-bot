@@ -29,8 +29,8 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksFirstVisitHealthCardReadFailureSelfPay(normalized)) {
     return [
-      "第一次看診若健保卡讀不到，可能是系統、卡片或健保身分確認問題，不能在 LINE 先保證能怎麼處理。",
-      "能否先自費看診、之後補健保、退費或補件，要由 3 樓櫃台依現場健保身分與規定確認。",
+      "第一次看診如果健保卡讀不到，可能要先由櫃台確認卡片、系統或健保身分。",
+      "能否先自費看診、之後補健保、退費或補件，請到 3 樓櫃台依現場資料與健保規定確認。",
       `建議帶身分證/健保卡到現場；不確定可先電話 ${PHONE} 問櫃台。`
     ].join("\n");
   }
@@ -45,8 +45,8 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksLabReportTimingNotification(normalized)) {
     return [
-      "抽血或檢驗報告多久出來，要看檢查項目與送檢流程，不能在 LINE 先保證固定天數。",
-      `報告好了沒、是否能用 LINE 只通知狀態，涉及個人資料與身份確認；請先電話 ${PHONE} 或到櫃台確認通知/領取方式。`,
+      "抽血或檢驗報告多久出來，要看檢查項目與送檢流程，每一項時間不一定相同。",
+      `如果只是想知道報告好了沒，或想確認能不能只通知狀態，請先電話 ${PHONE} 或到櫃台讓人員核對身分後查詢通知/領取方式。`,
       "若需要醫師判讀結果，仍要依診所安排回診或由醫師說明。"
     ].join("\n");
   }
@@ -103,7 +103,7 @@ export function answerAdminMixedQuestion(message) {
   if (asksCircumcisionCounterFeeBeforeVisit(normalized)) {
     return [
       `可以先到櫃台或電話 ${PHONE} 問割包皮/包皮槍的大概費用與流程，不一定今天看診。`,
-      "但實際費用會依項目、醫師評估與現場流程確認，LINE 或櫃台初問不能保證最後金額。",
+      "實際費用會依項目、醫師評估與現場流程確認，櫃台可先協助你了解大概範圍。",
       "如果決定要看診，再依現場安排掛號。"
     ].join("\n");
   }
@@ -119,15 +119,15 @@ export function answerAdminMixedQuestion(message) {
   if (asksFeePaymentAtCounterWithoutVisit(normalized)) {
     return [
       "可以先到櫃台或請診所人員詢問費用與付款方式，不一定要先決定看診。",
-      "但實際費用會依項目、當天流程與是否需要醫師評估而定，不能在 LINE 直接保證金額。",
-      `刷卡/付款方式目前沒有明確公開資訊，不能保證一定可刷卡；建議先電話 ${PHONE}，或到現場櫃台確認後再決定。`
+      "實際費用會依項目、當天流程與是否需要醫師評估而定，請以櫃台或現場說明為準。",
+      `付款方式建議先電話 ${PHONE} 或到現場櫃台確認，避免白跑或臨時需要準備現金。`
     ].join("\n");
   }
 
   if (asksGeneralPaymentMethod(normalized)) {
     return [
-      "付款方式、是否可刷卡或行動支付，以及是否一定要先準備現金，目前不能在 LINE 直接保證。",
-      `請先電話 ${PHONE}，或到現場櫃台確認當天可用的付款方式後再決定。`
+      "付款方式、是否可刷卡或行動支付，建議先跟櫃台確認。",
+      `可以先電話 ${PHONE}，或到現場櫃台確認當天可用的付款方式後再決定要不要先準備現金。`
     ].join("\n");
   }
 
@@ -189,7 +189,7 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksFirstVisitMissingHealthCard(normalized)) {
     return [
-      "第一次看診健保卡忘帶，不能在 LINE 先保證一定能用健保或一定能先看。",
+      "第一次看診如果健保卡忘帶，會需要櫃台先核對身分與健保資料。",
       "請先帶身分證或其他證件到 3 樓櫃台，讓櫃台確認身分、健保身分、是否需改自費或後續補件。",
       `如果還沒出門，也可以先電話 ${PHONE} 問櫃台。`
     ].join("\n");
@@ -197,7 +197,7 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksOnlineRegistrationLateArrival(normalized)) {
     return [
-      "已線上掛號但可能晚到，不能先保證晚到 20 分鐘一定還看得到。",
+      "已線上掛號但可能晚到，建議先打電話讓櫃台知道，確認當診報到與名額狀況。",
       `建議先電話 ${PHONE} 通知並確認；現場會由櫃台依報到時間、醫師門診狀況、號碼/名額安排。`,
       "到診後仍請帶健保卡/身分證到 3 樓櫃台報到。"
     ].join("\n");
@@ -228,7 +228,7 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksRegistrationPatientSwitch(normalized)) {
     return [
-      "同一筆掛號能不能改成不同就診者，不能在 LINE 先保證。",
+      "同一筆掛號能不能改成不同就診者，需要櫃台查原本掛號資料後確認。",
       `這會涉及身分、健保與掛號資料核對；請帶本人證件到 3 樓櫃台，或先電話 ${PHONE} 請櫃台確認。`,
       "現場可能需要取消原掛號後重掛，或重新掛號，實際以櫃台處理為準。"
     ].join("\n");
@@ -236,7 +236,7 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksSameNumberReschedule(normalized)) {
     return [
-      "同一個號能不能直接改成別的時段，不能在 LINE 先保證。",
+      "同一個號能不能直接改成別的時段，需要櫃台查原本掛號與新時段名額後確認。",
       `通常要由原本線上掛號系統、電話 ${PHONE} 或現場 3 樓櫃台確認是否可改、是否需取消重掛，以及新時段還有沒有名額。`
     ].join("\n");
   }
@@ -258,7 +258,7 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksReportPickupProxy(normalized)) {
     return [
-      "檢查報告涉及個人醫療資料，能不能只領報告、能不能由家人代領，都要先由櫃台或診所人員確認，不能在 LINE 直接保證。",
+      "檢查報告屬於個人醫療資料，能不能只領報告、能不能由家人代領，請先由櫃台或診所人員核對身分後確認。",
       `請病人或家人先電話 ${PHONE}，或到現場先問櫃台。`,
       "若現場確認可代領，通常請先準備病人身分證/健保卡或影本、代領人身分證，以及診所要求的授權或關係資料；實際文件以櫃台流程為準。",
       "如果報告需要醫師解釋，仍可能需要掛號回診或門診說明。"
@@ -267,9 +267,9 @@ export function answerAdminMixedQuestion(message) {
 
   if (asksFamilyMemberVisitStatusLookup(normalized)) {
     return [
-      "報到或看完了沒，屬於個人就醫資訊，不能直接在 LINE 幫家人查或透露。",
+      "報到或看完了沒，屬於個人就醫資訊，這裡不能直接幫家人查或透露。",
       `請病人本人聯絡診所，或由家人依診所身份確認/授權流程電話 ${PHONE} 或現場詢問。`,
-      "若是安全或緊急狀況，請依實際情況聯絡家人、現場人員或緊急服務，但 LINE 這裡不能揭露就醫狀態。"
+      "若是安全或緊急狀況，請依實際情況聯絡家人、現場人員或緊急服務；就醫狀態仍需要依身分確認流程查詢。"
     ].join("\n");
   }
 
@@ -277,7 +277,7 @@ export function answerAdminMixedQuestion(message) {
     return [
       "可以先告知想指定醫師或偏好男醫師。",
       "但能否指定、當天是否由指定醫師看、是否可改掛/等候，要依門診表、名額與櫃台確認。",
-      "當天只有其他醫師時，可先向櫃台詢問再決定；不能保證一定改到。"
+      "當天只有其他醫師時，可先向櫃台詢問再決定；不一定能改到指定醫師。"
     ].join("\n");
   }
 
@@ -325,7 +325,7 @@ export function answerAdminMixedQuestion(message) {
   if (asksMobilityCheckinAssistance(normalized)) {
     return [
       "可以先到 3 樓櫃台說明長輩行動比較慢，請櫃台協助確認報到與等候安排；病人本人是否需到櫃台核對，仍以現場流程為準。",
-      `診所是否有可借用輪椅或其他協助，公開資料沒有明確保證；建議先電話 ${PHONE} 確認。`,
+      `輪椅或其他協助是否方便安排，建議先電話 ${PHONE} 問櫃台。`,
       "若只是先讓長輩坐著等，也可抵達後先跟櫃台說明。"
     ].join("\n");
   }
@@ -340,8 +340,8 @@ export function answerAdminMixedQuestion(message) {
   if (asksAnonymousScreeningPaymentOrId(normalized)) {
     return [
       "匿名篩檢可到診後向護理人員詢問流程與項目。",
-      "刷卡/付款方式知識庫沒有明確公開，不能保證可刷卡；請電話或現場確認。",
-      "是否需健保卡或身分證會依篩檢項目與現場流程說明，不能先保證完全不用證件。"
+      "付款方式請先電話或現場確認。",
+      "是否需健保卡或身分證會依篩檢項目與現場流程說明，請到場時讓護理人員協助確認。"
     ].join("\n");
   }
 

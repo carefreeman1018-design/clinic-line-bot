@@ -58,7 +58,7 @@ function normalizeLineReply(reply) {
 }
 
 function enforceDefaultClinicVoice(reply, _context) {
-  return reply
+  return rewriteInternalBoundaryLanguage(reply)
     .replace(/^(您好|你好)[，,：:\s]+/g, "")
     .replace(/(?:^|\n)(感謝您的訊息|謝謝您的詢問)[。！!.\s]*$/g, "")
     .replace(/(?:^|\n)(祝您健康平安|祝您早日康復)[。！!.\s]*$/g, "")
@@ -68,4 +68,32 @@ function enforceDefaultClinicVoice(reply, _context) {
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+
+function rewriteInternalBoundaryLanguage(reply) {
+  return reply
+    .replace(/知識庫沒有寫死/g, "這部分需要櫃台依實際門診安排確認")
+    .replace(/知識庫沒有(?:公開)?明確(?:資訊|數字|資料)?/g, "這部分建議向櫃台確認")
+    .replace(/公開資料沒有明確(?:保證|確認)?/g, "這部分建議向櫃台確認")
+    .replace(/目前沒有明確公開資訊/g, "這部分建議向櫃台確認")
+    .replace(/不能在\s*LINE\s*先保證固定天數/g, "每個檢查項目的時間不一定相同")
+    .replace(/不能在\s*LINE\s*直接保證金額/g, "實際金額請以櫃台或現場說明為準")
+    .replace(/LINE\s*或櫃台初問不能保證最後金額/g, "櫃台可先協助了解大概範圍，最後金額以現場評估與流程為準")
+    .replace(/LINE\s*不能保證價格或一定可刷卡/g, "實際費用和付款方式請以現場確認為準")
+    .replace(/不能保證一定可刷卡/g, "付款方式請先向櫃台確認")
+    .replace(/不能保證可刷卡/g, "付款方式請先向櫃台確認")
+    .replace(/刷卡\/付款方式[^；。\n]*；建議/g, "付款方式建議")
+    .replace(/是否能用\s*LINE\s*只通知狀態，涉及個人資料與身[份分]確認；/g, "若只是想確認報告狀態，也需要先核對身分；")
+    .replace(/，不能在\s*LINE\s*先保證/g, "，需要由櫃台確認")
+    .replace(/不能在\s*LINE\s*先保證/g, "需要由櫃台確認")
+    .replace(/不能在\s*LINE\s*直接保證/g, "需要由櫃台確認")
+    .replace(/不能直接在\s*LINE\s*幫/g, "這裡不能直接幫")
+    .replace(/不能只靠\s*LINE\s*訊息直接保證/g, "需要由櫃台確認")
+    .replace(/LINE\s*這裡不能/g, "這裡無法")
+    .replace(/LINE\s*這裡/g, "這裡")
+    .replace(/([；。])\s*不能保證一定/g, "$1 是否能")
+    .replace(/；不能先保證/g, "，請以現場確認為準")
+    .replace(/；\s+是否能/g, "；是否能")
+    .replace(/但\s+這裡/g, "但這裡");
 }
