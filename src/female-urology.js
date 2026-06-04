@@ -1,11 +1,13 @@
 const PHONE = "02-2511-9488";
 
 export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
+  if (hasExplicitMaleSelfCue(message)) return null;
+  if (hasMaleUtiTopicCue(message)) return null;
+  if (hasMaleSpecificUrologyCue(message)) return null;
+
   const officialUtiInfoReply = answerOfficialUtiInfoQuestion(message);
   if (officialUtiInfoReply) return officialUtiInfoReply;
 
-  if (hasExplicitMaleSelfCue(message)) return null;
-  if (hasMaleSpecificUrologyCue(message)) return null;
   if (hasAdministrativeIdCue(message) && !hasFemaleSpecificCue(message)) return null;
   if (!hasFemaleSpecificCue(message) && hasUpperUrinaryEmergencyCue(message)) return null;
   const isFemaleUrologyFollowUp = isFemaleUrologyFeeFollowUp(message, conversationHistory);
@@ -107,6 +109,10 @@ function isFemaleUrologyQuestion(message) {
 
 function hasExplicitMaleSelfCue(message) {
   return /我是男生|我是男性|我是男的|我.*男生|我.*男性|我.*男的/.test(message);
+}
+
+function hasMaleUtiTopicCue(message) {
+  return /男性|男生|男/.test(message) && /尿道炎|膀胱炎|泌尿道感染|尿路感染|攝護腺炎|睪丸炎|副睪丸炎/.test(message);
 }
 
 function hasMaleSpecificUrologyCue(message) {
