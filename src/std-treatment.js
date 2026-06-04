@@ -13,6 +13,9 @@ export function answerStdTreatmentQuestion(message) {
     return answerWartQuestion(message);
   }
 
+  const officialStdInfoReply = answerOfficialStdInfoQuestion(message);
+  if (officialStdInfoReply) return officialStdInfoReply;
+
   const pepMedicationReply = answerPepMedicationAdjustmentQuestion(message);
   if (pepMedicationReply) return pepMedicationReply;
 
@@ -46,6 +49,34 @@ export function answerStdTreatmentQuestion(message) {
     "性病篩檢與治療需要依症狀、病灶與檢查結果由醫師判斷。",
     `不能只靠線上訊息診斷或開藥；建議預約門診，或電話 ${PHONE} 確認時段。`
   ].join("");
+}
+
+function answerOfficialStdInfoQuestion(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message) && /項目|包含|哪些|驗什麼/.test(message)) {
+    return "官網列出匿名性病快篩/治療，包含愛滋病、菜花 HPV、梅毒、淋病、披衣菌等篩檢與治療服務；實際可做項目與流程仍由現場護理人員依篩檢項目說明。";
+  }
+
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message) && /流程|怎麼做|怎麼.*匿名|櫃台|圖片|真名|姓名|暱稱/.test(message)) {
+    return "官網說明匿名篩檢可先電話或由診所人員協助預約；到診後不用在櫃台說出檢查內容，可出示預約後提供的指定圖片，由護理人員帶到獨立空間篩檢。官網也提到可使用暱稱、不需留下真實姓名，報告查詢需由診所人員協助。";
+  }
+
+  if (/菜花|尖銳濕疣|HPV(?!\s*疫苗)/i.test(message) && /潛伏期|多久.*長|多久.*出現/.test(message)) {
+    return "官網菜花衛教提到菜花潛伏期平均約 2 到 3 個月，也可能更久；若擔心感染，可先做 HPV 篩檢，再依醫師評估是否需要處理。";
+  }
+
+  if (/菜花|尖銳濕疣|HPV(?!\s*疫苗)/i.test(message) && /治療方式|怎麼治療|怎麼處理|電燒|冷凍|雷射|藥/.test(message)) {
+    return "菜花治療需經醫師診斷後開立或安排，官網整理可能方式包含外用藥物、免疫調節、電燒、冷凍、雷射等；實際方式需看病灶與檢查結果決定。";
+  }
+
+  if (/PrEP|暴露前/i.test(message) && /適合|哪些人|族群|誰/.test(message)) {
+    return "官網提到可諮詢 PrEP 的族群包括性行為頻率較高、較少使用保險套、有藥愛習慣，或伴侶為 HIV 感染者但自己為 HIV 陰性者；PrEP 需經醫師評估後使用。";
+  }
+
+  if (/PEP|暴露後|高風險|保險套破|無套/i.test(message) && /情境|什麼情況|哪些狀況|需要|適合/.test(message)) {
+    return "官網提到可能需要評估 PEP 的情境包含未使用保險套、遭受性侵、共用針頭，或直接接觸疑似含 HIV 的血液或體液；PEP 重點是在風險行為後 72 小時內盡快由醫師評估。";
+  }
+
+  return null;
 }
 
 export function answerUrethralDischargeStdQuestion(message) {
