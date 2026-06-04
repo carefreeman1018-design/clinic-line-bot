@@ -185,6 +185,27 @@ const cases = [
     forbidden: ["PEP", "72 小時", "越早越好", "預防性投藥"]
   },
   {
+    name: "natural dean doctor fixed schedule lists all regular slots",
+    message: "院長是哪位醫師？他固定什麼時候看診？",
+    routedOnly: true,
+    expected: ["陳偉傑醫師", "津久診所院長", "一般泌尿/排尿相關問題", "固定門診", "週一早診", "09:30-12:30", "週二早診", "週四晚診", "18:00-20:30", "週五早診"],
+    forbidden: ["只有週四晚診", "週四晚診（18:00-20:30）是陳偉傑醫師門診", "主要看精雕微創包皮槍手術、無刀口結紮手術、男性私密整形/陰莖增大手術"]
+  },
+  {
+    name: "natural luo specialty summary includes general urology",
+    message: "那羅醫師呢？他主要看什麼？",
+    routedOnly: true,
+    expected: ["羅詩修醫師", "一般泌尿/排尿相關問題", "男性/女性排尿障礙", "包皮/結紮", "男性私密"],
+    forbidden: ["主要看精雕微創包皮槍手術、無刀口結紮手術、男性私密整形/陰莖增大手術"]
+  },
+  {
+    name: "natural frequency doctor comparison avoids surgery dump and hard pick",
+    message: "如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？",
+    routedOnly: true,
+    expected: ["一般頻尿或泌尿問題", "不一定只能掛院長", "不需要只推薦唯一", "陳偉傑醫師和羅詩修醫師都有一般泌尿固定門診", "依你能到的時段", "一般泌尿門診", "醫師評估原因"],
+    forbidden: ["共同項目：精雕微創包皮槍手術", "無刀口結紮手術、男性私密整形/陰莖增大手術", "週四早診", "一定掛院長", "一定掛羅醫師"]
+  },
+  {
     name: "round18 near lunch clinic end asks counter deadline not doctor schedule",
     message: "Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。",
     expected: ["不能先保證", "壓線", "一定看得到", "17:00 後", "等加號", "午診 13:30-17:00", "診間時段", "最晚報到", "能否加號或候補", "電話", "現場櫃台確認", "快到診所", "3 樓櫃台", "02-2511-9488"],

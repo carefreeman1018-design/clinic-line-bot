@@ -191,6 +191,11 @@ const DOCTOR_PROFILES = {
   }
 };
 
+const CONCISE_SPECIALTY_SUMMARIES = {
+  "陳偉傑醫師": "一般泌尿/排尿相關問題、男性排尿障礙、包皮/結紮等男性手術與男性私密相關問題",
+  "羅詩修醫師": "一般泌尿/排尿相關問題、男性/女性排尿障礙、包皮/結紮等男性手術與男性私密相關問題"
+};
+
 const DOCTOR_ALIASES = [
   ["陳偉傑醫師", /陳偉傑|陳醫師|陳醫生/],
   ["羅詩修醫師", /羅詩修|羅醫師|羅醫生/],
@@ -278,19 +283,22 @@ function buildMaleMenopauseDoctorChoiceReply(message) {
 
 function buildGeneralUrologyDoctorChoiceReply(message, now) {
   const hasGeneralUrologySymptom = /頻尿|夜尿|尿急|排尿|泌尿|一般泌尿/.test(message);
-  const hasDoctorChoiceCue = /院長|醫師|醫生|掛他|掛誰|掛哪|推薦/.test(message);
-  const hasNonExclusiveCue = /一定要|只能|唯一|不要推薦|不一定|非要/.test(message);
-  if (!hasGeneralUrologySymptom || !hasDoctorChoiceCue || !hasNonExclusiveCue) return null;
+  const hasDoctorChoiceCue = /院長|羅醫師|羅醫生|醫師|醫生|掛他|掛誰|掛哪|推薦|比較適合|差在哪|差別|不同/.test(message);
+  const hasChoiceBoundaryCue = /一定要|只能|唯一|不要推薦|不一定|非要|比較適合|差在哪|差別|不同/.test(message);
+  if (!hasGeneralUrologySymptom || !hasDoctorChoiceCue || !hasChoiceBoundaryCue) return null;
 
   const doctor = resolveDoctor(message);
-  const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
+  const requestedDay = resolveRequestedDay(message, now);
+  const day = requestedDay ?? getTaipeiWeekday(now);
   const dayLabel = buildDayLabel(message, day);
   const periods = resolveRequestedPeriods(message);
   const periodText = periods.length > 0
     ? periods.map((period) => `${period}（${PERIOD_TIMES[period]}）`).join("、")
     : "一般門診時段";
   const doctorScheduleLine = doctor ? buildDoctorDayScheduleLine(doctor, day, dayLabel, periods) : null;
-  const scheduleNote = doctorScheduleLine && !doctorScheduleLine.includes("沒有")
+  const scheduleNote = !requestedDay && periods.length === 0
+    ? "院長陳偉傑醫師和羅詩修醫師都有一般泌尿固定門診，可依你能到的時段先掛一般泌尿"
+    : doctorScheduleLine && !doctorScheduleLine.includes("沒有")
     ? `${doctorScheduleLine}可先參考固定門診`
     : periods.includes("晚診") && day === "週四"
     ? "今天晚診若固定門診是院長陳偉傑醫師可先參考"
@@ -299,6 +307,7 @@ function buildGeneralUrologyDoctorChoiceReply(message, now) {
   return [
     "一般頻尿或泌尿問題不一定只能掛院長，也不需要只推薦唯一一位醫師。",
     `${scheduleNote}；也可以依一般門診時段與名額安排。`,
+    "若只是頻尿、夜尿或排尿問題，可先掛一般泌尿門診；到診後再由醫師評估原因。",
     "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
   ].join("");
 }
@@ -365,7 +374,9 @@ function buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, 
   const lines = [buildConciseDoctorIntro(resolvedDoctor)];
   const day = resolveRequestedDay(message, now) ?? getTaipeiWeekday(now);
   const periods = resolveRequestedPeriods(message);
-  const scheduleLine = buildDoctorDayScheduleLine(resolvedDoctor, day, buildDayLabel(message, day), periods);
+  const scheduleLine = asksFullFixedDoctorSchedule(message) && !resolveRequestedDay(message, now) && periods.length === 0
+    ? buildDoctorFullFixedScheduleLine(resolvedDoctor)
+    : buildDoctorDayScheduleLine(resolvedDoctor, day, buildDayLabel(message, day), periods);
   if (scheduleLine) lines.push(scheduleLine);
   lines.push(TEMPORARY_CHANGE_CONFIRMATION);
 
@@ -388,14 +399,14 @@ function buildConciseDoctorIntro(doctor) {
   const profile = DOCTOR_PROFILES[doctor];
   const specialties = DOCTOR_SPECIALTIES[doctor] ?? [];
   const role = profile?.current?.[0] ?? "津久診所醫師";
-  const specialtyText = specialties.slice(0, 3).join("、");
+  const specialtyText = CONCISE_SPECIALTY_SUMMARIES[doctor] ?? specialties.slice(0, 3).join("、");
   if (!specialtyText) return `${doctor}是${role}。`;
   return `${doctor}是${role}，主要看${specialtyText}。`;
 }
 
 function buildConciseSpecialtyReply(doctor) {
   const specialties = DOCTOR_SPECIALTIES[doctor] ?? [];
-  const specialtyText = specialties.slice(0, 3).join("、");
+  const specialtyText = CONCISE_SPECIALTY_SUMMARIES[doctor] ?? specialties.slice(0, 3).join("、");
   if (!specialtyText) return `目前沒有整理到${doctor}的主治專長。`;
   return `${doctor}主要看${specialtyText}。`;
 }
@@ -437,6 +448,23 @@ function buildDoctorDayScheduleLine(doctor, day, dayLabel, requestedPeriods) {
   }
 
   return `${dayLabel}固定門診沒有列到${doctor}的一般門診。`;
+}
+
+function asksFullFixedDoctorSchedule(message) {
+  return /固定|什麼時候|哪些時段|哪幾天|哪天|時間|門診表/.test(message);
+}
+
+function buildDoctorFullFixedScheduleLine(doctor) {
+  const lines = Object.entries(FIXED_SCHEDULE)
+    .flatMap(([day, schedule]) => ["早診", "午診", "晚診"].map((period) => {
+      const clinic = schedule[period] ?? "休診";
+      if (!clinic.includes(doctor)) return null;
+      return `${day}${period}（${PERIOD_TIMES[period]}）`;
+    }))
+    .filter(Boolean);
+
+  if (lines.length === 0) return `固定門診表沒有列到${doctor}的一般門診。`;
+  return `${doctor}固定門診：${lines.join("、")}。`;
 }
 
 function buildDoctorAvailablePeriodsForDay(doctor, day) {
