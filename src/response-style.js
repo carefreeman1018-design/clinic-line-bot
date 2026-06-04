@@ -1,7 +1,14 @@
-const DEFAULT_RESPONSE_STYLE_ID = process.env.RESPONSE_STYLE_ID || "clinic-default";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { supabase } from "./supabase.js";
+
+const RESPONSE_STYLES_TABLE = process.env.SUPABASE_RESPONSE_STYLES_TABLE || "response_styles";
+const DEFAULT_RESPONSE_STYLE_ID = process.env.RESPONSE_STYLE_ID || "uromeeme-doctor";
+const LOCAL_RESPONSE_STYLE_DIR = path.join(process.cwd(), "data", "response-styles");
+const styleCache = new Map();
 
 export const DEFAULT_RESPONSE_STYLE = {
-  id: DEFAULT_RESPONSE_STYLE_ID,
+  id: "clinic-default",
   displayName: "津久診所預設語氣",
   voice: [
     "簡短、直接、溫和",
@@ -23,6 +30,19 @@ export const DEFAULT_RESPONSE_STYLE = {
   ],
   doctorPersona: null
 };
+
+export async function getResponseStyle(styleId = DEFAULT_RESPONSE_STYLE_ID) {
+  const normalizedStyleId = String(styleId || DEFAULT_RESPONSE_STYLE_ID).trim() || DEFAULT_RESPONSE_STYLE_ID;
+  if (styleCache.has(normalizedStyleId)) return styleCache.get(normalizedStyleId);
+
+  const style =
+    (await loadResponseStyleFromSupabase(normalizedStyleId)) ||
+    (await loadResponseStyleFromLocalFile(normalizedStyleId)) ||
+    DEFAULT_RESPONSE_STYLE;
+
+  styleCache.set(normalizedStyleId, style);
+  return style;
+}
 
 export function applyResponseStyle({
   reply,
@@ -49,6 +69,91 @@ export function buildResponseStyleContext(overrides = {}) {
   };
 }
 
+export function buildResponseStylePrompt(style = DEFAULT_RESPONSE_STYLE) {
+  const sections = [];
+
+  if (style.displayName) sections.push(`目前使用回覆風格：${style.displayName}`);
+  if (Array.isArray(style.voice) && style.voice.length > 0) {
+    sections.push(`語氣規則：\n${style.voice.map((item) => `- ${item}`).join("\n")}`);
+  }
+  if (Array.isArray(style.preferredPhrases) && style.preferredPhrases.length > 0) {
+    sections.push(`可自然使用的說法：${style.preferredPhrases.join("、")}`);
+  }
+  if (Array.isArray(style.avoidPhrases) && style.avoidPhrases.length > 0) {
+    sections.push(`避免用語：${style.avoidPhrases.join("、")}`);
+  }
+  if (Array.isArray(style.boundaryPhrases) && style.boundaryPhrases.length > 0) {
+    sections.push(`醫療邊界說法參考：\n${style.boundaryPhrases.map((item) => `- ${item}`).join("\n")}`);
+  }
+  if (style.doctorPersona?.notAllowed) {
+    sections.push(`身分邊界：${style.doctorPersona.notAllowed}`);
+  }
+  if (Array.isArray(style.safetyNotes) && style.safetyNotes.length > 0) {
+    sections.push(`安全提醒：\n${style.safetyNotes.map((item) => `- ${item}`).join("\n")}`);
+  }
+
+  return sections.join("\n\n");
+}
+
+async function loadResponseStyleFromSupabase(styleId) {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from(RESPONSE_STYLES_TABLE)
+    .select("id, display_name, voice, preferred_phrases, avoid_phrases, boundary_phrases, example_rewrites, doctor_name, is_active")
+    .eq("id", styleId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "PGRST205") return null;
+    console.error(`Supabase response style load failed for ${styleId}:`, error);
+    return null;
+  }
+
+  if (!data) return null;
+
+  return buildResponseStyleContext({
+    id: data.id,
+    displayName: data.display_name,
+    voice: Array.isArray(data.voice) ? data.voice : DEFAULT_RESPONSE_STYLE.voice,
+    preferredPhrases: data.preferred_phrases ?? [],
+    avoidPhrases: data.avoid_phrases ?? [],
+    boundaryPhrases: data.boundary_phrases ?? [],
+    exampleRewrites: data.example_rewrites ?? [],
+    doctorName: data.doctor_name ?? null
+  });
+}
+
+async function loadResponseStyleFromLocalFile(styleId) {
+  try {
+    const raw = await fs.readFile(path.join(LOCAL_RESPONSE_STYLE_DIR, `${styleId}.json`), "utf8");
+    return normalizeLocalResponseStyle(JSON.parse(raw));
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error(`Local response style load failed for ${styleId}:`, error);
+    }
+    return null;
+  }
+}
+
+function normalizeLocalResponseStyle(style) {
+  return buildResponseStyleContext({
+    id: style.id,
+    displayName: style.displayName,
+    voice: style.voice,
+    preferredPhrases: style.preferredPhrases,
+    avoidPhrases: style.avoidPhrases,
+    boundaryPhrases: style.boundaryPhrases,
+    doctorPersona: style.doctorPersona,
+    exampleRewrites: style.exampleRewrites,
+    safetyNotes: style.safetyNotes,
+    source: style.source,
+    extractionNotes: style.extractionNotes,
+    testScenarios: style.testScenarios
+  });
+}
+
 function normalizeLineReply(reply) {
   return reply
     .replace(/\r\n/g, "\n")
@@ -69,7 +174,6 @@ function enforceDefaultClinicVoice(reply, _context) {
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
-
 
 function rewriteInternalBoundaryLanguage(reply) {
   return reply
