@@ -409,6 +409,13 @@ const cases = [
     forbidden: ["直接保證", "一定掛得到", "一定看得到", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   },
   {
+    name: "natural tomorrow daytime frequency lists morning and afternoon",
+    message: "我明天白天想第一次去看頻尿，早上或下午哪個時段可以？誰看？我不方便看長文。",
+    routedOnly: true,
+    expected: ["明天（週五）白天一般泌尿", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "02-2511-9488"],
+    forbidden: ["只列", "只有下午", "明天（週五）午診/下午 13:30-17:00，羅詩修醫師。", "抗生素", "急診/立即就醫", "https://", "appointment"]
+  },
+  {
     name: "online full frequency visit resets older vasectomy context",
     message: "我明天想第一次去看頻尿，如果線上掛號滿了，可以直接到現場等嗎？",
     routedOnly: true,

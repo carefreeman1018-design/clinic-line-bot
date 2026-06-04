@@ -20,6 +20,13 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksTomorrowFridayDaytimeUrologyMorningOrAfternoon(normalized)) {
+    return [
+      "明天（週五）白天一般泌尿可參考：早診 09:30-12:30 陳偉傑醫師；午診 13:30-17:00 羅詩修醫師。",
+      `名額與臨時異動請電話 ${PHONE} 或現場確認。`
+    ].join("\n");
+  }
+
   if (asksTomorrowFridayAfternoonClinicDoctorOnly(normalized)) {
     return [
       "明天（週五）午診/下午 13:30-17:00，羅詩修醫師。",
@@ -397,6 +404,17 @@ function asksTomorrowFridayAfternoonUrologyForReportVaccineOnly(message) {
   const asksRegistrationFit = /掛|看|可以嗎|可不可以|能不能|要不要|怎麼掛|怎麼看|不想做治療|只是問|只問|短一點|講重點/.test(message);
 
   return asksTomorrowAfternoon && asksDoctorOrUrology && hasReportAndVaccine && asksRegistrationFit;
+}
+
+function asksTomorrowFridayDaytimeUrologyMorningOrAfternoon(message) {
+  if (/院長|差在哪|差別|比較|我要掛誰|掛誰|哪個比較適合|不硬選|不要幫我硬選/.test(message)) return false;
+
+  const asksTomorrow = /明天/.test(message);
+  const asksDaytimeOrMultiplePeriods = /白天|早上或下午|上午或下午|早診或午診|早上.*下午|上午.*下午|早診.*午診/.test(message);
+  const asksUrologyOrFrequency = /頻尿|夜尿|一般泌尿|泌尿科|泌尿|排尿|尿急|尿尿|小便/.test(message);
+  const asksTimeOrDoctor = /時段|時間|誰看|哪位醫師|哪位醫生|醫師|醫生|早上|上午|下午|午診|可以/.test(message);
+
+  return asksTomorrow && asksDaytimeOrMultiplePeriods && asksUrologyOrFrequency && asksTimeOrDoctor;
 }
 
 function asksTomorrowFridayAfternoonClinicDoctorOnly(message) {
