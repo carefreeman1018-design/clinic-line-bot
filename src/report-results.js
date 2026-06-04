@@ -2,6 +2,7 @@ const PHONE = "02-2511-9488";
 
 export function answerReportResultQuestion(message, conversationHistory = []) {
   if (!isReportResultQuestion(message)) return null;
+  if (isGeneralProstateCancerInfoQuestion(message)) return null;
   if (isAnonymousScreeningQuestion(message)) return null;
   if (isStdReportQuestion(message)) return null;
 
@@ -68,6 +69,14 @@ export function answerReportResultQuestion(message, conversationHistory = []) {
 
 function isReportResultQuestion(message) {
   return /報告|檢查結果|PSA|攝護腺指數|超音波|尿流速|切片|癌|腫瘤|尿蛋白|潛血|腎功能|eGFR|肌酸酐|creatinine/i.test(message);
+}
+
+function isGeneralProstateCancerInfoQuestion(message) {
+  return (
+    /攝護腺肥大|前列腺肥大/.test(message) &&
+    /攝護腺癌|前列腺癌|癌/.test(message) &&
+    !/報告|檢查結果|PSA|攝護腺指數|超音波|尿流速|切片|數值|Gleason|格里森/i.test(message)
+  );
 }
 
 function isAnonymousScreeningQuestion(message) {
