@@ -465,3 +465,14 @@ Goal: test ordinary first-visit clinic operations in the real LINE test chat.
 | 2 | 第三次重測 Round25-2：我有別家診所的藥袋和檢查報告，明天看診要帶去嗎？可以先傳 LINE 給你們嗎？不要幫我判讀。 | Says outside clinic medicine bag and paper/image reports can be brought for doctor reference; do not first send personal data, medicine bag or medical report by LINE for online interpretation; call or ask counter if unsure what to bring. | Pass | Doctor-review waiting tail is gone, while true report interpretation remains protected. |
 | 3 | 重測 Round25-3：我幫爸爸掛號，結果臨時換成我要看，可以用同一筆掛號改名字嗎？還是一定要取消重掛？不要貼連結。 | Says same registration cannot be guaranteed for a different patient or name change on LINE; bring ID/health-card data to 3F counter or call; onsite may need cancelling and rebooking or a new registration. | Pass | No appointment URL and no overpromise. |
 | 4 | 重測 Round25-4：我看完診如果醫師說要抽血或驗尿，是當天在診所做嗎？還是要另外約時間？我只是想知道流程。 | Says after the doctor orders blood or urine testing, same-day vs separate appointment depends on the order and onsite process; fasting, sample time, fee and report time are confirmed by counter/nursing staff after the visit; no same-day guarantee. | Pass | No doctor schedule drift. |
+
+## Round 26 - Natural patient wording for daily clinic admin questions
+
+Tested after pushing commit `fb1b64b` on 2026-06-04 around 08:13-08:15 CST. Questions were sent in natural patient wording without `Round`, `重測`, or artificial "不要貼連結" instructions.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我想做匿名篩檢，如果報告出來你們會打電話通知嗎？電話裡會講檢查內容嗎？ | Says anonymous screening values privacy; report notification method, time to know results, and whether phone calls mention test contents depend on onsite staff and item; LINE inquiry will not cause active disclosure to family; call 02-2511-9488 or tell nursing staff privacy needs onsite. | Pass | No unnecessary doctor/staff review waiting tail. |
+| 2 | 我月底要出國，想先問 HPV 或皮蛇疫苗有沒有庫存、大概多少錢，可以直接到櫃台問嗎？ | Says the patient can ask counter or call 02-2511-9488 about HPV/skin-shingles vaccine stock, fee and available vaccination time without deciding to receive it first; stock, actual fee, suitability, travel timing and same-day arrangement depend on staff/doctor confirmation. | Pass | No payment-method drift. |
+| 3 | 朋友說結紮要找院長，我明天下午如果只有羅醫師的診，可以先去問結紮諮詢嗎？ | Says tomorrow Friday afternoon 13:30-17:00 is Luo Shixiu general urology; for vasectomy consultation, tell 3F counter; same-day assessment, changing registration, separate appointment, fee and follow-up depend on doctor/counter; not necessarily only the dean. | Pass | Practical counter path instead of specialty dump. |
+| 4 | 匿名篩檢流程怎麼做？我昨天無套高風險，需要 PEP 嗎？ | Says PEP should be evaluated within 72 hours and the earlier the better; contact the clinic today or see outpatient/ER for physician assessment; anonymous screening can be asked together but PEP assessment is prioritized. | Pass | Safety boundary prevents generic anonymous-screening admin reply. |
