@@ -35,6 +35,14 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
   }
 
   if (!hasDirectVasectomyQuestion) return null;
+  if (asksVasectomyAvailabilityOrOfficialKind(message)) {
+    return [
+      "有，官網列出的項目是「雷射無刀口男性結紮手術」，也就是男性無刀口結紮/輸精管結紮評估。",
+      "官網說明手術會阻斷輸精管，達到避孕效果；是否適合、能否當天安排與費用仍需醫師術前評估並依當天時段確認。",
+      `下一步可先預約男性結紮諮詢，或電話 ${PHONE} 確認可評估時段。`
+    ].join("\n");
+  }
+
   if (!asksSchedulePriceReversalOrSafety(message)) return null;
 
   if (asksSexualFunctionImpact(message)) {
@@ -172,6 +180,10 @@ function asksSexualFunctionImpact(message) {
 
 function asksCost(message) {
   return /費用|價格|價錢|多少錢|報價/.test(message);
+}
+
+function asksVasectomyAvailabilityOrOfficialKind(message) {
+  return /有做|有沒有|提供|哪一種|哪種|官網.*說|官網.*寫|官網.*列|服務項目|診療項目|治療項目/.test(message);
 }
 
 function asksFirstConsultOrDirectorQuestion(message) {

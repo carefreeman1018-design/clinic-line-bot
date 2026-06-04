@@ -1,6 +1,25 @@
 const HOME_URL = "https://uromeeme.com/";
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const LINE_ADD_FRIEND_URL = "https://lin.ee/qDUYijn";
+const OFFICIAL_TREATMENT_SERVICES = [
+  "雙主治增粗包皮槍手術（包皮槍 5.0）與包皮環切手術",
+  "無刀口男性結紮手術",
+  "男性私密處微創手術、陰莖增大與龜頭減敏治療",
+  "攝護腺肥大治療，包含雷射剜除、水蒸氣消融、綠光雷射汽化與 Urolift 前列腺手術",
+  "腎結石、輸尿管結石治療",
+  "男性泌尿道感染評估",
+  "100% 匿名篩檢與性病篩檢/治療",
+  "HPV、皮蛇疫苗施打",
+  "暴露愛滋病毒前/後預防性投藥（PrEP/PEP）",
+  "性功能障礙治療",
+  "低能量震波治療",
+  "女性泌尿道感染/漏尿",
+  "美磁波鍛肌椅",
+  "痔瘡微創手術、廔管手術、肛裂手術",
+  "肛門性病診斷與治療",
+  "客製化功能性修復點滴",
+  "猛健樂門診"
+];
 
 export function answerBasicInfoQuestion(message) {
   const normalized = message.replace(/\s+/g, " ").trim();
@@ -19,6 +38,10 @@ export function answerBasicInfoQuestion(message) {
 
   if (/院長|執行院長/.test(normalized) && /誰|哪位|是誰|叫什麼|介紹/.test(normalized)) {
     return "津久診所院長是陳偉傑醫師；羅詩修醫師是執行院長。";
+  }
+
+  if (asksOfficialTreatmentServiceList(normalized)) {
+    return buildOfficialTreatmentServiceListReply();
   }
 
   if (asksParkingInfo(normalized)) {
@@ -78,7 +101,7 @@ export function answerBasicInfoQuestion(message) {
     return `官網「立即預約」頁有「預約掛號」入口，線上掛號系統網址是 ${APPOINTMENT_URL}。`;
   }
 
-  if (/官網|官方網站|首頁|網站/.test(normalized) && /網址|連結|是哪|在哪|給我|提供/.test(normalized)) {
+  if (/官網|官方網站|首頁|網站/.test(normalized) && /網址|連結|是哪|在哪|給我|提供/.test(normalized) && !asksClinicServiceQuestion(normalized)) {
     return `津久診所官網首頁是 ${HOME_URL}。`;
   }
 
@@ -202,4 +225,24 @@ function asksAppointmentSystem(message) {
 
 function asksOfficialLineConflict(message) {
   return /@455twnga/i.test(message) && /@uromeeme/i.test(message);
+}
+
+function asksOfficialTreatmentServiceList(message) {
+  const asksList = /列出|有哪些|有什麼|服務項目|診療項目|治療項目|主要項目|總覽/.test(message);
+  const referencesOfficialServices = /官網|官方|主要診療|診療項目|治療項目|服務項目/.test(message);
+  const asksSpecificService = /結紮|包皮|攝護腺|前列腺|結石|性病|匿名篩檢|HPV|皮蛇|疫苗|PrEP|PEP|性功能|震波|泌尿道感染|尿道炎|膀胱炎|漏尿|鍛肌椅|痔瘡|廔管|肛裂|肛門|點滴|猛健樂/.test(message);
+
+  return asksList && referencesOfficialServices && !asksSpecificService;
+}
+
+function buildOfficialTreatmentServiceListReply() {
+  return [
+    "官網主要診療項目包含：",
+    ...OFFICIAL_TREATMENT_SERVICES.map((service) => `- ${service}`),
+    "個人是否適合、費用、療程安排、是否可當天處理或疫苗庫存，仍需電話 02-2511-9488 或門診確認。"
+  ].join("\n");
+}
+
+function asksClinicServiceQuestion(message) {
+  return /結紮|包皮|攝護腺|前列腺|結石|性病|匿名篩檢|HPV|皮蛇|疫苗|PrEP|PEP|性功能|震波|泌尿道感染|尿道炎|膀胱炎|漏尿|鍛肌椅|痔瘡|廔管|肛裂|肛門|點滴|猛健樂|診療項目|治療項目|服務項目/.test(message);
 }
