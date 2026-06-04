@@ -27,7 +27,7 @@ export function answerBasicInfoQuestion(message) {
 
   if (asksOfficialLineConflict(normalized)) {
     return [
-      "目前知識庫中的官方 LINE ID 是 @455twnga，加好友連結是 https://lin.ee/qDUYijn。",
+      "官方 LINE ID 是 @455twnga，加好友連結是 https://lin.ee/qDUYijn。",
       "若 LINE VOOM 貼文另有 @uromeeme，建議以加好友連結、官方 LINE 最新公告或電話 02-2511-9488 確認。"
     ].join("\n");
   }
@@ -40,12 +40,12 @@ export function answerBasicInfoQuestion(message) {
     return "津久診所院長是陳偉傑醫師；羅詩修醫師是執行院長。";
   }
 
-  if (asksOfficialTreatmentServiceList(normalized)) {
-    return buildOfficialTreatmentServiceListReply();
-  }
-
   if (asksParkingInfo(normalized)) {
     return buildParkingReply(normalized);
+  }
+
+  if (asksOfficialTreatmentServiceList(normalized)) {
+    return buildOfficialTreatmentServiceListReply();
   }
 
   if (asksBasicInfoBundle(normalized)) {

@@ -45,7 +45,7 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
     const adminTopic = asksExplicitPrice(message)
       ? "價格、庫存與可預約時段"
       : "今天能不能直接打、疫苗庫存與可預約時段";
-    parts.push(`${adminTopic}目前知識庫沒有公開明確資訊，建議電話 ${PHONE} 或由診所人員確認。`);
+    parts.push(`${adminTopic}我這邊不能直接確認，建議電話 ${PHONE} 先確認費用、庫存與當天能不能安排。`);
   }
 
   if (asksSameDayCoadministration(message)) {
@@ -217,7 +217,7 @@ function buildPersonalSuitabilityBoundary(message) {
     ? "，以及今天能不能直接打"
     : "";
 
-  return `是否適合施打不能只靠訊息判斷；${factors.join("、")}${sameDayText}，都需由醫師或診所人員依個人狀況與庫存評估。`;
+  return `是否適合施打不能只靠訊息判斷；${factors.join("、")}${sameDayText}，都需由醫師或診所人員依個人狀況與庫存評估。建議預約門診，或先電話 ${PHONE} 確認可評估時段。`;
 }
 
 function hasCurrentHpvWartConcern(message) {

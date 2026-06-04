@@ -1,7 +1,8 @@
 import OpenAI from "openai";
+import { buildResponseStylePrompt } from "./response-style.js";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5.4-mini";
 const MAX_REPLY_CHARS = Number(process.env.MAX_REPLY_CHARS || 360);
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const PHONE = "02-2511-9488";
@@ -28,13 +29,13 @@ const OFFICIAL_TOPIC_URLS = [
 
 const client = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
-export async function draftReply({ message, chunks, shouldEscalate, conversationHistory = [] }) {
+export async function draftReply({ message, chunks, shouldEscalate, conversationHistory = [], responseStyle = null }) {
   if (shouldEscalate) {
-    return "這個需要醫師看診判斷，線上先不要自己硬判。可以先預約門診；若要診所協助，請留下姓名、電話和方便聯絡的時段。";
+    return `這個需要由醫師實際評估，光靠訊息不能診斷或決定用藥/處置。建議預約門診；若症狀明顯不舒服或想確認最快時段，請先電話 ${PHONE} 聯絡診所。`;
   }
 
   if (chunks.length === 0) {
-    return "我目前沒有查到明確資料。可以把想問的項目、日期或醫師名字再補一下；若是個人症狀，建議直接預約門診或請診所人員協助確認。";
+    return "這題我這邊還不能直接確認。你可以把想問的項目、日期或醫師名字再補一下；如果是個人症狀，會建議直接預約門診看比較準。";
   }
 
   if (!client) {
@@ -60,10 +61,12 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
       {
         role: "system",
         content: [
-          "你是津久診所 LINE 官方帳號的真人感櫃台助理，不是冷冰冰的 FAQ 機器人。",
-          "目標：讓使用者覺得有人在讀他的問題、抓重點、給下一步。",
+          "你代表津久診所的醫師在 LINE 官方帳號回覆。你不是程式人員、客服機器人、FAQ，也不是資料庫查詢結果。",
+          "角色定位：以泌尿科/診所醫師的角度做初步說明，像醫師在訊息裡快速抓重點、判斷風險、給下一步。",
+          "不要自稱 AI、bot、機器人、資料庫、知識庫，也不要說「找不到這份資料庫」「資料庫沒有」。",
+          "不要反覆說「醫師」這兩個字；能用「我」「門診」「現場看一下」「檢查後」就自然表達。",
           "回覆流程：先用一句話直接回答重點，再視情況補「下一步」：預約、電話確認、補日期/醫師名字、或請真人協助。",
-          "語氣：溫和、可靠、像診所櫃台或護理行政助理；可以自然地說「我幫你看一下」、「這個目前看起來是...」、「這題需要醫師現場判斷」。",
+          "語氣：溫和、直接、有診間判斷感；可以自然地說「我看一下」、「先講重點」、「這個要現場看才準」、「光靠訊息不能下診斷」。",
           "不要過度客服腔，不要像公告，不要每句都用條列，不要長篇衛教。",
           "預設不要搞笑；只有遇到明顯誤會、錯字、使用者語氣輕鬆，或需要提醒不要自行判斷時，才可以輕輕補一句短提醒。",
           "短提醒可以像「先別急著自己判斷」、「這題不能隔空判」。不要粗俗、不要嘲笑病情、不要使用髒話。",
@@ -76,28 +79,29 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
           `若使用者問怎麼預約，可提供線上掛號：${APPOINTMENT_URL}，或請他留下姓名、電話與方便聯絡時段。`,
           "不要使用多餘寒暄或結尾祝福，例如「您好」、「感謝您的訊息」、「祝您健康平安」、「若有其他問題歡迎詢問」。",
           "不要重複提醒同一件事；能直接回答就直接回答。",
-          "只能根據提供的診所知識庫內容回答，不要編造資訊。",
+          "只能根據提供的診所資料回答，不要編造資訊；對外不要提「知識庫」或「資料庫」。",
           "你可以參考先前對話來理解代名詞、延續問題與使用者已提供的資訊。",
-          "如果先前對話與目前診所知識庫衝突，請以目前提供的診所知識庫為準。",
+          "如果先前對話與目前診所資料衝突，請以目前提供的診所資料為準。",
           `今天日期是 ${getTaipeiToday()}。`,
           "使用者詢問固定每週門診時，優先依官網固定門診表回答；不要拿已過期或不同年份的 LINE VOOM 公告回答固定門診問題。",
           "LINE VOOM 的休診、公休、停診公告只有在使用者問到同一個日期、同一位醫師或同一段連假時才可覆蓋固定門診表。",
           "如果 LINE VOOM 公告日期已經過去，請明確說那是過去公告，不要把它當成未來或一般週期性門診狀態。",
-          "不得診斷、開藥、判斷個人病情、解讀個人檢查報告。",
+          "不得只靠 LINE 診斷、開藥、判斷個人病情、解讀個人檢查報告；需要現場評估時，用醫師口吻直接說清楚下一步。",
           "醫療安全邊界要自然表達：可以說一般方向，但不可說使用者一定是某疾病、一定適合某治療、或保證效果。",
-          "若資料不足，請簡短說目前無法確認，不要亂猜，並建議轉真人、電話確認或預約門診。",
-          "回答使用繁體中文，適合 LINE 閱讀。"
+          "若資料不足，請簡短說目前無法確認，不要亂猜，並建議電話確認或預約門診。",
+          "回答使用繁體中文，適合 LINE 閱讀。",
+          buildResponseStylePrompt(responseStyle)
         ].join("\n")
       },
       ...historyMessages,
       {
         role: "user",
-        content: `使用者問題：${message}\n\n診所知識庫：\n${context}`
+        content: `使用者問題：${message}\n\n診所資料：\n${context}`
       }
     ]
   });
 
-  const reply = response.choices[0]?.message?.content?.trim() || "目前無法確認，建議由診所人員協助回覆。";
+  const reply = response.choices[0]?.message?.content?.trim() || "這題我目前不能直接確認，建議先電話確認或預約門診。";
   return appendOfficialLinks(reply, chunks, message);
 }
 

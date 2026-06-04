@@ -344,8 +344,8 @@ const cases = [
   {
     name: "round14 online registration cancellation avoids appointment link",
     message: "Round14-2：我臨時不能去，線上掛號要取消嗎？可以直接在 LINE 跟你說取消，還是要打電話？不要貼連結。",
-    expected: ["臨時不能去", "建議先取消或改期", "LINE bot 不保證", "代你取消", "02-2511-9488", "櫃台確認", "線上掛號系統取消/改期"],
-    forbidden: ["https://", "appointment", "預約掛號", "立即預約", "女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿"]
+    expected: ["臨時不能去", "建議先取消或改期", "這裡不一定能直接代你取消", "02-2511-9488", "櫃台確認", "線上掛號系統取消/改期"],
+    forbidden: ["LINE bot 不保證", "LINE 不保證", "https://", "appointment", "預約掛號", "立即預約", "女性泌尿", "美磁波", "磁波鍛肌椅", "漏尿"]
   },
   {
     name: "two patients should not assume one registration number",
@@ -497,6 +497,13 @@ const cases = [
     message: "我想問猛健樂減重門診，可以今天直接打嗎？我朋友剩一支藥筆可以帶去用嗎？費用先問得到嗎？",
     routedOnly: true,
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "醫師", "朋友剩下的藥筆", "不建議使用", "用藥需由醫師評估與開立", "費用", "02-2511-9488"],
+    forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
+  },
+  {
+    name: "wellness iv same-day fatigue fee question avoids generic payment branch",
+    message: "我最近很累，想問功能性點滴可以今天直接打嗎？不想看長文，費用可以先問嗎？",
+    routedOnly: true,
+    expected: ["客製化功能性修復點滴", "排毒疲勞解酒", "今天能不能施打", "需要醫師評估", "費用需依評估後確認", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
   },
   {

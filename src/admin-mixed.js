@@ -229,7 +229,7 @@ export function answerAdminMixedQuestion(message) {
   if (asksOnlineRegistrationCancellation(normalized)) {
     return [
       "臨時不能去，建議先取消或改期，避免占用名額。",
-      `LINE bot 不保證能代你取消；最穩妥是打 ${PHONE} 請櫃台確認，或依原本線上掛號系統取消/改期。`
+      `這裡不一定能直接代你取消；最穩妥是打 ${PHONE} 請櫃台確認，或依原本線上掛號系統取消/改期。`
     ].join("\n");
   }
 
@@ -655,6 +655,7 @@ function asksFeePaymentAtCounterWithoutVisit(message) {
   if (isSexualFunctionTreatmentQuestion(message)) return false;
   if (isFemaleUrologyTreatmentQuestion(message)) return false;
   if (isMounjaroTreatmentQuestion(message)) return false;
+  if (isWellnessDripTreatmentQuestion(message)) return false;
 
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
@@ -687,6 +688,11 @@ function isFemaleUrologyTreatmentQuestion(message) {
 function isMounjaroTreatmentQuestion(message) {
   return /猛健樂|Mounjaro|Tirzepatide|減重|體重管理|瘦瘦筆|藥筆|BMI/i.test(message)
     && /今天|當天|直接打|施打|可以打|能不能打|朋友|剩下|剩的|藥筆|費用|價格|多少錢|一針|副作用|適合/i.test(message);
+}
+
+function isWellnessDripTreatmentQuestion(message) {
+  return /客製化功能性修復點滴|功能性修復點滴|保健點滴|術後修復點滴|免疫提升|護肝|疲勞|解酒|點滴/i.test(message)
+    && /今天|當天|直接打|施打|可以打|能不能打|費用|價格|多少錢|適合|保證|恢復精神|累|疲勞/i.test(message);
 }
 
 function asksCircumcisionCounterFeeBeforeVisit(message) {

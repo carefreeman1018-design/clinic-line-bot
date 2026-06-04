@@ -18,7 +18,7 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
     return [
       `${procedureDay}陰囊越來越腫、瘀青變大、傷口滲血，又很痛或發燒，光靠訊息無法判斷嚴重度。`,
       "這可能需要排除術後血腫、感染或持續出血；不建議只冰敷、吃止痛藥等到明天。",
-      `請現在先電話 ${PHONE} 聯絡診所確認最快處理方式；若聯絡不上、腫痛快速加劇、發燒或出血變多，請直接急診/立即就醫。`
+      `請現在先電話 ${PHONE} 聯絡診所確認最快處理方式，並預約門診或依診所指示處理；若聯絡不上、腫痛快速加劇、發燒或出血變多，請直接急診/立即就醫。`
     ].join("");
   }
 
@@ -212,7 +212,7 @@ function isClearlyNewNonVasectomyTopic(message) {
 function isPostVasectomyUrgentQuestion(message) {
   return (
     /結紮|輸精管/.test(message) &&
-    /術後|做完|第\s*\d{1,2}\s*天|第\s*[一二三四五六七八九十]\s*天/.test(message) &&
+    /術後|做完|結紮後|第\s*\d{1,2}\s*天|第\s*[一二三四五六七八九十]\s*天/.test(message) &&
     /陰囊|傷口|睪丸/.test(message) &&
     /越來越腫|腫|瘀青|滲血|出血|血腫|很痛|疼痛|發燒|化膿|流膿|急診|回診/.test(message)
   );

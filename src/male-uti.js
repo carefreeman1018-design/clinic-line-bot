@@ -62,7 +62,7 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (scheduleReply) {
     parts.push(`${scheduleReply}到診前請電話 ${PHONE} 確認當天名額。`);
   } else {
-    parts.push(`請先電話 ${PHONE} 確認可看診時段，或盡快到泌尿科就醫。`);
+    parts.push(`建議預約門診；也可先電話 ${PHONE} 確認可看診時段，或盡快到泌尿科就醫。`);
   }
 
   parts.push("若高燒、劇痛、尿不出來、血尿或明顯很不舒服，請直接急診/立即就醫。");

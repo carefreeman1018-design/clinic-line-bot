@@ -138,7 +138,7 @@ function answerFemaleUtiUrgentQuestion(message) {
   return [
     `${symptoms.join("、")}，${pregnancyNote}光靠訊息無法診斷。`,
     `${treatmentDelay}不要自行吃家裡剩的抗生素；現在要由醫師評估${medicationAssessment}。`,
-    `請現在電話 ${PHONE} 確認最快可評估時段；若高燒、腰痛加劇、血尿變多、明顯不舒服、尿不出來或診所無法即時安排，請直接急診/立即就醫。`
+    `建議預約門診；也請現在電話 ${PHONE} 確認最快可評估時段。若高燒、腰痛加劇、血尿變多、明顯不舒服、尿不出來或診所無法即時安排，請直接急診/立即就醫。`
   ].join("");
 }
 

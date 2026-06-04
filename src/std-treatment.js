@@ -6,9 +6,15 @@ export function answerStdTreatmentQuestion(message) {
   const urethralDischargeReply = answerUrethralDischargeStdQuestion(message);
   if (urethralDischargeReply) return urethralDischargeReply;
 
+  const syphilisReportReply = answerSyphilisReportQuestion(message);
+  if (syphilisReportReply) return syphilisReportReply;
+
   if (shouldPrioritizeWartQuestion(message)) {
     return answerWartQuestion(message);
   }
+
+  const pepMedicationReply = answerPepMedicationAdjustmentQuestion(message);
+  if (pepMedicationReply) return pepMedicationReply;
 
   if (isPepQuestion(message)) {
     return answerPepQuestion(message);
@@ -16,6 +22,10 @@ export function answerStdTreatmentQuestion(message) {
 
   if (isAnonymousScreeningPrivacyQuestion(message)) {
     return answerAnonymousScreeningQuestion(message);
+  }
+
+  if (isAnonymousScreeningAdminQuestion(message)) {
+    return answerAnonymousScreeningAdminQuestion(message);
   }
 
   if (isPrepQuestion(message)) {
@@ -86,8 +96,50 @@ function answerAnonymousScreeningQuestion(message) {
   ].join("");
 }
 
+function isAnonymousScreeningAdminQuestion(message) {
+  return /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)
+    && /有嗎|有沒有|提供|今天|今日|現場|直接|當天|費用|價錢|價格|多少錢|可不可以|能不能|可以做|流程|項目/.test(message);
+}
+
+function answerAnonymousScreeningAdminQuestion(message) {
+  const sameDayOrPrice = /今天|今日|現場|直接|當天|費用|價錢|價格|多少錢|可不可以|能不能|可以做/.test(message);
+  if (sameDayOrPrice) {
+    return [
+      "診所有提供匿名篩檢相關服務，可到診後向護理人員詢問流程與項目。",
+      `費用、當天名額與今天現場能不能做，都需要電話 ${PHONE} 或到現場由診所人員確認，不能先保證今天一定能做。`
+    ].join("");
+  }
+
+  return [
+    "診所有提供匿名篩檢相關服務，會重視隱私。",
+    `篩檢流程、項目、費用與可評估時段，建議電話 ${PHONE} 或由診所人員確認。`
+  ].join("");
+}
+
 function hasAnonymousScreeningAbnormalResultConcern(message) {
   return /報告|結果|HIV|愛滋|梅毒|淋病|披衣菌/i.test(message) && /陽性|不確定|確診|看報告|解讀/.test(message);
+}
+
+function answerSyphilisReportQuestion(message) {
+  if (!isSyphilisReportQuestion(message)) return null;
+
+  const reportContext = /RPR|TPPA/i.test(message)
+    ? "你提到 RPR/TPPA 或梅毒篩檢陽性，這需要由醫師把檢驗項目、數值、過去病史與是否曾治療一起判讀。"
+    : "梅毒篩檢或報告陽性需要由醫師把檢驗項目、數值、過去病史與是否曾治療一起判讀。";
+  const partnerNote = /伴侶|另一半|男友|女友|配偶|對方/.test(message)
+    ? "伴侶是否需要檢查或治療，也要一起讓醫師評估；在確認前先避免性行為，或至少全程保險套。"
+    : "";
+
+  return [
+    reportContext,
+    "不能只靠報告或訊息決定是否確診、是否一定要打針或怎麼治療，也不能線上開藥。",
+    partnerNote,
+    `下一步：請預約性病篩檢/治療門診，或電話 ${PHONE} 確認可評估時段。`
+  ].join("");
+}
+
+function isSyphilisReportQuestion(message) {
+  return /RPR|TPPA|梅毒.{0,12}(?:報告|篩檢|陽性|數值)|(?:報告|篩檢|陽性|數值).{0,12}梅毒|1\s*:\s*\d+/i.test(message);
 }
 
 function isPrepQuestion(message) {
@@ -98,6 +150,26 @@ function isPrepQuestion(message) {
 function isPepQuestion(message) {
   if (/不是問\s*PEP|不問\s*PEP|換問|另一件事/.test(message) && isWartQuestion(message)) return false;
   return /PEP|暴露後|保險套破|無套|高風險/i.test(message);
+}
+
+function answerPepMedicationAdjustmentQuestion(message) {
+  if (!isPepMedicationAdjustmentQuestion(message)) return null;
+
+  const urgentSideEffectNote = /喘|呼吸困難|胸痛|昏倒|快昏倒|全身紅疹|臉腫|嘴唇腫|喉嚨腫|嚴重腹痛|一直吐|吐到喝不下/.test(message)
+    ? "若有呼吸困難、胸痛、昏倒、臉或嘴唇腫、全身紅疹、嚴重腹痛，或一直吐到喝不下，請急診/立即就醫。"
+    : "若症狀明顯惡化、一直吐到喝不下、嚴重腹痛、胸痛、呼吸困難或過敏反應，請急診/立即就醫。";
+
+  return [
+    "PEP 已開始服用後出現噁心、想吐、頭暈或其他副作用，不能自行停藥、減量、改成半顆或改吃別人的藥。",
+    "PEP 是否要調整、改藥或加止吐藥，需要醫師依用藥時間、症狀嚴重度與檢查結果判斷；自行中斷可能影響預防效果。",
+    `下一步：請今天先電話 ${PHONE} 聯絡診所或回診，讓醫師或診所人員確認怎麼處理。${urgentSideEffectNote}`
+  ].join("");
+}
+
+function isPepMedicationAdjustmentQuestion(message) {
+  const hasPepMedicationCue = /PEP|暴露後預防|事後預防/i.test(message) && /開始吃|已經吃|正在吃|吃了|服用|藥/.test(message);
+  const hasAdjustmentOrSideEffectCue = /噁心|想吐|嘔吐|吐|頭暈|暈|拉肚子|腹痛|副作用|停藥|少吃|減量|半顆|加量|改藥|換藥|不想回診|繼續吃|照吃/.test(message);
+  return hasPepMedicationCue && hasAdjustmentOrSideEffectCue;
 }
 
 function shouldPrioritizeWartQuestion(message) {
@@ -118,7 +190,7 @@ function answerWartQuestion(message) {
     "診所有提供菜花 HPV 相關篩檢與治療評估。",
     `${photoTriageNote}不要自行買藥、自己擦或使用伴侶剩下的藥膏。`,
     partnerNote,
-    `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；可電話 ${PHONE} 預約或確認時段。`
+    `治療方式可能包含外用藥物、電燒、冷凍或雷射等，需由醫師確認後安排；建議預約門診，也可電話 ${PHONE} 確認時段。`
   ].join("");
 }
 
