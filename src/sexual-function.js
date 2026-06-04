@@ -24,6 +24,9 @@ export function answerSexualFunctionQuestion(message) {
     ].join("");
   }
 
+  const officialSexualFunctionReply = answerOfficialSexualFunctionQuestion(message);
+  if (officialSexualFunctionReply) return officialSexualFunctionReply;
+
   return [
     "診所有提供性功能障礙評估與治療，包含勃起功能障礙、硬度不足、早洩、陽痿或遲射等問題。",
     "原因可能和血管、三高、壓力、心理、神經或生活因素有關，不能只靠訊息判斷或直接開藥。",
@@ -32,6 +35,14 @@ export function answerSexualFunctionQuestion(message) {
 }
 
 function answerOfficialShockwaveFaq(message) {
+  if (/原理|怎麼.*作用|血管新生|組織修復|為什麼.*有效/.test(message)) {
+    return "低能量震波主要是用低能量震波刺激局部血管與組織修復，促進血流與組織再生；官網提到津久使用線性聚焦型震波技術，目標是促進陰莖海綿體血管新生、重啟組織修復，讓勃起時充血量增加、硬度改善。";
+  }
+
+  if (/適應症|需要.*震波|適合.*震波|自我評估|硬度不足|容易軟/.test(message)) {
+    return "官網的低能量震波自我評估提到，若有親熱前常需吃藥、擔心肝腎功能不想每次靠藥、有三高或血管問題、勃起不夠硬或容易軟、硬得起來但不夠硬或不夠久等狀況，可由醫師評估是否適合低能量震波。";
+  }
+
   if (/痛|疼痛|會不會痛|疼嗎/.test(message)) {
     return "低能量震波治療過程多少會有些許刺痛；多數病患回饋痛感約像橡皮筋輕彈，若以 1–10 分量化約 0–1 分。醫師可依個人忍受程度調整發數、強度和頻率。";
   }
@@ -62,6 +73,26 @@ function answerOfficialShockwaveFaq(message) {
 
   if (/副作用|腫脹|不適/.test(message)) {
     return "低能量震波治療後無明顯副作用；極少數患者治療部位可能有些許腫脹或疼痛，約 3–5 天後會慢慢緩解，不影響日常生活。";
+  }
+
+  return null;
+}
+
+function answerOfficialSexualFunctionQuestion(message) {
+  if (/早洩.*治療|早洩.*改善|怎麼.*治.*早洩|延長.*射精/.test(message)) {
+    return "官網說明早洩可從藥物治療、物理治療和行為治療著手，積極治療下有機會改善；也可配合運動、避免飲酒吸菸，或進行延長訓練來拉長射精時間。";
+  }
+
+  if (/陽痿.*原因|勃起.*原因|硬度.*原因|為什麼.*不硬|為什麼.*軟|性功能障礙.*原因|原因/.test(message)) {
+    return "官網整理性功能障礙常見原因包含生理與心理因素：高血壓、動脈硬化、心血管疾病可能影響血流；糖尿病神經病變、中風、神經損傷、長期酗酒或濫用毒品也可能影響勃起；年齡增加、睪固酮下降、骨盆手術或創傷、部分藥物，以及壓力、焦慮、伴侶關係等心理因素也都可能有關。";
+  }
+
+  if (/包含|有哪些|範圍|什麼.*性功能障礙/.test(message) && /性功能障礙|勃起|早洩|陽痿|遲射|性慾/.test(message) && !/原因|治療|改善|方式/.test(message)) {
+    return "官網說明性功能障礙涵蓋範圍很廣，常見包含勃起障礙、早洩、遲射，也包含性慾低落、性慾異常或射精障礙等狀況。若已影響性生活滿意度，可以由泌尿科醫師評估。";
+  }
+
+  if (/早洩.*定義|怎樣.*早洩|多久.*算.*早洩|射太快/.test(message)) {
+    return "官網提到早洩是陰莖勃起後，在進入性器官前或進入後沒多久就射精；泌尿科嚴格定義常以射精時間小於 1 分鐘為早洩，廣泛定義約 3–5 分鐘內也可能算，超過 5 分鐘通常不算。這個定義以前提有插入性行為為主，自慰小於 1 分鐘不算早洩。";
   }
 
   return null;
