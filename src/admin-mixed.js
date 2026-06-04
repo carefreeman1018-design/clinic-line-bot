@@ -424,6 +424,7 @@ function asksTomorrowFridayAfternoonUrologyForReportVaccineOnly(message) {
 
 function asksTomorrowFridayDaytimeUrologyMorningOrAfternoon(message) {
   if (/院長|差在哪|差別|比較|我要掛誰|掛誰|哪個比較適合|不硬選|不要幫我硬選/.test(message)) return false;
+  if (isProstateTreatmentQuestion(message)) return false;
 
   const asksTomorrow = /明天/.test(message);
   const asksDaytimeOrMultiplePeriods = /白天|早上或下午|上午或下午|早診或午診|早上.*下午|上午.*下午|早診.*午診/.test(message);

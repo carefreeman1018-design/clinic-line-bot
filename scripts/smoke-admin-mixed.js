@@ -257,6 +257,13 @@ const cases = [
     forbidden: ["主要看精雕微創包皮槍手術、無刀口結紮手術、男性私密整形/陰莖增大手術"]
   },
   {
+    name: "misspelled luo doctor with relative day answers correction and schedule",
+    message: "羅醫師是羅詩修嗎？我看到有人寫羅世修，明天白天他有診嗎？",
+    routedOnly: true,
+    expected: ["羅醫師是羅詩修醫師", "沒有「羅世修醫師」", "羅詩修醫師", "明天（週五）", "午診", "13:30-17:00", "02-2511-9488"],
+    forbidden: ["只有列固定門診", "陳偉傑醫師；午診", "沒回答羅世修", "https://", "lin.ee"]
+  },
+  {
     name: "natural frequency doctor comparison avoids surgery dump and hard pick",
     message: "如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？",
     routedOnly: true,
@@ -477,6 +484,13 @@ const cases = [
     routedOnly: true,
     expected: ["攝護腺肥大評估與治療", "水蒸氣消融", "Urolift", "夜尿、尿流變細", "醫師", "攝護腺大小", "費用", "不能直接線上判斷或報價", "不能先保證", "今天看完就能直接手術", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
+  },
+  {
+    name: "prostate water vapor consult with daytime schedule avoids generic urology schedule",
+    message: "我爸是攝護腺肥大想問水蒸氣，不是一般頻尿，應該掛哪一診？明天白天可以先諮詢嗎？",
+    routedOnly: true,
+    expected: ["攝護腺肥大評估與治療", "水蒸氣消融", "Urolift", "醫師評估", "明天（週五）", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "可先諮詢", "不能先保證當天處置", "費用", "02-2511-9488"],
+    forbidden: ["明天（週五）白天一般泌尿可參考", "只是一般泌尿", "可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "https://", "appointment"]
   },
   {
     name: "sexual shockwave fee question avoids generic payment branch",

@@ -74,19 +74,29 @@ function buildProstateVisitScheduleReply(message, now) {
   const dayLabel = buildDayLabel(message, day);
   const periods = resolveRequestedPeriods(message);
   const scheduleLines = buildProstateScheduleLines(day, periods);
+  const serviceIntro = hasProstateTreatmentServiceCue(message)
+    ? "診所有提供攝護腺肥大評估與治療，官網列出水蒸氣消融、Urolift、綠光雷射汽化與雷射剜除等方式；能否適合要由醫師評估。"
+    : "診所有看攝護腺肥大/排尿問題，需由醫師評估。";
   const scheduleReply = scheduleLines.length > 0
     ? [`${dayLabel}可先參考固定門診：`, ...scheduleLines]
     : [`${dayLabel}固定門診表沒有列到一般泌尿科門診時段。`];
 
   return [
-    "診所有看攝護腺肥大/排尿問題，需由醫師評估。",
+    serviceIntro,
     ...scheduleReply,
+    "可先諮詢；但不能先保證當天處置，費用與療程也需評估後確認。",
     "請帶健保卡、身分證；若有近期檢查報告、PSA/超音波資料或用藥資料也一起帶。",
-    `名額與臨時異動請電話 ${PHONE} 確認。`
+    `當天能否安排處置、費用與名額，請電話 ${PHONE} 或現場確認。`
   ].join("\n");
 }
 
+function hasProstateTreatmentServiceCue(message) {
+  return /攝護腺肥大|前列腺肥大|水蒸氣|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除|治療|手術/i.test(message);
+}
+
 function resolveRequestedPeriods(message) {
+  if (/白天/.test(message)) return ["早診", "午診"];
+
   const periods = [];
   if (/早上|上午|早診|09:30|9:30/.test(message)) periods.push("早診");
   if (/下午|午診|13:30|1:30/.test(message)) periods.push("午診");

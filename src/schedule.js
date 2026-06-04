@@ -94,6 +94,14 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
   if (!day) return null;
 
   const dayLabel = buildDayLabel(message, day);
+  if (misspelledDoctor) {
+    return compactLines([
+      `津久固定門診裡的羅醫師是${misspelledDoctor.intendedDoctor}；目前沒有「${misspelledDoctor.inputName}」。`,
+      buildDoctorDayAvailabilityReply(misspelledDoctor.intendedDoctor, day, dayLabel),
+      `名額與臨時異動請電話 02-2511-9488 確認。`
+    ]);
+  }
+
   const staleStopAnnouncementNote = buildStaleStopAnnouncementNote(message);
   const temporaryChangeConfirmation = staleStopAnnouncementNote
     ? "當週是否臨時異動可電話 02-2511-9488 確認。"
