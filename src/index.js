@@ -373,7 +373,8 @@ export function shouldBypassDoctorReviewForRoutedSafety(message) {
     answerMaleUtiUrgentQuestion(message) ||
     answerWoundCareQuestion(message) ||
     answerCircumcisionFastPassQuestion(message) ||
-    answerVasectomyQuestion(message)
+    answerVasectomyQuestion(message) ||
+    answerMalePrivateSurgeryQuestion(message)
   );
 }
 
