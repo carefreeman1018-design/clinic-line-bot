@@ -4,6 +4,9 @@ export function answerWoundCareQuestion(message) {
   if (!isWoundCareQuestion(message)) return null;
   if (/結紮|輸精管/.test(message)) return null;
 
+  const officialCircumcisionAftercareReply = answerOfficialCircumcisionAftercareQuestion(message);
+  if (officialCircumcisionAftercareReply) return officialCircumcisionAftercareReply;
+
   if (isOutsideSurgeryWoundQuestion(message)) {
     return [
       "外院手術後傷口有紅、腫或不舒服，建議先掛門診讓醫師實際看傷口；到場也可先跟 3 樓櫃台說明是外院術後想評估傷口。",
@@ -43,6 +46,33 @@ export function answerWoundCareQuestion(message) {
   }
 
   return null;
+}
+
+function answerOfficialCircumcisionAftercareQuestion(message) {
+  if (!/割包皮|包皮槍|包皮環切|包皮術後|術後/.test(message)) return null;
+  if (hasUrgentWoundCue(message)) return null;
+
+  if (/尿尿|小便|排尿|漏尿|亂噴/.test(message) && /亂噴|漏尿|正常|控制/.test(message)) {
+    return "官網術後注意事項提到，有瘀青、尿尿亂噴或漏尿都是正常的；可以坐著尿，會比較好控制。若出現尿不出來、明顯疼痛加劇或大量出血，請直接聯絡診所或盡快就醫。";
+  }
+
+  if (/龜頭/.test(message) && /脹|腫|水腫|不舒服|處理|怎麼辦/.test(message)) {
+    return "官網術後注意事項提到，龜頭很脹不舒服時，可以一小時擠壓一次、一次 5–10 秒，幫助換血；一小時內最多一次。若脹痛明顯惡化、發紫發黑、發燒或尿不出來，請直接聯絡診所或盡快就醫。";
+  }
+
+  if (/紗布|拆|包到|回診/.test(message) && /兩天|2\s*天|前兩天|回診|不要拆|可以拆/.test(message)) {
+    return "官網術後注意事項提到，紗布前兩天不要拆，包到回診；回診前只需要吃口服藥，不需要換藥，所以藥膏也先不需要用。若紗布大量滲血或傷口明顯惡化，請直接聯絡診所。";
+  }
+
+  if (/出血|流血|滲血|止血|加壓/.test(message) && /怎麼|處理|先|可以|要/.test(message)) {
+    return `官網術後注意事項提到，若有出血，可以加壓傷口處直到止血。若出血量多、持續止不住、疼痛加劇或有其他明顯惡化，請不要等線上回覆，直接聯絡診所 ${PHONE} 或盡快就醫。`;
+  }
+
+  return null;
+}
+
+function hasUrgentWoundCue(message) {
+  return /大量出血|血流不止|止不住|發燒|尿不出來|尿不出|劇痛|痛到|越來越痛|發紫|紫黑|發黑|傷口裂開|明顯流膿|流膿|感染|惡化/.test(message);
 }
 
 function isWoundCareQuestion(message) {

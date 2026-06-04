@@ -371,7 +371,8 @@ export function shouldBypassDoctorReviewForRoutedSafety(message) {
   return Boolean(
     answerTesticularMassQuestion(message) ||
     answerMaleUtiUrgentQuestion(message) ||
-    answerWoundCareQuestion(message)
+    answerWoundCareQuestion(message) ||
+    answerCircumcisionFastPassQuestion(message)
   );
 }
 

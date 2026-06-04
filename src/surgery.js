@@ -58,6 +58,10 @@ function answerCircumcisionDoctorRecommendation() {
 }
 
 function answerOfficialCircumcisionFaq(message) {
+  if (/追蹤|LINE|line|訊息|回覆/.test(message) && /術後|傷口|恢復|復原|脫釘|換藥/.test(message)) {
+    return "會。官網提到手術後由雙主治醫師親自在 LINE 上持續追蹤，協助換藥與講解術後照護，並追蹤傷口脫釘、復原程度；術後照護有問題也可以透過 LINE 詢問。";
+  }
+
   if (/恢復|上班|上學|休息|多久.*工作|幾天.*工作/.test(message)) {
     return "大部分割包皮患者術後隔天可正常上學、上班；如果工作需要走動、搬重物或容易流汗，建議休息數天後再返回職場。";
   }
