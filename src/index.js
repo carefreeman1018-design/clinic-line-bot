@@ -49,6 +49,7 @@ import { answerReportResultQuestion } from "./report-results.js";
 import { answerStdTreatmentQuestion } from "./std-treatment.js";
 import { answerStoneQuestion } from "./stone-treatment.js";
 import { answerTesticularTorsionQuestion } from "./testicular-torsion.js";
+import { answerTesticularMassQuestion } from "./testicular-mass.js";
 import { answerUrologyProcedureAftercareQuestion } from "./urology-procedure-aftercare.js";
 import { answerWellnessWeightQuestion } from "./wellness-weight.js";
 import { answerWoundCareQuestion } from "./wound-care.js";
@@ -503,6 +504,9 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const testicularTorsionReply = answerTesticularTorsionQuestion(message);
   if (testicularTorsionReply) return { reply: testicularTorsionReply, relevantChunks: [] };
+
+  const testicularMassReply = answerTesticularMassQuestion(message);
+  if (testicularMassReply) return { reply: testicularMassReply, relevantChunks: [] };
 
   const maleFertilityReply = answerMaleFertilityQuestion(message);
   if (maleFertilityReply) return { reply: maleFertilityReply, relevantChunks: [] };
