@@ -495,6 +495,13 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
     };
   }
 
+  if (isClearlyOutOfScopeMessage(message)) {
+    return {
+      reply: "這題跟診所服務無關，我不能協助處理這類內容。若要問門診、預約、交通或診所有沒有提供某項服務，可以直接傳訊息給我。",
+      relevantChunks: []
+    };
+  }
+
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
 
@@ -612,6 +619,10 @@ function buildSimpleReply(message) {
     return "好，我先等你。";
   }
 
+  if (/^(喔+|哦+|噢+|哈哈+|呵呵+|嘿嘿+|無聊|隨便|你在幹嘛|你在做什麼|在幹嘛|在做什麼)[。！!?.？\s]*$/i.test(normalized)) {
+    return "我在，有需要可以直接問門診、預約、交通或服務項目。";
+  }
+
   if (/^(搞笑喔|搞笑哦|搞笑嗎|屁啦|亂回|你在亂回|不要亂回|回錯了|不是啦|蛤|蛤\?|蛤？|啥|什麼鬼)[。！!?.？\s]*$/i.test(normalized)) {
     return "抱歉，剛剛回得不對。我重來，你直接說想問的內容就好。";
   }
@@ -620,7 +631,7 @@ function buildSimpleReply(message) {
     return "不客氣，有需要我再幫你查。";
   }
 
-  if (/^(ok|okay|好|好的|了解|收到|知道了|明白|喔+好|喔+喔+好|哦+好|嗯+好|恩+好|嗯+嗯+|恩+恩+)[。！!.\s]*$/i.test(normalized)) {
+  if (/^(ok|okay|好|好的|好喔|好哦|好啦|了解|收到|知道了|明白|喔+好|喔+喔+好|哦+好|嗯+好|恩+好|嗯+嗯+|恩+恩+)[。！!.\s]*$/i.test(normalized)) {
     return "好，有需要再直接傳訊息給我。";
   }
 
@@ -665,8 +676,35 @@ function isLowInformationMessage(message) {
   if (!normalized) return true;
   if (/^\d+$/.test(normalized)) return true;
   if (/^[a-z]+$/i.test(normalized) && normalized.length <= 3) return true;
+  if (/^([\u4e00-\u9fff])\1{2,}$/.test(normalized)) return true;
+  if (/^[\u4e00-\u9fff]{1,2}$/.test(normalized) && !hasShortClinicIntent(normalized)) return true;
 
   return false;
+}
+
+function hasShortClinicIntent(text) {
+  return /包皮|結紮|血尿|頻尿|漏尿|菜花|皰疹|梅毒|淋病|HPV|HIV|PEP|PrEP|疫苗|門診|掛號|地址|電話|交通|報告|醫師|醫生/i.test(text);
+}
+
+function isClearlyOutOfScopeMessage(message) {
+  if (hasExplicitOutOfScopeProgrammingIntent(message)) return true;
+  if (hasClinicOrMedicalIntent(message)) return false;
+
+  return [
+    /(?:python|javascript|typescript|java|c\+\+|c#|vba|excel|程式|腳本|巨集|macro|script|code|coding|演算法|資料結構|資料結構作業)/i,
+    /(?:linked\s*list|連結串列|鏈結串列|反轉.*(?:串列|list)|reverse.*list)/i,
+    /(?:幫我寫|寫一個|給我.*範例|提供.*範例|念一段|唸一段|教我|完整程式碼).*(?:python|javascript|c\+\+|vba|excel|程式|腳本|巨集|linked\s*list|連結串列|鏈結串列)/i
+  ].some((pattern) => pattern.test(message));
+}
+
+function hasExplicitOutOfScopeProgrammingIntent(message) {
+  const saysOutOfScope = /(?:跟|和|與)?(?:診所|醫療|門診|服務)(?:完全)?無關|不是(?:診所|醫療|門診|服務)|只是測試|不要.*診所|不要.*醫療|不要.*官網/.test(message);
+  const hasProgrammingCue = /python|javascript|typescript|java|c\+\+|c#|vba|excel|程式|腳本|巨集|macro|script|code|coding|演算法|資料結構|linked\s*list|連結串列|鏈結串列/i.test(message);
+  return saysOutOfScope && hasProgrammingCue;
+}
+
+function hasClinicOrMedicalIntent(message) {
+  return /津久|診所|門診|掛號|預約|交通|地址|電話|醫師|醫生|櫃台|看診|回診|檢查|報告|費用|價格|收據|診斷證明|泌尿|肛門|大腸直腸|包皮|結紮|性病|篩檢|疫苗|HPV|HIV|PEP|PrEP|菜花|梅毒|淋病|披衣菌|皰疹|血尿|頻尿|漏尿|尿痛|尿不出來|攝護腺|結石|睪丸|陰莖|陰囊|會陰|割包皮|猛健樂|美磁波|震波|水蒸氣|痔瘡|肛裂|廔管/i.test(message);
 }
 
 function buildContextualQuery(message, conversationHistory) {
