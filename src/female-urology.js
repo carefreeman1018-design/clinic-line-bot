@@ -7,6 +7,8 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
   if (!hasFemaleSpecificCue(message) && hasUpperUrinaryEmergencyCue(message)) return null;
   const isFemaleUrologyFollowUp = isFemaleUrologyFeeFollowUp(message, conversationHistory);
   if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message) && !isFemaleUrologyFollowUp) return null;
+  const officialMagneticFaqReply = answerOfficialMagneticChairFaq(message);
+  if (officialMagneticFaqReply) return officialMagneticFaqReply;
   if (!asksSuitabilityPriceOrNextStep(message) && !isFemaleUrologyFollowUp) return null;
 
   if (isFemaleUtiUrgentQuestion(message)) {
@@ -20,9 +22,6 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
       "美磁波/磁波鍛肌椅偏向骨盆底訓練或輔助療程，不能取代診斷；適不適合要由醫師評估後決定。"
     ].join("");
   }
-
-  const officialMagneticFaqReply = answerOfficialMagneticChairFaq(message);
-  if (officialMagneticFaqReply) return officialMagneticFaqReply;
 
   const safetyNotes = buildSafetyNotes(message);
 
