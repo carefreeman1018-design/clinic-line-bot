@@ -145,7 +145,7 @@ function answerOfficialMaleUtiQuestion(message) {
 }
 
 function isUtiQuestion(message) {
-  return hasPositiveUrinationPainCue(message) || /尿道炎|膀胱炎|泌尿道感染|攝護腺炎|睪丸炎|副睪丸炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
+  return hasPositiveUrinationPainCue(message) || /尿道炎|膀胱炎|泌尿道感染|泌尿道症狀|泌尿道.*檢查|尿路感染|尿路症狀|攝護腺炎|睪丸炎|副睪丸炎|頻尿|尿急|會陰|骨盆.*痛|射精.*痛|射精.*酸/.test(message);
 }
 
 function hasUrgentOrMedicationConcern(message) {
