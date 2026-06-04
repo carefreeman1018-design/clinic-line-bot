@@ -552,3 +552,13 @@ Tested on 2026-06-04 around 11:08-11:10 CST after commit `eeb2853`. This round c
 | 1 | 我會帶小孩和推車去，候診區放得下嗎？如果不方便家人可以在外面等嗎？ | Says clinic/waiting area may not be convenient for stroller placement, suggests asking the counter and calling 02-2511-9488 to confirm flow and space; family waiting outside or entering depends on onsite arrangement and needs. | Pass | No `不能在 LINE 先保證`; wording reads more like counter staff. |
 | 2 | 我想先問 HPV 或皮蛇疫苗有沒有庫存，大概多少錢，可以只先打電話問嗎？ | Says the patient can call or ask the counter about HPV/shingles vaccine stock, fee and possible vaccination time; stock, actual fee, suitability and same-day arrangement still depend on staff/doctor confirmation. | Pass | Handles stock/fee by phone without forcing a visit or inventing a price. |
 | 3 | 那如果有現貨，可以刷卡或一定要現金嗎？我怕白跑。 | Says if there is stock, payment method should still be confirmed with the counter; recommends calling 02-2511-9488 to ask whether cash is needed before coming. | Pass | No `不能在 LINE 直接保證金額` or `付款方式目前沒有明確公開資訊`. |
+
+## Round 34 - Natural doctor-choice wording after anti-test-language cleanup
+
+Tested on 2026-06-04 around 11:30-11:45 CST. The first two doctor-info replies were reasonable, but the natural frequency follow-up still leaked rule-like wording: `不需要只推薦唯一一位醫師`. After commit `e1bca2a`, the same doctor-choice question was retested in LINE without a visible test label.
+
+| # | Patient question | Initial LINE reply summary | Initial result | Retest reply summary | Final result | Notes |
+|---|---|---|---|---|---|---|
+| 1 | 院長是哪位醫師？他固定什麼時候看診？ | Says Chen Wei-Jie is the clinic dean, lists general urology/voiding and male-private/surgery focus, then lists Monday morning, Tuesday morning, Thursday evening, and Friday morning fixed clinics. | Pass | Not retested after this code change. | Pass | Doctor identity and fixed schedule are both answered. |
+| 2 | 那羅醫師呢？他主要看什麼？ | Says Luo Shixiu mainly sees general urology/voiding-related issues, male/female voiding disorders, and male surgery/private concerns. | Pass | Not retested after this code change. | Pass | Contextual doctor follow-up works. |
+| 3 | 如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？ | Direction was correct, but included `不需要只推薦唯一一位醫師`, which reads like test/spec language rather than clinic wording. | Partial | Says general frequency/urology does not require specifying the dean; Chen Wei-Jie and Luo Shixiu both have general urology clinics, so choose a convenient time and confirm quota by phone or onsite. | Pass | `src/doctors.js` and `src/male-uti.js` now output patient-facing counter language, and `src/response-style.js` has a fallback rewrite for this rule phrase. |
