@@ -7,22 +7,34 @@ const PERIOD_TIMES = FIXED_SCHEDULE_CONFIG.periodTimes;
 const VASECTOMY_DOCTORS = new Set(["陳偉傑醫師", "羅詩修醫師", "李齊泰醫師", "吳致寬醫師"]);
 const WEEKDAYS = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
 
-export function answerVasectomyQuestion(message, now = new Date()) {
-  if (!isVasectomyQuestion(message)) return null;
+export function answerVasectomyQuestion(message, now = new Date(), conversationHistory = []) {
+  const hasDirectVasectomyQuestion = isVasectomyQuestion(message);
+  const hasRecentVasectomyContext = hasRecentVasectomyConsultContext(conversationHistory);
+  if (!hasDirectVasectomyQuestion && !hasRecentVasectomyContext) return null;
 
-  if (isPostVasectomyUrgentQuestion(message)) {
+  if (hasDirectVasectomyQuestion && isPostVasectomyUrgentQuestion(message)) {
+    const procedureDay = resolveVasectomyProcedureDay(message);
     return [
-      "結紮後第 2 天陰囊越來越腫、瘀青變大、傷口滲血，又很痛或發燒，光靠訊息無法判斷嚴重度。",
+      `${procedureDay}陰囊越來越腫、瘀青變大、傷口滲血，又很痛或發燒，光靠訊息無法判斷嚴重度。`,
       "這可能需要排除術後血腫、感染或持續出血；不建議只冰敷、吃止痛藥等到明天。",
       `請現在先電話 ${PHONE} 聯絡診所確認最快處理方式；若聯絡不上、腫痛快速加劇、發燒或出血變多，請直接急診/立即就醫。`
     ].join("");
   }
 
-  if (!asksSchedulePriceReversalOrSafety(message)) return null;
-
   if (asksVasectomyConsultSchedule(message)) {
     return buildVasectomyConsultScheduleReply(message, now);
   }
+
+  if (hasDirectVasectomyQuestion && asksFirstConsultOrDirectorQuestion(message)) {
+    return [
+      "第一次可以先諮詢，不一定要直接處理。",
+      "男性結紮通常要先由醫師評估；不一定只能找院長，實際由哪位醫師評估和能否安排，要看門診時段與櫃台安排。",
+      `到診時可先到 3 樓櫃台說想諮詢男性結紮；也可先電話 ${PHONE} 確認可諮詢時段。`
+    ].join("\n");
+  }
+
+  if (!hasDirectVasectomyQuestion) return null;
+  if (!asksSchedulePriceReversalOrSafety(message)) return null;
 
   if (asksSexualFunctionImpact(message)) {
     return [
@@ -58,11 +70,11 @@ function isVasectomyQuestion(message) {
 }
 
 function asksSchedulePriceReversalOrSafety(message) {
-  return /今天|當天|直接做|看完就手術|快速通關|費用|價格|價錢|多少錢|保證|接回來|恢復|復原|可逆|後悔|避孕|無套|精液|驗精|殘存精子|性慾|勃起|性能力|射精|射精量|荷爾蒙|預約|掛號|下一步|怎麼約|怎麼預約|術後|做完|傷口|陰囊|瘀青|發燒|滲血|出血|血腫|很痛|急診|回診/.test(message);
+  return /今天|當天|直接做|看完就手術|快速通關|費用|價格|價錢|多少錢|保證|接回來|恢復|復原|可逆|後悔|避孕|無套|精液|驗精|殘存精子|性慾|勃起|性能力|射精|射精量|荷爾蒙|預約|掛號|諮詢|下一步|怎麼約|怎麼預約|術後|做完|傷口|陰囊|瘀青|發燒|滲血|出血|血腫|很痛|急診|回診/.test(message);
 }
 
 function asksVasectomyConsultSchedule(message) {
-  return /諮詢|哪位|醫師|醫生|早上|上午|下午|晚上|早診|午診|晚診|時段|掛|看哪/.test(message) &&
+  return /諮詢|先問|問一下|哪位|醫師|醫生|早上|上午|下午|晚上|早診|午診|晚診|時段|掛|看哪|比較適合/.test(message) &&
     /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|下午|晚上/.test(message);
 }
 
@@ -161,6 +173,22 @@ function asksCost(message) {
   return /費用|價格|價錢|多少錢|報價/.test(message);
 }
 
+function asksFirstConsultOrDirectorQuestion(message) {
+  const asksFirstConsult = /第一次|初次|第一次去|先諮詢|只是諮詢|先問|問一下/.test(message);
+  const asksDirectorOnly = /院長|一定要找|只能找|指定/.test(message);
+  const asksCanConsult = /可以嗎|可不可以|能不能|要不要|需要/.test(message);
+
+  return (asksFirstConsult || asksDirectorOnly) && asksCanConsult;
+}
+
+function hasRecentVasectomyConsultContext(conversationHistory) {
+  return [...conversationHistory]
+    .slice(-6)
+    .some((historyMessage) =>
+      /結紮|輸精管|男性結紮|避孕手術|想諮詢男性結紮|可先諮詢結紮/.test(historyMessage.content ?? "")
+    );
+}
+
 function isPostVasectomyUrgentQuestion(message) {
   return (
     /結紮|輸精管/.test(message) &&
@@ -168,4 +196,14 @@ function isPostVasectomyUrgentQuestion(message) {
     /陰囊|傷口|睪丸/.test(message) &&
     /越來越腫|腫|瘀青|滲血|出血|血腫|很痛|疼痛|發燒|化膿|流膿|急診|回診/.test(message)
   );
+}
+
+function resolveVasectomyProcedureDay(message) {
+  const numericDay = message.match(/第\s*(\d{1,2})\s*天/);
+  if (numericDay) return `結紮後第 ${numericDay[1]} 天`;
+
+  const chineseDay = message.match(/第\s*([一二三四五六七八九十])\s*天/);
+  if (chineseDay) return `結紮後第 ${chineseDay[1]} 天`;
+
+  return "結紮術後";
 }

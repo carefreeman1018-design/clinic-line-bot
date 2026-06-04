@@ -180,6 +180,24 @@ const cases = [
     forbidden: ["主要看精雕微創包皮槍手術", "男性私密整形/陰莖增大手術", "臨時異動請以 LINE VOOM", "https://", "appointment"]
   },
   {
+    name: "natural vasectomy first consult does not link or hard-pick dean",
+    message: "我先生想問結紮，是不是一定要找院長？第一次去只是諮詢可以嗎？",
+    routedOnly: true,
+    expected: ["第一次可以先諮詢", "不一定要直接處理", "男性結紮", "醫師評估", "不一定只能找院長", "門診時段", "櫃台安排", "3 樓櫃台", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "知識庫", "寫死", "至少是不是", "整理成", "一句話給櫃台", "一定要找院長", "保證"]
+  },
+  {
+    name: "natural vasectomy tomorrow contextual follow-up lists actual slots",
+    message: "那明天如果他想先問一下，哪個時段比較適合？不要貼連結，短一點。",
+    routedOnly: true,
+    conversationHistory: [
+      { role: "user", content: "我先生想問結紮，是不是一定要找院長？第一次去只是諮詢可以嗎？" },
+      { role: "assistant", content: "第一次可以先諮詢，不一定要直接處理。男性結紮通常要先由醫師評估；不一定只能找院長，實際由哪位醫師評估和能否安排，要看門診時段與櫃台安排。" }
+    ],
+    expected: ["明天（週五）", "可先諮詢結紮", "固定門診", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "醫師確認", "02-2511-9488"],
+    forbidden: ["官網介紹：", "https://", "早上剛開始前後比較好", "我也可以", "整理", "一句話", "櫃台問", "LINE VOOM"]
+  },
+  {
     name: "natural tomorrow daytime follow-up lists morning and afternoon despite older pep context",
     message: "那明天呢？我白天可以去。",
     routedOnly: true,

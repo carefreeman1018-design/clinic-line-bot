@@ -498,7 +498,7 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
   const sexualFunctionReply = answerSexualFunctionQuestion(message);
   if (sexualFunctionReply) return { reply: sexualFunctionReply, relevantChunks: [] };
 
-  const vasectomyReply = answerVasectomyQuestion(message);
+  const vasectomyReply = answerVasectomyQuestion(message, new Date(), conversationHistory);
   if (vasectomyReply) return { reply: vasectomyReply, relevantChunks: [] };
 
   const maleUtiUrgentReply = answerMaleUtiUrgentQuestion(message);
