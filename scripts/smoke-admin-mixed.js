@@ -491,6 +491,13 @@ const cases = [
     routedOnly: true,
     expected: ["女性泌尿", "漏尿評估", "美磁波鍛肌椅", "醫師評估", "漏尿原因", "費用", "評估與療程安排", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "知識庫沒有", "公開明確數字", "https://", "appointment"]
+  },
+  {
+    name: "mounjaro same-day leftover pen fee question avoids generic payment branch",
+    message: "我想問猛健樂減重門診，可以今天直接打嗎？我朋友剩一支藥筆可以帶去用嗎？費用先問得到嗎？",
+    routedOnly: true,
+    expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "醫師", "朋友剩下的藥筆", "不建議使用", "用藥需由醫師評估與開立", "費用", "02-2511-9488"],
+    forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
   }
 ];
 

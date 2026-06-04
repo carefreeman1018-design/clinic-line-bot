@@ -618,6 +618,7 @@ function asksFeePaymentAtCounterWithoutVisit(message) {
   if (isProstateTreatmentQuestion(message)) return false;
   if (isSexualFunctionTreatmentQuestion(message)) return false;
   if (isFemaleUrologyTreatmentQuestion(message)) return false;
+  if (isMounjaroTreatmentQuestion(message)) return false;
 
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
@@ -645,6 +646,11 @@ function isSexualFunctionTreatmentQuestion(message) {
 function isFemaleUrologyTreatmentQuestion(message) {
   return /女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|磁波|鍛肌椅|高密度磁波/i.test(message)
     && /看診|不用看診|不看診|直接做|可以做|能不能做|適合|費用|價格|多少錢|療程|一次/i.test(message);
+}
+
+function isMounjaroTreatmentQuestion(message) {
+  return /猛健樂|Mounjaro|Tirzepatide|減重|體重管理|瘦瘦筆|藥筆|BMI/i.test(message)
+    && /今天|當天|直接打|施打|可以打|能不能打|朋友|剩下|剩的|藥筆|費用|價格|多少錢|一針|副作用|適合/i.test(message);
 }
 
 function asksCircumcisionCounterFeeBeforeVisit(message) {
