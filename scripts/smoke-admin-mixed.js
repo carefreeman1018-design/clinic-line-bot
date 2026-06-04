@@ -477,6 +477,13 @@ const cases = [
     routedOnly: true,
     expected: ["攝護腺肥大評估與治療", "水蒸氣消融", "Urolift", "夜尿、尿流變細", "醫師", "攝護腺大小", "費用", "不能直接線上判斷或報價", "不能先保證", "今天看完就能直接手術", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
+  },
+  {
+    name: "sexual shockwave fee question avoids generic payment branch",
+    message: "我想問勃起硬度變差，你們有低能量震波嗎？可以保證有效嗎？費用和療程能先問嗎？不要貼連結。",
+    routedOnly: true,
+    expected: ["性功能障礙評估", "低能量震波治療", "血管性勃起功能障礙", "不能保證療效", "醫師", "心因性", "血管性", "混合性", "療程次數與費用", "02-2511-9488"],
+    forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
   }
 ];
 
