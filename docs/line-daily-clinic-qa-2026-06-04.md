@@ -589,3 +589,12 @@ Tested on 2026-06-04 around 12:02-12:04 CST. This pass-only round checked mixed 
 | 1 | 我想問 HPV 疫苗和匿名篩檢，可以先到櫃台問流程跟費用嗎？不一定今天做，請講重點。 | Says the patient can ask the counter or call 02-2511-9488 about HPV vaccine and anonymous-screening process/fees; it is not necessarily done today. Same-day feasibility, evaluation need, vaccine stock/prep, and screening flow depend on clinic staff/counter confirmation, and no same-day or amount guarantee is made. | Pass | Keeps both service names and answers the counter-first request without forcing treatment or adding links. |
 | 2 | 匿名篩檢如果我只是先問，不想留真名可以嗎？報告怎麼通知？不要貼連結。 | Says anonymous screening values privacy, but report notification, time to know results, and whether/what information is required should be explained onsite by nursing staff. It says LINE inquiry will not proactively disclose test contents to family, and suggests telling staff privacy needs at arrival or calling 02-2511-9488. | Pass | Good privacy boundary: no guarantee of zero data, no link, no disclosure overpromise. |
 | 3 | 那如果當天只是先問或真的要做，付款可以刷卡嗎？還是一定要現金？ | Says the patient can ask counter/staff about fees and payment method; whether payment is needed depends on actual item/process and doctor evaluation. It recommends confirming payment method by phone or onsite to avoid a wasted trip or needing cash. | Pass | Does not guarantee card payment, cash-only, final price, or same-day service. |
+
+## Round 38 - Natural MRT, floor, check-in, and parking questions
+
+Tested on 2026-06-04 around 12:06-12:07 CST. This pass-only round checked whether route and parking questions answer both logistics and onsite flow without overexplaining or overpromising temporary stopping.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我從外地搭捷運過去，行天宮站幾號出口？診所在幾樓？到了先做什麼？請短一點。 | Says Xingtiangong Station Exit 4, turn right after exiting, walk about 40 seconds, and take the elevator to 3F. On arrival, report or ask at the counter; if number-taking, registration, or supplementing data is needed, follow onsite staff instructions. | Pass | Route, floor, and first action are all answered briefly. |
+| 2 | 如果我開車去，附近哪裡可以停？只是先上樓問一下，可以臨停門口嗎？ | Suggests nearby parking lots and says special parking/discounts should be confirmed with the counter. Temporary stopping at the entrance depends on traffic and building entrance conditions; call 02-2511-9488 or check onsite if needed. | Pass | Does not guarantee door temporary stopping and avoids unrelated clinic-service content. |
