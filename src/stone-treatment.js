@@ -30,7 +30,7 @@ export function answerStoneQuestion(message) {
 }
 
 function answerOfficialStoneQuestion(message) {
-  if (/包含|有哪些.*結石|種類|腎結石.*輸尿管.*膀胱|尿路結石.*是什麼/.test(message)) {
+  if ((/包含哪些.*結石|有哪些.*結石|種類|腎結石.*輸尿管.*膀胱|尿路結石.*是什麼/.test(message) && !/症狀/.test(message)) || /尿路結石包含哪些/.test(message)) {
     return "尿路結石包含腎結石、輸尿管結石與膀胱結石；多數結石在腎臟形成，往下掉到輸尿管或膀胱後，可能造成不同位置的結石症狀。";
   }
 
