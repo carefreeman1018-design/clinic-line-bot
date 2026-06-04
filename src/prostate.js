@@ -22,6 +22,9 @@ export function answerProstateQuestion(message, now = new Date()) {
     return buildProstateVisitScheduleReply(message, now);
   }
 
+  const officialFaqReply = answerOfficialProstateFaq(message);
+  if (officialFaqReply) return officialFaqReply;
+
   if (asksTreatmentChoiceCostOrOutcome(message)) {
     return [
       "診所有提供攝護腺肥大評估與治療，官網列出雷射剜除、水蒸氣消融、綠光雷射汽化與 Urolift 等方式。",
@@ -35,6 +38,38 @@ export function answerProstateQuestion(message, now = new Date()) {
     "診所有提供攝護腺肥大相關評估與治療。",
     "頻尿、夜尿、尿流變細或排尿困難建議由醫師檢查後判斷原因。"
   ].join("");
+}
+
+function answerOfficialProstateFaq(message) {
+  if (/不治療|放著|不處理|會怎樣/.test(message)) {
+    return "官網 FAQ 說明，攝護腺肥大若持續嚴重阻塞，可能造成排尿不順、頻尿、夜尿；嚴重時可能反覆感染、反覆血尿、膀胱結石和腎水腫。";
+  }
+
+  if (/一定.*手術|最後.*手術|都要.*手術|必須.*手術/.test(message)) {
+    return "官網 FAQ 說明，不是每位男性最後都一定需要攝護腺手術；是否需要手術和肥大嚴重度、是否早期診治與療程反應有關，有症狀或疑慮時建議找醫師評估。";
+  }
+
+  if (/尿管|導尿管|留置|置留|幾天/.test(message)) {
+    return "官網 FAQ 說明，攝護腺手術後會放置尿管監控止血與等待組織消腫，再依恢復狀況拔除。尿管留置時間約為：雷射剜除 1–2 天、綠光雷射汽化 1–2 天、水蒸氣攝護腺消融術 Rezūm 3–7 天、Urolift 攝護腺擴開術 0–1 天。";
+  }
+
+  if (/住院|住幾天|住院天數/.test(message)) {
+    return "官網 FAQ 說明，雷射剜除手術與綠光雷射汽化約住院 1.5–3 天；水蒸氣攝護腺消融術 Rezūm 與 Urolift 攝護腺擴開術則視個人狀況可不需住院。";
+  }
+
+  if (/性行為|性生活|多久.*性/.test(message)) {
+    return "官網 FAQ 說明，攝護腺手術後約一個月可逐漸恢復性生活。";
+  }
+
+  if (/影響.*性功能|性功能.*影響|勃起/.test(message)) {
+    return "官網 FAQ 說明，目前雷射與微創手術屬最低能量破壞，幾乎沒有能量傳導影響骨盆神經，性功能與控制排尿功能幾乎不會受影響。";
+  }
+
+  if (/攝護腺癌|前列腺癌|癌/.test(message)) {
+    return "官網 FAQ 說明，攝護腺肥大不等於攝護腺癌；攝護腺肥大有良性增生和攝護腺癌的差異，是否為哪一種需要手術後送檢驗才知道。";
+  }
+
+  return null;
 }
 
 function loadFixedScheduleConfig() {

@@ -35,6 +35,9 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
   }
 
   if (!hasDirectVasectomyQuestion) return null;
+  const officialFaqReply = answerOfficialVasectomyFaq(message);
+  if (officialFaqReply) return officialFaqReply;
+
   if (asksVasectomyAvailabilityOrOfficialKind(message)) {
     return [
       "有，官網列出的項目是「雷射無刀口男性結紮手術」，也就是男性無刀口結紮/輸精管結紮評估。",
@@ -67,6 +70,45 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
     "結紮屬於重大生育決定；之後可評估輸精管重接，但不能保證恢復生育。",
     `下一步可留下姓名、電話、方便時段與想諮詢結紮，或電話 ${PHONE} 確認。`
   ].join("");
+}
+
+function answerOfficialVasectomyFaq(message) {
+  if (/多久|多長|幾分鐘|時間|洗澡|沖澡|碰水/.test(message)) {
+    return [
+      "官網 FAQ 說明，無刀口式結紮手術一般約 15–20 分鐘即可完成，無須住院，可於當日或隔日正常上班。",
+      "如果手術中選用醫療用凝膠，當天返家後即可正常洗澡。"
+    ].join("");
+  }
+
+  if (/睪固酮|男性賀爾蒙|荷爾蒙/.test(message)) {
+    return "官網 FAQ 說明，結紮不會影響睪固酮/男性賀爾蒙；睪固酮由睪丸製造後經血管進入全身循環，沒有切除睪丸就不會影響。";
+  }
+
+  if (/性慾|性功能|勃起|性能力/.test(message)) {
+    return "官網 FAQ 說明，結紮只是將輸精管切斷與燒灼，不影響睪固酮和男性賀爾蒙，所以通常不會影響性功能或性慾。";
+  }
+
+  if (/射精|精液量|沒有精液/.test(message)) {
+    return "官網 FAQ 說明，結紮後仍會有精液；精液中精子只占小部分，所以精液量肉眼通常沒有太大差異。";
+  }
+
+  if (/精子.*去哪|精子.*哪裡|精子.*代謝/.test(message)) {
+    return "官網 FAQ 說明，精子無法從輸精管出去後，會堆積在副睪丸，之後自然被身體代謝掉，不會傷身。";
+  }
+
+  if (/併發症|後遺症|副作用|腫脹|副睪丸|持續出血|傷口/.test(message)) {
+    return "官網 FAQ 說明，結紮後一個月內可能有射精睪丸腫脹感、偶發性副睪丸發炎等情況；若術後睪丸持續腫脹變大與疼痛、傷口持續出血或陰囊左右大小明顯不同，請儘速透過 LINE 向醫師確認並安排回診。";
+  }
+
+  if (/割包皮.*一起|一起.*割包皮|同時.*包皮|一起做/.test(message)) {
+    return "官網 FAQ 說明，結紮可以和割包皮一起評估處理；若還有燒菜花、珍珠丘疹去除、龜頭增大、陰莖減敏等想一併處理，需經雙主治醫師評估，並建議先透過官方 LINE 事先討論。";
+  }
+
+  if (/外縣市|離島|海外|當天看診|當天手術|快速通關|看完診.*手術/.test(message)) {
+    return "官網 FAQ 說明，可以使用當日看診、當日手術的「快速通關」服務；不只結紮，割包皮、燒菜花、珍珠丘疹去除手術等也可提前預約快速通關，建議先透過官方 LINE 預約。";
+  }
+
+  return null;
 }
 
 function loadFixedScheduleConfig() {

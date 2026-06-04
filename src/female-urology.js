@@ -21,6 +21,9 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
     ].join("");
   }
 
+  const officialMagneticFaqReply = answerOfficialMagneticChairFaq(message);
+  if (officialMagneticFaqReply) return officialMagneticFaqReply;
+
   const safetyNotes = buildSafetyNotes(message);
 
   return [
@@ -29,6 +32,40 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
     safetyNotes,
     `下一步可先電話 ${PHONE}，或留下姓名、電話與方便時段，請診所人員協助確認。`
   ].filter(Boolean).join("");
+}
+
+function answerOfficialMagneticChairFaq(message) {
+  if (!/美磁波|磁波|鍛肌椅|高密度磁波/.test(message)) return null;
+
+  if (/痛|疼痛|會不會痛/.test(message)) {
+    return "官網 FAQ 說明，高密度磁波治療不會有疼痛感；多數人會感覺盆底肌肉收縮，治療部位可能有麻麻的電流感，通常不會不適，稍微休息後即可解除。";
+  }
+
+  if (/維持|效果.*多久|撐多久/.test(message)) {
+    return "官網 FAQ 說明，臨床研究顯示治療後 5–6 個月仍有 75% 患者維持良好盆底肌效果；高風險族群或已有症狀者，可評估持續治療或搭配凱格爾運動保養。";
+  }
+
+  if (/多久|幾次|療程|有效/.test(message)) {
+    return "官網 FAQ 說明，高密度磁波每次療程 30 分鐘、每週 2 次，間隔 2–5 天；建議做 4–6 次並最好在 3 週內完成，有些人做 1–2 次後就會感覺差異。";
+  }
+
+  if (/準備|穿什麼|金屬|手機/.test(message)) {
+    return "官網 FAQ 說明，治療前著寬鬆衣褲即可；需移除治療部位周邊金屬配件，手機也不可直接靠近儀器。";
+  }
+
+  if (/訓練球|凱格爾|差別|不同/.test(message)) {
+    return "官網 FAQ 說明，高密度磁波鍛肌椅是非侵入性且無須更衣的療程，可精準刺激淺層到深層肌肉；盆底肌訓練球則需自行置入陰道，練習不易且有感染或損傷風險。";
+  }
+
+  if (/電磁波|輻射|放射線|安全/.test(message)) {
+    return "官網 FAQ 說明，高密度磁波治療使用的電磁能只用於引發骨盆底肌收縮，不具放射線；治療周圍電磁波甚至低於生活環境中的其他電磁波，且產品通過衛署醫器輸字第 036902 號認證。";
+  }
+
+  if (/自費|健保|給付|費用/.test(message)) {
+    return "官網 FAQ 說明，高密度磁波治療屬自費項目，健保無給付；詳細療程效果與方式仍需以醫師親自說明為準。";
+  }
+
+  return null;
 }
 
 function isFemaleUrologyQuestion(message) {
