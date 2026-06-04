@@ -394,7 +394,7 @@ function renderTreatmentServiceEntry({ service, pages, homepageCards, homepageFo
     service.defaultDescription
   ]);
   const highlights = uniqueCompact(matchedPages.flatMap((page) => page.contentHighlights)).slice(0, 8);
-  const faqs = uniqueFaqs(matchedPages.flatMap((page) => page.faqs)).slice(0, 8);
+  const faqs = uniqueFaqs(matchedPages.flatMap((page) => page.faqs)).slice(0, 12);
   const headings = uniqueCompact(matchedPages.flatMap((page) => page.headings)).slice(0, 14);
   const keywords = uniqueCompact([
     ...service.aliases,
