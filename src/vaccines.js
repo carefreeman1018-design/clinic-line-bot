@@ -22,6 +22,12 @@ export function answerVaccineQuestion(message, conversationHistory = []) {
     return answerHpvVaccineWithAnonymousScreeningQuestion(message);
   }
 
+  if ((isHpvVaccineQuestion(message) || followUpContext?.includesHpv)
+      && /治療|治好|處理|已經|菜花|肉芽|病灶|感染/.test(message)
+      && /菜花|HPV|肉芽|病灶|感染/.test(message)) {
+    return "HPV 疫苗主要是預防方向，可降低部分型別感染與菜花風險；不能治療已經出現的菜花、肉芽病灶或既有 HPV 感染。若已有病灶，需由醫師現場評估篩檢與治療。";
+  }
+
   if (isHpvVaccineQuestion(message) || followUpContext?.includesHpv) {
     parts.push("官網列出診所有提供 HPV 疫苗施打，也有提到 HPV 九價疫苗。");
     if (hasHpvExposureConcern) {

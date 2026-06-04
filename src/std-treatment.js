@@ -72,6 +72,10 @@ function answerOfficialStdInfoQuestion(message) {
     return "官網提到可諮詢 PrEP 的族群包括性行為頻率較高、較少使用保險套、有藥愛習慣，或伴侶為 HIV 感染者但自己為 HIV 陰性者；PrEP 需經醫師評估後使用。";
   }
 
+  if (/PEP|暴露後/i.test(message) && /其他性病|梅毒|淋病|菜花|HPV|預防.*性病|防.*性病/.test(message)) {
+    return "PEP 是 HIV 暴露後預防，並非 100% 有效，也不能預防梅毒、淋病、菜花等其他性病；仍建議搭配保險套，並由醫師評估是否需要一起篩檢。";
+  }
+
   if (/PEP|暴露後|高風險|保險套破|無套/i.test(message) && /情境|什麼情況|哪些狀況|需要|適合/.test(message)) {
     return "官網提到可能需要評估 PEP 的情境包含未使用保險套、遭受性侵、共用針頭，或直接接觸疑似含 HIV 的血液或體液；PEP 重點是在風險行為後 72 小時內盡快由醫師評估。";
   }
