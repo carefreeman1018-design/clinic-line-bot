@@ -22,7 +22,7 @@ export function answerBasicInfoQuestion(message) {
   }
 
   if (asksParkingInfo(normalized)) {
-    return buildParkingReply();
+    return buildParkingReply(normalized);
   }
 
   if (asksBasicInfoBundle(normalized)) {
@@ -101,12 +101,18 @@ function asksParkingInfo(message) {
   return /停車|開車|車位|停車場|特約停車|停車優惠/.test(message);
 }
 
-function buildParkingReply() {
-  return [
+function buildParkingReply(message = "") {
+  const lines = [
     "開車可參考官網列出的附近停車場，但診所公開資料沒有明確確認特約停車或診所停車優惠，不能當作一定有停車折抵。",
     "台灣聯通停車場－將捷二場（停車塔）：台北市中山區松江路 336 號。",
     "聯邦佳佳大樓停車場（地下平面停車場）：台北市中山區松江路 235 巷 22 號。"
-  ].join("\n");
+  ];
+
+  if (/臨停|暫停|門口|先上樓|先.*問|下車/.test(message)) {
+    lines.push("門口能否臨停或先下車要看現場交通與大樓入口狀況，不能先保證；建議先電話 02-2511-9488 或到場依現場規定。");
+  }
+
+  return lines.join("\n");
 }
 
 function asksClinicAccess(message) {

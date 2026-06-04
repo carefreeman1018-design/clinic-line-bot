@@ -6,6 +6,25 @@ const { buildReplyAndMatches } = await import("../src/index.js");
 
 const cases = [
   {
+    name: "round31 parking includes door temporary stop boundary",
+    message: "我開車過去，附近有停車場嗎？如果只是先上樓問一下，可以臨停門口嗎？",
+    routedOnly: true,
+    expected: ["附近停車場", "沒有明確確認特約停車", "不能當作一定有停車折抵", "台灣聯通停車場", "聯邦佳佳大樓停車場", "門口", "臨停", "現場交通", "大樓入口", "不能先保證", "02-2511-9488"],
+    forbidden: ["捷運可搭到行天宮站", "官網介紹：", "https://", "lin.ee"]
+  },
+  {
+    name: "round31 lab report timing notification avoids pure interpretation reply",
+    message: "如果有抽血報告，大概幾天會出來？可以 LINE 通知我好了沒就好嗎？",
+    expected: ["報告多久出來", "檢查項目", "送檢流程", "不能在 LINE 先保證固定天數", "好了沒", "LINE", "身份確認", "02-2511-9488", "通知/領取方式", "醫師判讀"],
+    forbidden: ["檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "建議預約門診或回診讓醫師說明", "PSA", "陽性", "陰性", "https://", "lin.ee"]
+  },
+  {
+    name: "round31 mobility checkin and wheelchair avoids mrt-only route",
+    message: "我帶爸爸去，他走路比較慢，可以先讓他坐著我去櫃台報到嗎？診所有輪椅嗎？",
+    expected: ["3 樓櫃台", "長輩行動比較慢", "報到", "等候安排", "病人本人", "現場流程", "輪椅", "公開資料沒有明確保證", "02-2511-9488", "坐著等"],
+    forbidden: ["捷運可搭到行天宮站", "4 號出口", "步行約 40 秒", "只回答路線", "https://", "lin.ee"]
+  },
+  {
     name: "fee card counter question overrides prior service context",
     message: "如果只是想先問費用跟能不能刷卡，不想看診，可以到櫃台問嗎？",
     conversationHistory: [

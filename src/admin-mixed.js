@@ -43,6 +43,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksLabReportTimingNotification(normalized)) {
+    return [
+      "抽血或檢驗報告多久出來，要看檢查項目與送檢流程，不能在 LINE 先保證固定天數。",
+      `報告好了沒、是否能用 LINE 只通知狀態，涉及個人資料與身份確認；請先電話 ${PHONE} 或到櫃台確認通知/領取方式。`,
+      "若需要醫師判讀結果，仍要依診所安排回診或由醫師說明。"
+    ].join("\n");
+  }
+
   if (asksAnonymousScreeningReportNotificationPrivacy(normalized)) {
     return [
       "匿名篩檢會重視隱私；報告通知方式、多久可知道結果，以及電話裡會不會說明檢查內容，要由現場人員依篩檢項目說明。",
@@ -314,6 +322,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksMobilityCheckinAssistance(normalized)) {
+    return [
+      "可以先到 3 樓櫃台說明長輩行動比較慢，請櫃台協助確認報到與等候安排；病人本人是否需到櫃台核對，仍以現場流程為準。",
+      `診所是否有可借用輪椅或其他協助，公開資料沒有明確保證；建議先電話 ${PHONE} 確認。`,
+      "若只是先讓長輩坐著等，也可抵達後先跟櫃台說明。"
+    ].join("\n");
+  }
+
   if (asksRouteWithArrivalRegistration(normalized)) {
     return [
       "行天宮站 4 號出口出站右轉，步行約 40 秒，搭電梯到 3 樓。",
@@ -405,6 +421,17 @@ function asksPostVisitBloodUrineTestFlow(message) {
   const asksTimingOrFlow = /當天|診所做|另外約|另約|約時間|流程|空腹|採檢時間|費用|報告時間|多久/.test(message);
 
   return hasAfterVisitOrDoctorOrder && hasBloodOrUrineTest && asksTimingOrFlow;
+}
+
+function asksLabReportTimingNotification(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+
+  const hasLabReportCue = /抽血報告|驗血報告|血液報告/.test(message)
+    || (/報告/.test(message) && /抽血|驗血|血液/.test(message));
+  const asksTimingOrNotification = /幾天|多久|什麼時候|出來|好了沒|通知|LINE|line|打電話|電話/.test(message);
+  const asksLogisticsNotInterpretation = !/數值|正常|不正常|陽性|陰性|判讀|解讀|是不是|要不要回診|嚴不嚴重/.test(message);
+
+  return hasLabReportCue && asksTimingOrNotification && asksLogisticsNotInterpretation;
 }
 
 function asksAnonymousScreeningReportNotificationPrivacy(message) {
@@ -682,6 +709,14 @@ function asksWheelchairDropoffAccess(message) {
 function asksWheelchairElevatorAccess(message) {
   return /輪椅|行動不便|行動不方便|走路不方便|長輩|老人家|爸爸|媽媽/.test(message)
     && /電梯|上去|上樓|到\s*3\s*樓|到三樓|無障礙|怎麼走|入口|動線/.test(message);
+}
+
+function asksMobilityCheckinAssistance(message) {
+  const hasMobilityCue = /走路.*慢|走路不方便|行動不便|行動不方便|輪椅|長輩|老人家|爸爸|爸|媽媽|媽/.test(message);
+  const asksCheckinOrWaiting = /報到|櫃台|櫃檯|坐著|坐下|等候|先讓.*坐|先.*坐|協助|輪椅/.test(message);
+  const asksArrangement = /可以|可不可以|能不能|有沒有|診所有|先|要不要/.test(message);
+
+  return hasMobilityCue && asksCheckinOrWaiting && asksArrangement;
 }
 
 function asksRouteWithArrivalRegistration(message) {
