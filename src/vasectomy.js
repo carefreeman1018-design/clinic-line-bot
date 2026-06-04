@@ -73,6 +73,18 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
 }
 
 function answerOfficialVasectomyFaq(message) {
+  if (/阻斷|原理|怎麼做|如何做|輸精管|精子.*精液|避孕效果/.test(message)) {
+    return "官網說明，結紮手術是阻斷輸精管，讓精子無法進入精液，達到避孕效果；精子無法輸送後，會在副睪丸堆積，之後自然被身體代謝。";
+  }
+
+  if (/傷口|切口|開口|位置|在哪|哪裡/.test(message) && /無刀口|結紮|輸精管/.test(message)) {
+    return "官網說明，無刀口結紮會在陰囊中間開一個很小的傷口，將輸精管拉出、剪斷，並封住精子的通道；整個手術過程約 15–20 分鐘。";
+  }
+
+  if (/生小孩|懷孕|恢復|復原|可逆|接回來|重接|後悔/.test(message)) {
+    return "官網說明，結紮屬於永久絕育方式；若之後想生小孩，可以評估輸精管重接等恢復手術，但不是絕對有效，也不能保證恢復生育。";
+  }
+
   if (/多久|多長|幾分鐘|時間|洗澡|沖澡|碰水/.test(message)) {
     return [
       "無刀口式結紮手術一般約 15–20 分鐘即可完成，無須住院，可於當日或隔日正常上班。",
