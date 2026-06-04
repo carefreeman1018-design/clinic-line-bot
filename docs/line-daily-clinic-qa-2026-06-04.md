@@ -486,3 +486,13 @@ Tested after pushing commit `82e395b` on 2026-06-04 around 08:28-08:30 CST. The 
 | 1 | 我第一次來，今天下午或晚上想看頻尿，哪個時段可以看？誰看診？ | Says frequency/night-urination general urology for today Thursday: afternoon 13:30-17:00 is surgery time, not general clinic; evening 18:00-20:30 is Chen Wei-Jie; call to confirm quota/time. | Pass | Establishes non-PEP schedule context. |
 | 2 | 那明天呢？我白天可以去。 | Says tomorrow Friday fixed clinic has morning 09:30-12:30 Chen Wei-Jie and afternoon 13:30-17:00 Luo Shixiu; call/LINE VOOM/online registration to confirm. | Pass | `白天` now includes morning and afternoon, not only Luo afternoon. |
 | 3 | 早上也可以嗎？還是只有下午？ | Says Friday fixed clinic has morning 09:30-12:30 Chen Wei-Jie and afternoon 13:30-17:00 Luo Shixiu; no PEP text appears. | Pass | Older PEP context no longer pollutes schedule follow-up. |
+
+## Round 28 - Natural doctor info and frequency doctor choice
+
+Tested on 2026-06-04 around 08:47-08:57 CST. Initial retest after commit `81e23b8` fixed the first two doctor-info replies, but the third contextual frequency comparison still fell into the surgery-heavy doctor-comparison branch. Jason confirmed the cause: `buildDoctorComparisonReply()` ran before the general-urology doctor-choice branch. After commit `dfdb736`, the same three natural patient questions were retested in LINE.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 院長是哪位醫師？他固定什麼時候看診？ | Says Chen Wei-Jie is the clinic dean, summarizes general urology/voiding first, and lists full fixed clinics: Monday morning, Tuesday morning, Thursday evening, and Friday morning. | Pass | No longer answers only the current Thursday evening slot. |
+| 2 | 那羅醫師呢？他主要看什麼？ | Says Luo Shixiu mainly sees general urology/voiding-related issues, male/female voiding disorders, and then male surgery/private concerns. | Pass | No longer starts with only circumcision/vasectomy/private surgery. |
+| 3 | 如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？ | Says general frequency/urology problems do not require only the dean or a single hard-picked doctor; both Chen Wei-Jie and Luo Shixiu have general-urology fixed clinics, so choose by available time and let the physician evaluate. | Pass | After route-order fix, no "shared surgery items" comparison appears. |
