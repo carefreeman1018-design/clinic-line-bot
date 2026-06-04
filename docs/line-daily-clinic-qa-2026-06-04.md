@@ -570,3 +570,12 @@ Tested on 2026-06-04 around 11:47-11:56 CST. The LINE conversation still contain
 | # | Patient question | Initial LINE reply summary | Initial result | Retest reply summary | Final result | Notes |
 |---|---|---|---|---|---|---|
 | 1 | 我明天想第一次去看頻尿，如果線上掛號滿了，可以直接到現場等嗎？ | Replied with tomorrow Friday fixed clinics for vasectomy consultation and did not answer online-full onsite waiting for frequency. | Fail | Says tomorrow Friday general urology can use morning Chen Wei-Jie or afternoon Luo Shixiu; if online registration is full, onsite waiting/waitlist cannot be guaranteed, so call 02-2511-9488 or ask the 3F counter about onsite quota. | Pass | `src/vasectomy.js` now drops older vasectomy context when the current message clearly starts a new urology/admin topic, and `src/schedule.js` gives a direct online-full/waitlist note. |
+
+## Round 36 - Natural registration-change and check-in flow follow-ups
+
+Tested on 2026-06-04 around 11:58-11:59 CST after Round 35 established a frequency/online-full context. This pass-only round checked whether short follow-ups about changing to the afternoon and onsite check-in remain practical and do not drift into doctor-specialty or generic schedule text.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 那如果我改下午去，是同一個號可以改，還是要重新掛？ | Says the same number cannot be directly changed to another time here; staff need to check the original registration and the afternoon quota. Recommends original online system, phone 02-2511-9488, or 3F counter to confirm whether it can be changed, whether cancellation/rebooking is needed, and whether the new slot has availability. | Pass | Answers registration-change mechanics without listing unrelated doctors or overpromising. |
+| 2 | 我到現場是先去櫃台報到，還是要先抽號？第一次去要帶什麼？講重點。 | Says to first report at the 3F counter and not draw a number by yourself; first visit should bring health card and ID, and prior reports or medication lists if available. | Pass | Direct, short, and clinic-counter-like. |
