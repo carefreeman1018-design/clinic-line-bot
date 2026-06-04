@@ -206,7 +206,7 @@ async function handleLineEvent(event) {
     await rememberConversationExchange(userId, message, reply);
   } catch (error) {
     console.error(error);
-    await safeReplyText(event.replyToken, "系統暫時查不到資料，請稍後再試或留下問題。");
+    await safeReplyText(event.replyToken, "這題我現在暫時不能直接確認，請稍後再傳一次，或留下問題讓我們回覆。");
   }
 }
 
@@ -360,6 +360,7 @@ async function isDoctorReviewReady() {
 
 async function shouldCreateDoctorReviewCase(message) {
   if (shouldBypassDoctorReviewForRoutedSafety(message)) return false;
+  if (shouldBypassDoctorReviewForOfficialGeneralInfo(message)) return false;
   if (shouldBypassDoctorReviewForAnonymousScreeningLogistics(message)) return false;
   if (shouldBypassDoctorReviewForReportLogistics(message)) return false;
   if (shouldBypassDoctorReviewForRoutineAdmin(message)) return false;
@@ -372,6 +373,16 @@ export function shouldBypassDoctorReviewForRoutedSafety(message) {
     answerMaleUtiUrgentQuestion(message) ||
     answerWoundCareQuestion(message)
   );
+}
+
+export function shouldBypassDoctorReviewForOfficialGeneralInfo(message) {
+  const asksGeneralProstateCancerInfo = (
+    /攝護腺肥大|前列腺肥大/.test(message) &&
+    /攝護腺癌|前列腺癌|癌/.test(message)
+  );
+  const hasPersonalReportOrDecisionCue = /我|爸爸|媽媽|家人|報告|檢查結果|PSA|攝護腺指數|超音波|尿流速|切片|數值|Gleason|格里森|要不要|需不需要|治療|手術|開刀|打針|開藥/i.test(message);
+
+  return asksGeneralProstateCancerInfo && !hasPersonalReportOrDecisionCue;
 }
 
 export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) {
@@ -490,7 +501,14 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   if (isLowInformationMessage(message)) {
     return {
-      reply: "我看得到這則訊息，但問題內容不夠明確。可以直接告訴我想問門診、預約、交通，還是哪一項服務嗎？",
+      reply: "我收到，但問題內容還不夠明確。可以直接告訴我想問門診、預約、交通，還是哪一項服務嗎？",
+      relevantChunks: []
+    };
+  }
+
+  if (isClearlyOutOfScopeMessage(message)) {
+    return {
+      reply: "這題跟診所服務無關，我不能協助處理這類內容。若要問門診、預約、交通或診所有沒有提供某項服務，可以直接傳訊息給我。",
       relevantChunks: []
     };
   }
@@ -504,6 +522,16 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   const announcementReply = answerLineVoomAnnouncementQuestion(message);
   if (announcementReply) return { reply: announcementReply, relevantChunks: [] };
+
+  if (shouldPrioritizeDoctorNameSchedule(message)) {
+    const fixedScheduleReply = answerFixedScheduleQuestion(message, new Date(), conversationHistory);
+    if (fixedScheduleReply) return { reply: fixedScheduleReply, relevantChunks: [] };
+  }
+
+  if (shouldPrioritizeProstateServiceSchedule(message)) {
+    const prostateReply = answerProstateQuestion(message);
+    if (prostateReply) return { reply: prostateReply, relevantChunks: [] };
+  }
 
   const adminMixedReply = answerAdminMixedQuestion(message);
   if (adminMixedReply) return { reply: adminMixedReply, relevantChunks: [] };
@@ -588,7 +616,7 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
 
   if (shouldEscalate(message)) {
     return {
-      reply: "這需要醫師看診判斷。請預約門診，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。",
+      reply: "這需要到門診看一下。請先預約，或留下姓名、電話與方便聯絡時段。若劇烈疼痛、發燒、尿不出來或大量出血，請立即就醫。",
       relevantChunks: []
     };
   }
@@ -705,6 +733,18 @@ function hasExplicitOutOfScopeProgrammingIntent(message) {
 
 function hasClinicOrMedicalIntent(message) {
   return /津久|診所|門診|掛號|預約|交通|地址|電話|醫師|醫生|櫃台|看診|回診|檢查|報告|費用|價格|收據|診斷證明|泌尿|肛門|大腸直腸|包皮|結紮|性病|篩檢|疫苗|HPV|HIV|PEP|PrEP|菜花|梅毒|淋病|披衣菌|皰疹|血尿|頻尿|漏尿|尿痛|尿不出來|攝護腺|結石|睪丸|陰莖|陰囊|會陰|割包皮|猛健樂|美磁波|震波|水蒸氣|痔瘡|肛裂|廔管/i.test(message);
+}
+
+function shouldPrioritizeDoctorNameSchedule(message) {
+  const hasDoctorNameCorrection = /羅世修|羅詩修嗎|羅醫師是羅詩修|羅醫生是羅詩修/.test(message);
+  const hasScheduleCue = /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|白天|下午|晚上|早診|午診|晚診|有診|門診|看診/.test(message);
+  return hasDoctorNameCorrection && hasScheduleCue;
+}
+
+function shouldPrioritizeProstateServiceSchedule(message) {
+  const hasProstateService = /攝護腺肥大|前列腺肥大|水蒸氣|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除/i.test(message);
+  const hasScheduleOrRoutingCue = /今天|明天|後天|週[一二三四五六日]|周[一二三四五六日]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|早上|上午|白天|下午|晚上|早診|午診|晚診|掛|門診|看診|哪一診|哪診|可以先諮詢|先諮詢/.test(message);
+  return hasProstateService && hasScheduleOrRoutingCue;
 }
 
 function buildContextualQuery(message, conversationHistory) {
