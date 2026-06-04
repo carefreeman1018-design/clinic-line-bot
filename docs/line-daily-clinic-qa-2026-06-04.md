@@ -562,3 +562,11 @@ Tested on 2026-06-04 around 11:30-11:45 CST. The first two doctor-info replies w
 | 1 | 院長是哪位醫師？他固定什麼時候看診？ | Says Chen Wei-Jie is the clinic dean, lists general urology/voiding and male-private/surgery focus, then lists Monday morning, Tuesday morning, Thursday evening, and Friday morning fixed clinics. | Pass | Not retested after this code change. | Pass | Doctor identity and fixed schedule are both answered. |
 | 2 | 那羅醫師呢？他主要看什麼？ | Says Luo Shixiu mainly sees general urology/voiding-related issues, male/female voiding disorders, and male surgery/private concerns. | Pass | Not retested after this code change. | Pass | Contextual doctor follow-up works. |
 | 3 | 如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？ | Direction was correct, but included `不需要只推薦唯一一位醫師`, which reads like test/spec language rather than clinic wording. | Partial | Says general frequency/urology does not require specifying the dean; Chen Wei-Jie and Luo Shixiu both have general urology clinics, so choose a convenient time and confirm quota by phone or onsite. | Pass | `src/doctors.js` and `src/male-uti.js` now output patient-facing counter language, and `src/response-style.js` has a fallback rewrite for this rule phrase. |
+
+## Round 35 - Natural online-full frequency visit after older vasectomy context
+
+Tested on 2026-06-04 around 11:47-11:56 CST. The LINE conversation still contained older vasectomy-consult context, so this round checked whether a new frequency/registration question can reset the topic instead of being swallowed by the vasectomy follow-up handler.
+
+| # | Patient question | Initial LINE reply summary | Initial result | Retest reply summary | Final result | Notes |
+|---|---|---|---|---|---|---|
+| 1 | 我明天想第一次去看頻尿，如果線上掛號滿了，可以直接到現場等嗎？ | Replied with tomorrow Friday fixed clinics for vasectomy consultation and did not answer online-full onsite waiting for frequency. | Fail | Says tomorrow Friday general urology can use morning Chen Wei-Jie or afternoon Luo Shixiu; if online registration is full, onsite waiting/waitlist cannot be guaranteed, so call 02-2511-9488 or ask the 3F counter about onsite quota. | Pass | `src/vasectomy.js` now drops older vasectomy context when the current message clearly starts a new urology/admin topic, and `src/schedule.js` gives a direct online-full/waitlist note. |
