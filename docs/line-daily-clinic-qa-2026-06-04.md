@@ -476,3 +476,13 @@ Tested after pushing commit `fb1b64b` on 2026-06-04 around 08:13-08:15 CST. Ques
 | 2 | 我月底要出國，想先問 HPV 或皮蛇疫苗有沒有庫存、大概多少錢，可以直接到櫃台問嗎？ | Says the patient can ask counter or call 02-2511-9488 about HPV/skin-shingles vaccine stock, fee and available vaccination time without deciding to receive it first; stock, actual fee, suitability, travel timing and same-day arrangement depend on staff/doctor confirmation. | Pass | No payment-method drift. |
 | 3 | 朋友說結紮要找院長，我明天下午如果只有羅醫師的診，可以先去問結紮諮詢嗎？ | Says tomorrow Friday afternoon 13:30-17:00 is Luo Shixiu general urology; for vasectomy consultation, tell 3F counter; same-day assessment, changing registration, separate appointment, fee and follow-up depend on doctor/counter; not necessarily only the dean. | Pass | Practical counter path instead of specialty dump. |
 | 4 | 匿名篩檢流程怎麼做？我昨天無套高風險，需要 PEP 嗎？ | Says PEP should be evaluated within 72 hours and the earlier the better; contact the clinic today or see outpatient/ER for physician assessment; anonymous screening can be asked together but PEP assessment is prioritized. | Pass | Safety boundary prevents generic anonymous-screening admin reply. |
+
+## Round 27 - Natural schedule follow-ups after older PEP context
+
+Tested after pushing commit `82e395b` on 2026-06-04 around 08:28-08:30 CST. The same LINE user already had an older PEP conversation in history, so this round checks whether newer frequency/schedule context wins.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我第一次來，今天下午或晚上想看頻尿，哪個時段可以看？誰看診？ | Says frequency/night-urination general urology for today Thursday: afternoon 13:30-17:00 is surgery time, not general clinic; evening 18:00-20:30 is Chen Wei-Jie; call to confirm quota/time. | Pass | Establishes non-PEP schedule context. |
+| 2 | 那明天呢？我白天可以去。 | Says tomorrow Friday fixed clinic has morning 09:30-12:30 Chen Wei-Jie and afternoon 13:30-17:00 Luo Shixiu; call/LINE VOOM/online registration to confirm. | Pass | `白天` now includes morning and afternoon, not only Luo afternoon. |
+| 3 | 早上也可以嗎？還是只有下午？ | Says Friday fixed clinic has morning 09:30-12:30 Chen Wei-Jie and afternoon 13:30-17:00 Luo Shixiu; no PEP text appears. | Pass | Older PEP context no longer pollutes schedule follow-up. |
