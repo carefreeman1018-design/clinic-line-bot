@@ -231,14 +231,14 @@ export function answerDoctorInfoQuestion(message, conversationHistory = [], now 
   const generalUrologySlotComparisonReply = buildGeneralUrologySlotComparisonReply(message, now);
   if (generalUrologySlotComparisonReply) return generalUrologySlotComparisonReply;
 
+  const generalUrologyDoctorChoiceReply = buildGeneralUrologyDoctorChoiceReply(message, now);
+  if (generalUrologyDoctorChoiceReply) return generalUrologyDoctorChoiceReply;
+
   const comparisonReply = buildDoctorComparisonReply(message, doctor, conversationHistory);
   if (comparisonReply) return comparisonReply;
 
   const otherDoctorSpecialtyReply = buildOtherDoctorSpecialtyReply(message, conversationHistory);
   if (otherDoctorSpecialtyReply) return otherDoctorSpecialtyReply;
-
-  const generalUrologyDoctorChoiceReply = buildGeneralUrologyDoctorChoiceReply(message, now);
-  if (generalUrologyDoctorChoiceReply) return generalUrologyDoctorChoiceReply;
 
   const combinedDoctorScheduleReply = buildCombinedDoctorScheduleReply(message, doctor, conversationHistory, now);
   if (combinedDoctorScheduleReply) return combinedDoctorScheduleReply;

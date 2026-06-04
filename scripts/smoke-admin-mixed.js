@@ -202,8 +202,14 @@ const cases = [
     name: "natural frequency doctor comparison avoids surgery dump and hard pick",
     message: "如果我只是頻尿，院長跟羅醫師差在哪？我要掛誰比較適合？",
     routedOnly: true,
+    conversationHistory: [
+      { role: "user", content: "院長是哪位醫師？他固定什麼時候看診？" },
+      { role: "assistant", content: "陳偉傑醫師是津久診所院長，主要看一般泌尿/排尿相關問題、男性排尿障礙、包皮/結紮等男性手術與男性私密相關問題。" },
+      { role: "user", content: "那羅醫師呢？他主要看什麼？" },
+      { role: "assistant", content: "羅詩修醫師主要看一般泌尿/排尿相關問題、男性/女性排尿障礙、包皮/結紮等男性手術與男性私密相關問題。" }
+    ],
     expected: ["一般頻尿或泌尿問題", "不一定只能掛院長", "不需要只推薦唯一", "陳偉傑醫師和羅詩修醫師都有一般泌尿固定門診", "依你能到的時段", "一般泌尿門診", "醫師評估原因"],
-    forbidden: ["共同項目：精雕微創包皮槍手術", "無刀口結紮手術、男性私密整形/陰莖增大手術", "週四早診", "一定掛院長", "一定掛羅醫師"]
+    forbidden: ["很多男性泌尿與私密手術專長重疊", "共同項目：精雕微創包皮槍手術", "無刀口結紮手術、男性私密整形/陰莖增大手術", "週四早診", "一定掛院長", "一定掛羅醫師"]
   },
   {
     name: "round18 near lunch clinic end asks counter deadline not doctor schedule",
