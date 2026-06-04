@@ -1,6 +1,9 @@
 const PHONE = "02-2511-9488";
 
 export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
+  const officialUtiInfoReply = answerOfficialUtiInfoQuestion(message);
+  if (officialUtiInfoReply) return officialUtiInfoReply;
+
   if (hasExplicitMaleSelfCue(message)) return null;
   if (hasMaleSpecificUrologyCue(message)) return null;
   if (hasAdministrativeIdCue(message) && !hasFemaleSpecificCue(message)) return null;
@@ -31,6 +34,26 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
     safetyNotes,
     `下一步可先電話 ${PHONE}，或留下姓名、電話與方便時段，請診所人員協助確認。`
   ].filter(Boolean).join("");
+}
+
+function answerOfficialUtiInfoQuestion(message) {
+  if (/女生.*反覆.*泌尿道|女性.*反覆.*泌尿道|泌尿道.*反覆感染/.test(message)) {
+    return [
+      "女性泌尿道反覆感染常和生活習慣、生理結構或其他問題有關。",
+      "常見誘因包含長時間忍尿、喝水太少、親密行為或避孕方式不當、私密處清潔方式不正確、更年期後風險上升；也可能和廔管或結石等狀況有關。",
+      "如果反覆發作，建議到泌尿科評估原因，再決定治療和預防方式。"
+    ].join("");
+  }
+
+  if (/泌尿道感染.*原因|尿道炎.*原因|感染.*原因|為什麼.*泌尿道.*感染|泌尿道.*怎麼造成/.test(message)) {
+    return [
+      "泌尿道感染常見原因包含大腸桿菌、淋病雙球菌、披衣菌、單純皰疹病毒、巨細胞病毒等感染。",
+      "生活習慣也會增加風險，例如長時間忍尿、喝水太少、親密行為或避孕方式不當、私密處清潔方式不正確；更年期後感染機率也會提高。",
+      "若已經有尿痛、頻尿、發燒、血尿或腰痛，就建議直接看診評估，不要只靠訊息判斷。"
+    ].join("");
+  }
+
+  return null;
 }
 
 function answerOfficialMagneticChairFaq(message) {

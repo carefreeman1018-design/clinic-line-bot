@@ -78,8 +78,17 @@ export async function loadKnowledge() {
 }
 
 export function shouldEscalate(message) {
+  if (isGeneralMedicalInfoQuery(message)) return false;
+
   return MEDICAL_ESCALATION_PATTERNS.some((pattern) => pattern.test(message)) ||
     PROCEDURE_REVIEW_PATTERNS.some((pattern) => pattern.test(message));
+}
+
+function isGeneralMedicalInfoQuery(message) {
+  const asksGeneralInfo = /原因|成因|為什麼|怎麼造成|是什麼|有哪些|症狀|治療方式|怎麼治療|預防|怎麼預防|反覆感染|高危險/.test(message);
+  const hasSpecificPersonalCue = /我|本人|自己|今天|現在|這兩天|昨|前天|剛剛|正在|已經|尿痛|尿尿.*痛|排尿.*痛|血尿|尿.*血|發燒|腰痛|劇痛|很痛|尿不出|排不出尿|懷孕|月經|吃藥|抗生素|報告|檢查結果|照片|傷口|流膿|化膿/.test(message);
+
+  return asksGeneralInfo && !hasSpecificPersonalCue;
 }
 
 export function retrieveRelevantChunks(chunks, query, limit = 4) {
