@@ -484,6 +484,13 @@ const cases = [
     routedOnly: true,
     expected: ["性功能障礙評估", "低能量震波治療", "血管性勃起功能障礙", "不能保證療效", "醫師", "心因性", "血管性", "混合性", "療程次數與費用", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
+  },
+  {
+    name: "female leakage magnetic chair fee question avoids generic payment branch",
+    message: "我媽媽漏尿跟頻尿，想問美磁波是不是不用看診就能直接做？費用能先問嗎？短一點。",
+    routedOnly: true,
+    expected: ["女性泌尿", "漏尿評估", "美磁波鍛肌椅", "醫師評估", "漏尿原因", "費用", "評估與療程安排", "02-2511-9488"],
+    forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "知識庫沒有", "公開明確數字", "https://", "appointment"]
   }
 ];
 

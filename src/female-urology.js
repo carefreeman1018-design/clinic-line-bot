@@ -25,7 +25,7 @@ export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
 
   return [
     "診所有提供女性泌尿、漏尿評估，也有美磁波鍛肌椅相關服務。",
-    "是否適合療程需先由醫師評估漏尿原因；費用目前知識庫沒有公開明確數字。",
+    "是否適合療程需先由醫師評估漏尿原因；費用需依評估與療程安排確認。",
     safetyNotes,
     `下一步可先電話 ${PHONE}，或留下姓名、電話與方便時段，請診所人員協助確認。`
   ].filter(Boolean).join("");
