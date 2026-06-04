@@ -157,6 +157,34 @@ const cases = [
     forbidden: ["主要看精雕微創包皮槍手術", "男性私密整形/陰莖增大手術", "臨時異動請以 LINE VOOM", "https://", "appointment"]
   },
   {
+    name: "natural tomorrow daytime follow-up lists morning and afternoon despite older pep context",
+    message: "那明天呢？我白天可以去。",
+    routedOnly: true,
+    conversationHistory: [
+      { role: "user", content: "匿名篩檢流程怎麼做？我昨天無套高風險，需要 PEP 嗎？" },
+      { role: "assistant", content: "PEP 需把握風險行為後 72 小時內，越早越好，請今天盡快由醫師評估。" },
+      { role: "user", content: "我第一次來，今天下午或晚上想看頻尿，哪個時段可以看？誰看診？" },
+      { role: "assistant", content: "頻尿/夜尿想看一般泌尿科的話，今天（週四）固定門診：午診（13:30-17:00）手術時段，不是一般門診；晚診（18:00-20:30）陳偉傑醫師。" }
+    ],
+    expected: ["明天（週五）", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師"],
+    forbidden: ["PEP", "72 小時", "越早越好", "只列", "只有下午"]
+  },
+  {
+    name: "natural morning-or-afternoon follow-up ignores older pep context",
+    message: "早上也可以嗎？還是只有下午？",
+    routedOnly: true,
+    conversationHistory: [
+      { role: "user", content: "匿名篩檢流程怎麼做？我昨天無套高風險，需要 PEP 嗎？" },
+      { role: "assistant", content: "PEP 需把握風險行為後 72 小時內，越早越好，請今天盡快由醫師評估。" },
+      { role: "user", content: "我第一次來，今天下午或晚上想看頻尿，哪個時段可以看？誰看診？" },
+      { role: "assistant", content: "頻尿/夜尿想看一般泌尿科的話，今天（週四）固定門診：午診（13:30-17:00）手術時段，不是一般門診；晚診（18:00-20:30）陳偉傑醫師。" },
+      { role: "user", content: "那明天呢？我白天可以去。" },
+      { role: "assistant", content: "明天（週五）固定門診：早診（09:30-12:30）：陳偉傑醫師；午診（13:30-17:00）：羅詩修醫師。" }
+    ],
+    expected: ["週五", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師"],
+    forbidden: ["PEP", "72 小時", "越早越好", "預防性投藥"]
+  },
+  {
     name: "round18 near lunch clinic end asks counter deadline not doctor schedule",
     message: "Round18-1：我快到診所了，但午診快結束，最晚幾點前報到？如果超過 17:00 還能等加號嗎？請直接說。",
     expected: ["不能先保證", "壓線", "一定看得到", "17:00 後", "等加號", "午診 13:30-17:00", "診間時段", "最晚報到", "能否加號或候補", "電話", "現場櫃台確認", "快到診所", "3 樓櫃台", "02-2511-9488"],

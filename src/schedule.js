@@ -41,7 +41,7 @@ const DOCTOR_MISSPELLINGS = [
   }
 ];
 
-const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|一般泌尿|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|掛號|掛錯|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約|跑錯/;
+const SCHEDULE_INTENT_PATTERN = /看診|門診|泌尿科|一般泌尿|誰|醫師|醫生|有診|休診|停診|營業|有開|開嗎|時段|早上|上午|白天|下午|晚上|掛號|掛錯|掛哪|改掛|該掛|可以掛|能掛|哪一診|哪診|預約|跑錯/;
 const TEMPORARY_CHANGE_CONFIRMATION = FIXED_SCHEDULE_CONFIG.temporaryChangeConfirmation;
 const WALK_IN_CONFIRMATION = "現場掛號可先到現場、也可先參考固定門診；但名額與臨時異動仍需以電話 02-2511-9488 或現場/線上掛號確認，不能保證一定掛得到。";
 
@@ -268,12 +268,23 @@ function hasCompetingMedicalTopic(message) {
 }
 
 function hasRecentPepContext(conversationHistory) {
-  return [...conversationHistory]
-    .slice(-8)
-    .some((historyMessage) => /PEP|暴露後|72\s*小時|無套性行為|直接拿藥|預防性投藥/.test(historyMessage.content ?? ""));
+  const recentHistory = [...conversationHistory].slice(-8);
+  const lastPepIndex = recentHistory.findLastIndex((historyMessage) => /PEP|暴露後|72\s*小時|無套性行為|直接拿藥|預防性投藥/.test(historyMessage.content ?? ""));
+  if (lastPepIndex < 0) return false;
+
+  const newerHistory = recentHistory.slice(lastPepIndex + 1);
+  const hasNewerScheduleContext = newerHistory.some((historyMessage) => {
+    const content = historyMessage.content ?? "";
+    return /一般泌尿|泌尿科|頻尿|夜尿|門診|早診|午診|晚診|早上|上午|白天|下午|晚上|誰看診|哪個時段|陳偉傑醫師|羅詩修醫師|手術時段/.test(content)
+      && !/PEP|暴露後|72\s*小時|無套性行為|預防性投藥/.test(content);
+  });
+
+  return !hasNewerScheduleContext;
 }
 
 function resolveRequestedPeriods(message) {
+  if (/白天/.test(message)) return ["早診", "午診"];
+
   return PERIOD_ALIASES
     .filter(([, pattern]) => pattern.test(message))
     .map(([period]) => period);
@@ -304,8 +315,8 @@ function resolveFollowUpDay(message, conversationHistory, now) {
 function isScheduleDayFollowUp(message) {
   if (/其他|其它|別的|哪些醫師|哪些醫生|有誰|哪幾位|醫師名單|醫生名單/.test(message)) return false;
 
-  const hasFollowUpCue = /那|剛剛|剛才|前面|上一個|上面|同一天|那天|那個日期|改/.test(message);
-  const hasScheduleCue = /早上|上午|下午|午診|晚上|晚診|夜診|門診|泌尿科|醫師|醫生|時段|看診/.test(message);
+  const hasFollowUpCue = /那|剛剛|剛才|前面|上一個|上面|同一天|那天|那個日期|改|還是|也可以|只有/.test(message);
+  const hasScheduleCue = /早上|上午|白天|下午|午診|晚上|晚診|夜診|門診|泌尿科|醫師|醫生|時段|看診/.test(message);
   return hasFollowUpCue && hasScheduleCue;
 }
 
