@@ -382,7 +382,14 @@ export function shouldBypassDoctorReviewForOfficialGeneralInfo(message) {
   );
   const hasPersonalReportOrDecisionCue = /我|爸爸|媽媽|家人|報告|檢查結果|PSA|攝護腺指數|超音波|尿流速|切片|數值|Gleason|格里森|要不要|需不需要|治療|手術|開刀|打針|開藥/i.test(message);
 
-  return asksGeneralProstateCancerInfo && !hasPersonalReportOrDecisionCue;
+  const asksOfficialShockwaveFaqInfo = (
+    /低能量震波|線性震波|震波治療|LI-ESWT|Piezowave/i.test(message) &&
+    /痛|疼痛|不適合|哪些人|不能做|禁忌|自費|健保|給付|費用|維持|效果.*多久|撐多久|幾次|時間|療程|恢復期|恢復|休息|壯陽藥|威而鋼|犀利士|口服藥|搭配|副作用|腫脹|不適/.test(message)
+  );
+  const hasPersonalShockwaveSymptomCue = /我|本人|自己|今天|現在|剛|剛剛|昨|前天|術後|治療後|做完|打完|發燒|尿不出|大量出血|感染|傷口|潰瘍|劇烈疼痛|很痛|痛到|越來越痛|明顯惡化/.test(message);
+
+  return (asksGeneralProstateCancerInfo && !hasPersonalReportOrDecisionCue) ||
+    (asksOfficialShockwaveFaqInfo && !hasPersonalShockwaveSymptomCue);
 }
 
 export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) {
