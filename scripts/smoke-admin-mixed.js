@@ -498,6 +498,31 @@ const cases = [
     routedOnly: true,
     expected: ["猛健樂門診", "體重管理輔助療法", "不能在線上判斷", "直接安排施打", "醫師", "朋友剩下的藥筆", "不建議使用", "用藥需由醫師評估與開立", "費用", "02-2511-9488"],
     forbidden: ["可以先到櫃台或請診所人員詢問費用與付款方式", "付款方式建議", "信用卡", "準備現金", "https://", "appointment"]
+  },
+  {
+    name: "outside antibiotics urinary pain tells patient to bring medication info",
+    message: "我在別家拿的抗生素吃到一半，明天想第一次去看尿痛，要把藥帶去嗎？可以先停藥嗎？講重點。",
+    expected: ["尿痛", "醫師評估", "請不要自行服藥或停藥", "外院藥袋", "藥名", "目前用藥資料", "帶去", "02-2511-9488", "急診/立即就醫"],
+    forbidden: ["可以先停藥", "不用帶", "https://", "appointment", "線上掛號系統", "預約掛號"]
+  },
+  {
+    name: "general report notification privacy avoids report interpretation wrapper",
+    message: "如果醫師開檢查，報告好了可以只傳簡訊通知我嗎？不要在 LINE 講內容可以嗎？",
+    doctorReviewReportBypass: true,
+    expected: ["檢查報告通知方式", "檢查項目", "診所流程", "不能先保證", "簡訊", "LINE", "不要在 LINE 說明檢查內容", "櫃台/護理人員", "02-2511-9488", "核對身分", "醫師解釋"],
+    forbidden: ["檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "這題我先幫你請醫師或診所人員確認", "確認後會再回覆你", "https://", "appointment"]
+  },
+  {
+    name: "family online registration contact phone answers checkin documents",
+    message: "我想幫爸爸線上掛號，但電話會留我的，現場報到會有問題嗎？要帶誰的證件？",
+    expected: ["就診者資料填爸爸本人", "聯絡電話", "3 樓櫃台", "核對掛號資料", "爸爸的身分", "健保資料", "爸爸的健保卡", "身分證", "陪同者", "現場櫃台確認", "02-2511-9488"],
+    forbidden: ["https://", "appointment", "線上掛號系統網址", "立即預約", "預約掛號入口"]
+  },
+  {
+    name: "outside surgery wound redness asks visit and brings outside records",
+    message: "我之前在別家做小手術，傷口有點紅，想請你們看一下可以嗎？需要先掛號還是先問櫃台？",
+    expected: ["外院手術", "傷口", "建議先掛門診", "醫師實際看傷口", "3 樓櫃台", "外院術後", "外院手術資料", "目前用藥/藥袋", "健保卡", "發燒", "急診/立即就醫", "02-2511-9488"],
+    forbidden: ["可以直接判斷", "https://", "appointment", "線上掛號系統", "預約掛號入口"]
   }
 ];
 

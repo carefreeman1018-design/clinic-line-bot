@@ -27,7 +27,7 @@ import { answerBasicInfoQuestion } from "./basic-info.js";
 import { answerDoctorInfoQuestion } from "./doctors.js";
 import { loadKnowledge, shouldEscalate } from "./knowledge.js";
 import { pushText, replyText, verifyLineSignature } from "./line.js";
-import { applyResponseStyle } from "./response-style.js";
+import { applyResponseStyle, getResponseStyle } from "./response-style.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
 import { getBotEnabled, getStringListSetting, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
 import { answerSexualFunctionQuestion } from "./sexual-function.js";
@@ -165,15 +165,23 @@ async function handleLineEvent(event) {
 
     const followUpReply = buildAssistanceFollowUpReply(userId, patientMessage);
     if (followUpReply) {
-      await safeReplyText(event.replyToken, followUpReply);
-      await rememberConversationExchange(userId, message, followUpReply);
+      const styledReply = await styleReply({
+        reply: followUpReply,
+        message: patientMessage
+      });
+      await safeReplyText(event.replyToken, styledReply);
+      await rememberConversationExchange(userId, message, styledReply);
       return;
     }
 
     const simpleReply = buildSimpleReply(patientMessage);
     if (simpleReply) {
-      await safeReplyText(event.replyToken, simpleReply);
-      await rememberConversationExchange(userId, message, simpleReply);
+      const styledReply = await styleReply({
+        reply: simpleReply,
+        message: patientMessage
+      });
+      await safeReplyText(event.replyToken, styledReply);
+      await rememberConversationExchange(userId, message, styledReply);
       return;
     }
 
@@ -222,7 +230,7 @@ async function handleDoctorReviewRequest({ replyToken, userId, message, conversa
 
   if (!reviewCase) return false;
 
-  const waitingReply = applyResponseStyle({
+  const waitingReply = await styleReply({
     reply: buildDoctorReviewWaitingReply(message, { botDraft }),
     message,
     relevantChunks,
@@ -267,7 +275,7 @@ async function handleDoctorReviewCommand(event, command) {
     return;
   }
 
-  const finalReply = buildDoctorApprovedReply(reviewCase, command);
+  const finalReply = await buildDoctorApprovedReply(reviewCase, command);
   const sendingCase = await markDoctorReviewCaseSending({
     caseId: command.caseId,
     reviewerLineUserId: userId,
@@ -293,10 +301,10 @@ async function handleDoctorReviewCommand(event, command) {
   }
 }
 
-function buildDoctorApprovedReply(reviewCase, command) {
+async function buildDoctorApprovedReply(reviewCase, command) {
   const reply = command.action === "reply" ? command.doctorReply : reviewCase.botDraft;
 
-  return applyResponseStyle({
+  return styleReply({
     reply,
     message: reviewCase.userMessage,
     relevantChunks: [],
@@ -386,7 +394,8 @@ function asksLabReportTimingNotificationLogistics(message) {
   if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
 
   const hasLabReportCue = /抽血報告|驗血報告|血液報告/.test(message)
-    || (/報告/.test(message) && /抽血|驗血|血液/.test(message));
+    || (/報告/.test(message) && /抽血|驗血|血液/.test(message))
+    || (/報告|檢查結果|檢驗結果/.test(message) && /醫師開檢查|醫生開檢查|醫師.*檢查|醫生.*檢查|開檢查|做檢查/.test(message));
   const asksTimingOrNotification = /幾天|多久|什麼時候|出來|好了沒|通知|LINE|line|打電話|電話/.test(message);
   const asksPersonalInterpretation = /數值|正常|不正常|陽性|陰性|判讀|解讀|是不是|要不要回診|嚴不嚴重|幫我看|幫我判讀/.test(message);
 
@@ -435,6 +444,7 @@ function parseIdSet(value) {
 }
 
 export async function buildReplyAndMatches(message, chunks, conversationHistory = []) {
+  const responseStyle = await getResponseStyle();
   const patientMessage = normalizePatientQuestionForRouting(message);
   const patientConversationHistory = normalizeConversationHistoryForRouting(conversationHistory);
   const result = await buildRawReplyAndMatches(patientMessage, chunks, patientConversationHistory);
@@ -444,7 +454,8 @@ export async function buildReplyAndMatches(message, chunks, conversationHistory 
       reply: result.reply,
       message: patientMessage,
       relevantChunks: result.relevantChunks,
-      conversationHistory: patientConversationHistory
+      conversationHistory: patientConversationHistory,
+      style: responseStyle
     })
   };
 }
@@ -580,7 +591,8 @@ async function buildRawReplyAndMatches(message, chunks, conversationHistory = []
     message,
     chunks: relevantChunks,
     shouldEscalate: shouldEscalate(message),
-    conversationHistory
+    conversationHistory,
+    responseStyle: await getResponseStyle()
   });
 
   return { reply, relevantChunks };
@@ -667,6 +679,16 @@ async function safeReplyText(replyToken, message) {
   } catch (error) {
     console.error(error);
   }
+}
+
+async function styleReply({ reply, message = "", relevantChunks = [], conversationHistory = [] }) {
+  return applyResponseStyle({
+    reply,
+    message,
+    relevantChunks,
+    conversationHistory,
+    style: await getResponseStyle()
+  });
 }
 
 async function safePushText(to, message) {

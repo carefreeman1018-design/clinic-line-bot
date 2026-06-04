@@ -54,6 +54,10 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
     "是否感染、該不該用抗生素，都需要醫師評估；請不要自行服藥或停藥。"
   ];
 
+  if (asksAboutExistingMedication(message)) {
+    parts.push("明天看診請把外院藥袋、藥名或目前用藥資料一起帶去，讓醫師判斷用藥是否需要調整。");
+  }
+
   const scheduleReply = buildRequestedScheduleReply(message, now);
   if (scheduleReply) {
     parts.push(`${scheduleReply}到診前請電話 ${PHONE} 確認當天名額。`);
@@ -84,6 +88,11 @@ function isUtiQuestion(message) {
 
 function hasUrgentOrMedicationConcern(message) {
   return /發燒|很痛|劇痛|血尿|尿不出來|排不出尿|抗生素|吃藥|藥|今天|晚上|夜診|晚診|現在|急/.test(message);
+}
+
+function asksAboutExistingMedication(message) {
+  return /別家|外院|外面|其他醫院|他院|抗生素|藥袋|藥名|用藥|吃到一半|停藥|帶去|要帶/.test(message)
+    && /抗生素|藥|藥袋|藥名|用藥/.test(message);
 }
 
 function hasUpperUrinaryEmergency(message) {

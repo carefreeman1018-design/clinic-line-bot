@@ -4,6 +4,14 @@ export function answerWoundCareQuestion(message) {
   if (!isWoundCareQuestion(message)) return null;
   if (/結紮|輸精管/.test(message)) return null;
 
+  if (isOutsideSurgeryWoundQuestion(message)) {
+    return [
+      "外院手術後傷口有紅、腫或不舒服，建議先掛門診讓醫師實際看傷口；到場也可先跟 3 樓櫃台說明是外院術後想評估傷口。",
+      "請帶外院手術資料、出院或術後說明、目前用藥/藥袋和健保卡，方便醫師判斷。",
+      `若紅腫快速加劇、明顯流膿、發燒、傷口裂開、大量出血或很痛，請不要等 LINE 回覆，直接急診/立即就醫；也可先電話 ${PHONE} 確認可看診時段。`
+    ].join("");
+  }
+
   if (hasPossibleWoundAbnormality(message)) {
     const surgeryDay = resolveSurgeryDay(message);
     return [
@@ -33,6 +41,12 @@ export function answerWoundCareQuestion(message) {
 function isWoundCareQuestion(message) {
   if (/包皮|割包皮|包皮槍|傷口|釘子|紗布|換藥|包紮/.test(message)) return true;
   return /術後|手術後/.test(message) && /水腫|流膿|膿|出血|滲血|裂開|洗澡|碰水|換藥|傷口/.test(message);
+}
+
+function isOutsideSurgeryWoundQuestion(message) {
+  return /別家|外院|外面|其他醫院|他院|別的醫院/.test(message)
+    && /手術|開刀|術後|做.*手術/.test(message)
+    && /傷口|紅|腫|流膿|膿|出血|滲血|裂開|很痛|疼痛|發燒/.test(message);
 }
 
 function hasPossibleWoundAbnormality(message) {

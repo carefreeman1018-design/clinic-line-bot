@@ -58,6 +58,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksGeneralReportNotificationPrivacy(normalized)) {
+    return [
+      "檢查報告通知方式要依檢查項目與診所流程確認，不能先保證一定用簡訊或 LINE 通知。",
+      `如果只想知道報告好了沒、不要在 LINE 說明檢查內容，可以看診或報到時先跟櫃台/護理人員說；也可電話 ${PHONE} 詢問。`,
+      "查詢或領取報告前仍需要核對身分；若結果需要說明，會依診所安排由醫師解釋。"
+    ].join("\n");
+  }
+
   if (asksAnonymousScreeningReportNotificationPrivacy(normalized)) {
     return [
       "匿名篩檢會重視隱私；報告通知方式、多久可知道結果，以及電話裡會不會說明檢查內容，要由現場人員依篩檢項目說明。",
@@ -222,6 +230,14 @@ export function answerAdminMixedQuestion(message) {
     return [
       "臨時不能去，建議先取消或改期，避免占用名額。",
       `LINE bot 不保證能代你取消；最穩妥是打 ${PHONE} 請櫃台確認，或依原本線上掛號系統取消/改期。`
+    ].join("\n");
+  }
+
+  if (asksFamilyOnlineRegistrationContactPhone(normalized)) {
+    return [
+      "幫爸爸線上掛號時，建議就診者資料填爸爸本人；聯絡電話若留你的，到場時請先跟 3 樓櫃台說明，方便核對掛號資料。",
+      "報到主要會核對爸爸的身分與健保資料，請帶爸爸的健保卡、身分證或其他證件；陪同者自己的證件是否需要，以現場櫃台確認為準。",
+      `若擔心電話或資料填寫影響報到，可先電話 ${PHONE} 問櫃台。`
     ].join("\n");
   }
 
@@ -452,6 +468,17 @@ function asksLabReportTimingNotification(message) {
   return hasLabReportCue && asksTimingOrNotification && asksLogisticsNotInterpretation;
 }
 
+function asksGeneralReportNotificationPrivacy(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+
+  const hasReportCue = /報告|檢查結果|檢驗結果/.test(message);
+  const hasDoctorOrderedExamCue = /醫師開檢查|醫生開檢查|醫師.*檢查|醫生.*檢查|開檢查|做檢查/.test(message);
+  const asksNotificationOrPrivacy = /好了|好了沒|通知|簡訊|LINE|line|不要.*LINE.*講|不要.*講內容|不在.*LINE.*講|只傳|只通知|檢查內容/.test(message);
+  const asksPersonalInterpretation = /數值|正常|不正常|陽性|陰性|判讀|解讀|是不是|要不要回診|嚴不嚴重|幫我看|幫我判讀/.test(message);
+
+  return hasReportCue && hasDoctorOrderedExamCue && asksNotificationOrPrivacy && !asksPersonalInterpretation;
+}
+
 function asksAnonymousScreeningReportNotificationPrivacy(message) {
   const hasAnonymousScreening = /匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message);
   const asksNotification = /報告.*出來|報告|結果|通知|打電話|電話|講.*內容|檢查內容|家人|隱私|保密/.test(message);
@@ -488,6 +515,15 @@ function asksRegistrationPatientSwitch(message) {
   const asksCancelOrRewrite = /取消重掛|取消.*重掛|重新掛號|重掛|改名字|改姓名|同一筆|一定要取消|能不能改|可以.*改/.test(message);
 
   return hasRegistrationCue && hasPatientSwitchCue && asksCancelOrRewrite;
+}
+
+function asksFamilyOnlineRegistrationContactPhone(message) {
+  const hasFamilyRegistrationCue = /幫爸爸|幫爸|幫媽媽|幫媽|幫家人|爸爸.*掛號|媽媽.*掛號|家人.*掛號/.test(message);
+  const hasOnlineRegistrationCue = /線上掛號|網路掛號|預約掛號/.test(message);
+  const hasContactPhoneCue = /電話|手機|聯絡電話|留我的|留我|我的電話|我的手機/.test(message);
+  const asksCheckinOrDocuments = /報到|現場|櫃台|櫃檯|證件|健保卡|身分證|身份證|資料/.test(message);
+
+  return hasFamilyRegistrationCue && hasOnlineRegistrationCue && hasContactPhoneCue && asksCheckinOrDocuments;
 }
 
 function asksOnlineRegistrationChange(message) {
