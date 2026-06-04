@@ -364,12 +364,25 @@ export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) 
 }
 
 export function shouldBypassDoctorReviewForReportLogistics(message) {
+  if (asksLabReportTimingNotificationLogistics(message)) return true;
+
   const mentionsOutsideMaterials = /別家診所|外院|別家醫院|其他診所|其他醫院|藥袋|用藥資料|影像光碟|檢查報告|醫療報告/.test(message);
   const asksBringOrSendLogistics = /帶去|帶來|帶過去|要帶|需要帶|可以先傳|先傳 LINE|傳 LINE|補傳|要帶哪些資料|不要幫我判讀|不要判讀/.test(message);
   const asksPersonalInterpretation = /正常不正常|正不正常|需不需要回診|要不要回診|有沒有問題|嚴不嚴重|是不是.*病|幫我看|幫我判讀/.test(message)
     && !/不要.*判讀|不用.*判讀|不需要.*判讀/.test(message);
 
   return mentionsOutsideMaterials && asksBringOrSendLogistics && !asksPersonalInterpretation;
+}
+
+function asksLabReportTimingNotificationLogistics(message) {
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return false;
+
+  const hasLabReportCue = /抽血報告|驗血報告|血液報告/.test(message)
+    || (/報告/.test(message) && /抽血|驗血|血液/.test(message));
+  const asksTimingOrNotification = /幾天|多久|什麼時候|出來|好了沒|通知|LINE|line|打電話|電話/.test(message);
+  const asksPersonalInterpretation = /數值|正常|不正常|陽性|陰性|判讀|解讀|是不是|要不要回診|嚴不嚴重|幫我看|幫我判讀/.test(message);
+
+  return hasLabReportCue && asksTimingOrNotification && !asksPersonalInterpretation;
 }
 
 export function shouldBypassDoctorReviewForRoutineAdmin(message) {

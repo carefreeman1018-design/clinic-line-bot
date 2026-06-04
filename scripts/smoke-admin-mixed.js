@@ -2,7 +2,10 @@ import { answerAdminMixedQuestion } from "../src/admin-mixed.js";
 
 process.env.NODE_ENV = "test";
 
-const { buildReplyAndMatches } = await import("../src/index.js");
+const {
+  buildReplyAndMatches,
+  shouldBypassDoctorReviewForReportLogistics
+} = await import("../src/index.js");
 
 const cases = [
   {
@@ -15,6 +18,7 @@ const cases = [
   {
     name: "round31 lab report timing notification avoids pure interpretation reply",
     message: "如果有抽血報告，大概幾天會出來？可以 LINE 通知我好了沒就好嗎？",
+    doctorReviewReportBypass: true,
     expected: ["報告多久出來", "檢查項目", "送檢流程", "不能在 LINE 先保證固定天數", "好了沒", "LINE", "身份確認", "02-2511-9488", "通知/領取方式", "醫師判讀"],
     forbidden: ["檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "建議預約門診或回診讓醫師說明", "PSA", "陽性", "陰性", "https://", "lin.ee"]
   },
@@ -426,6 +430,10 @@ for (const testCase of cases) {
     if (reply.includes(term)) {
       issues.push(`${testCase.name} includes forbidden term: ${term}`);
     }
+  }
+
+  if (testCase.doctorReviewReportBypass && !shouldBypassDoctorReviewForReportLogistics(testCase.message)) {
+    issues.push(`${testCase.name} should bypass doctor-review report logistics`);
   }
 }
 
