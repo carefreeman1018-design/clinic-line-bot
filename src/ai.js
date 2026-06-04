@@ -81,6 +81,7 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
           "不要重複提醒同一件事；能直接回答就直接回答。",
           "只能根據提供的診所資料回答，不要編造資訊；對外不要提「知識庫」或「資料庫」。",
           "你可以參考先前對話來理解代名詞、延續問題與使用者已提供的資訊。",
+          "不要因為較早的歷史對話就擅自加入「你爸」「你媽」「你先生」「你太太」等家屬稱謂；只有本輪問題明確提到該家屬時才可使用。",
           "如果先前對話與目前診所資料衝突，請以目前提供的診所資料為準。",
           `今天日期是 ${getTaipeiToday()}。`,
           "使用者詢問固定每週門診時，優先依官網固定門診表回答；不要拿已過期或不同年份的 LINE VOOM 公告回答固定門診問題。",
@@ -199,9 +200,10 @@ function normalizeReplyForLineContext(reply, message) {
     return buildCircumcisionDoctorRecommendationReply();
   }
 
+  const replyWithoutStaleFamilyReference = removeUnpromptedFamilyReferences(reply, message);
   if (isOfficialLineRequested(message)) return reply;
 
-  return reply
+  return replyWithoutStaleFamilyReference
     .replace(/https:\/\/lin\.ee\/[^\s)）]+/gi, "")
     .replace(/(?:建議|可|可以)?先?(?:加|加入)官方\s*LINE\s*(?:預約)?(?:快速通關服務)?[，,、；;]?\s*/gi, "")
     .replace(/(?:官方\s*LINE\s*加好友連結|加好友連結)[:：]?\s*/gi, "")
@@ -222,6 +224,19 @@ function normalizeReplyForLineContext(reply, message) {
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+function removeUnpromptedFamilyReferences(reply, message) {
+  if (/爸爸|爸|父親|媽媽|媽|母親|家人|長輩|先生|老公|丈夫|太太|老婆|妻子|配偶|伴侶/.test(message)) return reply;
+
+  return reply
+    .replace(/你(?:的)?爸爸|你爸|令尊/g, "你")
+    .replace(/你(?:的)?媽媽|你媽|令堂/g, "你")
+    .replace(/你(?:的)?先生|你先生|你(?:的)?老公|你老公|你(?:的)?丈夫|你丈夫/g, "你")
+    .replace(/你(?:的)?太太|你太太|你(?:的)?老婆|你老婆|你(?:的)?妻子|你妻子/g, "你")
+    .replace(/如果你是想問你/g, "如果你是想問")
+    .replace(/如果是想問你/g, "如果是想問")
+    .replace(/問你適合/g, "問適合");
 }
 
 function findCanonicalOfficialTopicUrl(message) {
