@@ -1,7 +1,7 @@
 # 官網衛教天地與醫療文章索引
 
 資料來源：津久診所官網公開 WordPress API 與文章內容
-同步日期：2026-06-02
+同步日期：2026-06-04
 
 > 本檔供 LINE 官方帳號檢索官網衛教天地、男性健康、性病疑難雜症、泌尿手術醫學與最新消息文章。回答時可引用文章主題與官網連結，但個人症狀、診斷、用藥、手術適應症與費用仍需電話或門診確認。
 
@@ -14,7 +14,7 @@
 ## 男性健康
 
 ### GG硬度不夠，做到一半軟掉，可以靠低能量震波治療嗎？效果、原理與常見問題一篇告訴你
-- 官網文章：https://uromeeme.com/health-education/gg%e7%a1%ac%e5%ba%a6%e4%b8%8d%e5%a4%a0%ef%bc%8c%e5%81%9a%e5%88%b0%e4%b8%80%e5%8d%8a%e8%bb%9f%e6%8e%89%ef%bc%8c%e5%8f%af%e4%bb%a5%e9%9d%a0%e4%bd%8e%e8%83%bd%e9%87%8f%e9%9c%87%e6%b3%a2%e6%b2%bb%e7%99%82/
+- 官網文章：https://uromeeme.com/health-education/li-eswt_1/
 - 發布日期：2026-05-15
 - 分類：男性健康、衛教天地
 - 官網摘要：低能量體外震波治療（Low-intensity extracorporeal shock wave thera…

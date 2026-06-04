@@ -186,9 +186,12 @@ npm run sync:official
 
 ```text
 data/official-service-pages.md
+data/official-treatment-services.md
 data/official-health-education-index.md
 data/official-media-cases-index.md
 ```
+
+`official-treatment-services.md` 會把官網首頁「診療項目／主要診療項目」整理成每項一個 `##` chunk，包含常見問法、首頁短描述、對應服務頁重點、適合回答的問題類型與需轉人工/門診/電話確認的邊界。
 
 索引會保留官網標題、分類、日期、摘要、段落標題、關鍵字與連結，讓 bot 能用關鍵字或向量檢索找到對應官網內容。它不會整篇複製官網文章；回答個人症狀、診斷、用藥、費用、手術適應症或副作用時，仍需引導官方 LINE、電話或門診確認。
 
