@@ -4,6 +4,7 @@ process.env.NODE_ENV = "test";
 
 const {
   buildReplyAndMatches,
+  shouldBypassDoctorReviewForRoutedSafety,
   shouldBypassDoctorReviewForReportLogistics
 } = await import("../src/index.js");
 
@@ -442,6 +443,7 @@ const cases = [
     name: "natural testicular lump uses urology safety boundary not report review",
     message: "我洗澡摸到睪丸旁邊一顆硬硬的，不太痛但很怕是癌症。可以先用 LINE 判斷嗎？需要馬上開刀嗎？",
     routedOnly: true,
+    doctorReviewRoutedSafetyBypass: true,
     expected: ["睪丸", "硬塊", "不一定就是癌症", "LINE 訊息沒辦法判斷", "泌尿科門診", "陰囊超音波", "抽血", "現場評估", "急診/立即就醫", "02-2511-9488"],
     forbidden: ["檢查報告需要醫師搭配病史", "不適合只靠訊息直接解讀個人報告", "這題我先幫你請醫師或診所人員確認", "確認後會再回覆你", "馬上開刀", "https://", "lin.ee"]
   },
@@ -488,6 +490,10 @@ for (const testCase of cases) {
 
   if (testCase.doctorReviewReportBypass && !shouldBypassDoctorReviewForReportLogistics(testCase.message)) {
     issues.push(`${testCase.name} should bypass doctor-review report logistics`);
+  }
+
+  if (testCase.doctorReviewRoutedSafetyBypass && !shouldBypassDoctorReviewForRoutedSafety(normalizeTestMessage(testCase.message))) {
+    issues.push(`${testCase.name} should bypass doctor-review routed safety`);
   }
 }
 

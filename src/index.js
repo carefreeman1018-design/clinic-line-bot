@@ -351,10 +351,15 @@ async function isDoctorReviewReady() {
 }
 
 async function shouldCreateDoctorReviewCase(message) {
+  if (shouldBypassDoctorReviewForRoutedSafety(message)) return false;
   if (shouldBypassDoctorReviewForAnonymousScreeningLogistics(message)) return false;
   if (shouldBypassDoctorReviewForReportLogistics(message)) return false;
   if (shouldBypassDoctorReviewForRoutineAdmin(message)) return false;
   return (await isDoctorReviewReady()) && shouldEscalate(message);
+}
+
+export function shouldBypassDoctorReviewForRoutedSafety(message) {
+  return Boolean(answerTesticularMassQuestion(message));
 }
 
 export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) {
