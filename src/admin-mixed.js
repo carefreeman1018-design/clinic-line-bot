@@ -615,6 +615,7 @@ function asksCertificateOrReceiptAfterVisit(message) {
 
 function asksFeePaymentAtCounterWithoutVisit(message) {
   if (isVaccineSuitabilityQuestion(message)) return false;
+  if (isProstateTreatmentQuestion(message)) return false;
 
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const asksCounterOrStaff = /櫃台|櫃檯|現場|到診所|診所人員|工作人員|護理人員|行政|先問|詢問/.test(message);
@@ -627,6 +628,11 @@ function isVaccineSuitabilityQuestion(message) {
   const hasVaccineCue = /HPV\s*疫苗|HPV|九價|子宮頸癌疫苗|皮蛇疫苗|帶狀皰疹疫苗|疫苗/i.test(message);
   const hasSuitabilityCue = /懷孕|備孕|過敏|起疹|疹子|慢性病|免疫|吃藥|用藥|藥物|適合|能不能打|可不可以打|可以打|禁忌|副作用|不舒服|發燒/.test(message);
   return hasVaccineCue && hasSuitabilityCue;
+}
+
+function isProstateTreatmentQuestion(message) {
+  return /攝護腺|前列腺|夜尿|尿流變細|排尿困難|尿不順|水蒸氣|Rezum|Rezūm|Urolift|綠光雷射|雷射剜除/i.test(message)
+    && /治療|手術|水蒸氣|Rezum|Rezūm|Urolift|費用|價格|多少錢|當天|可以做|能不能做|適合/.test(message);
 }
 
 function asksCircumcisionCounterFeeBeforeVisit(message) {
