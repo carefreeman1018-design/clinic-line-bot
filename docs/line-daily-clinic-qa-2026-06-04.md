@@ -579,3 +579,13 @@ Tested on 2026-06-04 around 11:58-11:59 CST after Round 35 established a frequen
 |---|---|---|---|---|
 | 1 | 那如果我改下午去，是同一個號可以改，還是要重新掛？ | Says the same number cannot be directly changed to another time here; staff need to check the original registration and the afternoon quota. Recommends original online system, phone 02-2511-9488, or 3F counter to confirm whether it can be changed, whether cancellation/rebooking is needed, and whether the new slot has availability. | Pass | Answers registration-change mechanics without listing unrelated doctors or overpromising. |
 | 2 | 我到現場是先去櫃台報到，還是要先抽號？第一次去要帶什麼？講重點。 | Says to first report at the 3F counter and not draw a number by yourself; first visit should bring health card and ID, and prior reports or medication lists if available. | Pass | Direct, short, and clinic-counter-like. |
+
+## Round 37 - Natural service, privacy, and payment admin questions
+
+Tested on 2026-06-04 around 12:02-12:04 CST. This pass-only round checked mixed service/admin questions for HPV vaccine, anonymous screening, privacy, report notification, and payment method without visible test labels.
+
+| # | Patient question | LINE reply summary | Result | Notes |
+|---|---|---|---|---|
+| 1 | 我想問 HPV 疫苗和匿名篩檢，可以先到櫃台問流程跟費用嗎？不一定今天做，請講重點。 | Says the patient can ask the counter or call 02-2511-9488 about HPV vaccine and anonymous-screening process/fees; it is not necessarily done today. Same-day feasibility, evaluation need, vaccine stock/prep, and screening flow depend on clinic staff/counter confirmation, and no same-day or amount guarantee is made. | Pass | Keeps both service names and answers the counter-first request without forcing treatment or adding links. |
+| 2 | 匿名篩檢如果我只是先問，不想留真名可以嗎？報告怎麼通知？不要貼連結。 | Says anonymous screening values privacy, but report notification, time to know results, and whether/what information is required should be explained onsite by nursing staff. It says LINE inquiry will not proactively disclose test contents to family, and suggests telling staff privacy needs at arrival or calling 02-2511-9488. | Pass | Good privacy boundary: no guarantee of zero data, no link, no disclosure overpromise. |
+| 3 | 那如果當天只是先問或真的要做，付款可以刷卡嗎？還是一定要現金？ | Says the patient can ask counter/staff about fees and payment method; whether payment is needed depends on actual item/process and doctor evaluation. It recommends confirming payment method by phone or onsite to avoid a wasted trip or needing cash. | Pass | Does not guarantee card payment, cash-only, final price, or same-day service. |
