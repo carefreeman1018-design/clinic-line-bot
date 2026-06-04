@@ -18,6 +18,7 @@ export function answerMaleFertilityQuestion(message) {
 }
 
 function isMaleFertilityQuestion(message) {
+  if (/結紮|輸精管/.test(message)) return false;
   return /備孕|不孕|懷孕.*成功|精液報告|精液檢查|精蟲|精子|活動力|精索靜脈曲張/.test(message);
 }
 
