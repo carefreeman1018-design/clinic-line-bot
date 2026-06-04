@@ -8,8 +8,8 @@ export function answerMaleUtiUrgentQuestion(message, now = new Date()) {
   if (isLikelyHematospermiaQuestion(message)) return null;
   if (isNonExclusiveDoctorChoiceQuestion(message)) {
     return [
-      "一般頻尿或泌尿問題不一定只能掛院長，也不需要只推薦唯一一位醫師。",
-      "今天晚診若固定門診是院長陳偉傑醫師可先參考；也可以依一般門診時段與名額安排。",
+      "一般頻尿或泌尿問題不一定要指定院長。",
+      "陳偉傑醫師和羅詩修醫師都有一般泌尿門診；可以先依你方便的時段掛號。",
       `到診前請電話 ${PHONE} 確認名額與是否有臨時異動。`,
       "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
     ].join("");

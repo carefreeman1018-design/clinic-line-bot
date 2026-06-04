@@ -297,7 +297,7 @@ function buildGeneralUrologyDoctorChoiceReply(message, now) {
     : "一般門診時段";
   const doctorScheduleLine = doctor ? buildDoctorDayScheduleLine(doctor, day, dayLabel, periods) : null;
   const scheduleNote = !requestedDay && periods.length === 0
-    ? "院長陳偉傑醫師和羅詩修醫師都有一般泌尿固定門診，可依你能到的時段先掛一般泌尿"
+    ? "院長陳偉傑醫師和羅詩修醫師都有一般泌尿門診，可以依你方便的時段掛號"
     : doctorScheduleLine && !doctorScheduleLine.includes("沒有")
     ? `${doctorScheduleLine}可先參考固定門診`
     : periods.includes("晚診") && day === "週四"
@@ -305,8 +305,8 @@ function buildGeneralUrologyDoctorChoiceReply(message, now) {
     : `${dayLabel}${periodText}可先參考固定門診`;
 
   return [
-    "一般頻尿或泌尿問題不一定只能掛院長，也不需要只推薦唯一一位醫師。",
-    `${scheduleNote}；也可以依一般門診時段與名額安排。`,
+    "一般頻尿或泌尿問題不一定要指定院長。",
+    `${scheduleNote}，名額以現場或電話確認為準。`,
     "若只是頻尿、夜尿或排尿問題，可先掛一般泌尿門診；到診後再由醫師評估原因。",
     "若發燒、尿不出來、血尿明顯或很不舒服，請盡快就醫。"
   ].join("");
