@@ -3,6 +3,7 @@ const PHONE = "02-2511-9488";
 export function answerFemaleUrologyQuestion(message, conversationHistory = []) {
   if (hasExplicitMaleSelfCue(message)) return null;
   if (hasMaleSpecificUrologyCue(message)) return null;
+  if (hasAdministrativeIdCue(message) && !hasFemaleSpecificCue(message)) return null;
   if (!hasFemaleSpecificCue(message) && hasUpperUrinaryEmergencyCue(message)) return null;
   const isFemaleUrologyFollowUp = isFemaleUrologyFeeFollowUp(message, conversationHistory);
   if (!isFemaleUrologyQuestion(message) && !isFemaleUtiUrgentQuestion(message) && !isFemaleUrologyFollowUp) return null;
@@ -44,6 +45,10 @@ function hasMaleSpecificUrologyCue(message) {
 
 function hasFemaleSpecificCue(message) {
   return /我是女生|我是女性|我是女的|我.*女生|我.*女性|女性泌尿|漏尿|尿失禁|骨盆底肌|美磁波|磁波|鍛肌椅|高密度磁波|懷孕|月經|產後|哺乳/.test(message);
+}
+
+function hasAdministrativeIdCue(message) {
+  return /健保卡|身分證|身份證|證件|報到|櫃台|櫃檯|掛號|初診|第一次去|第一次來|第一次看/.test(message);
 }
 
 function hasUpperUrinaryEmergencyCue(message) {

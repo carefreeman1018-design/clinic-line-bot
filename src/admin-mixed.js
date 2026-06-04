@@ -179,6 +179,14 @@ export function answerAdminMixedQuestion(message) {
     ].join("\n");
   }
 
+  if (asksFirstVisitMissingHealthCard(normalized)) {
+    return [
+      "第一次看診健保卡忘帶，不能在 LINE 先保證一定能用健保或一定能先看。",
+      "請先帶身分證或其他證件到 3 樓櫃台，讓櫃台確認身分、健保身分、是否需改自費或後續補件。",
+      `如果還沒出門，也可以先電話 ${PHONE} 問櫃台。`
+    ].join("\n");
+  }
+
   if (asksOnlineRegistrationLateArrival(normalized)) {
     return [
       "已線上掛號但可能晚到，不能先保證晚到 20 分鐘一定還看得到。",
@@ -215,6 +223,13 @@ export function answerAdminMixedQuestion(message) {
       "同一筆掛號能不能改成不同就診者，不能在 LINE 先保證。",
       `這會涉及身分、健保與掛號資料核對；請帶本人證件到 3 樓櫃台，或先電話 ${PHONE} 請櫃台確認。`,
       "現場可能需要取消原掛號後重掛，或重新掛號，實際以櫃台處理為準。"
+    ].join("\n");
+  }
+
+  if (asksSameNumberReschedule(normalized)) {
+    return [
+      "同一個號能不能直接改成別的時段，不能在 LINE 先保證。",
+      `通常要由原本線上掛號系統、電話 ${PHONE} 或現場 3 樓櫃台確認是否可改、是否需取消重掛，以及新時段還有沒有名額。`
     ].join("\n");
   }
 
@@ -302,7 +317,7 @@ export function answerAdminMixedQuestion(message) {
   if (asksRouteWithArrivalRegistration(normalized)) {
     return [
       "行天宮站 4 號出口出站右轉，步行約 40 秒，搭電梯到 3 樓。",
-      "到現場先到櫃台報到；若還沒掛號或初診資料未建，櫃台會協助確認掛號流程。"
+      "到現場先到櫃台報到或詢問；若需要抽號/拿號碼牌、現場掛號或補初診資料，照櫃台人員指示即可。"
     ].join("\n");
   }
 
@@ -488,6 +503,14 @@ function asksOnlineRegistrationFirstVisitMissingHealthCard(message) {
   return mentionsFirstVisit && mentionsExistingRegistration && mentionsMissingHealthCard && mentionsIdOrCheckin;
 }
 
+function asksFirstVisitMissingHealthCard(message) {
+  const mentionsFirstVisit = /第一次去|第一次來|初診|第一次看/.test(message);
+  const mentionsMissingHealthCard = /健保卡.*忘|忘.*健保卡|沒帶健保卡|沒有帶健保卡|健保卡.*家|健保卡不在/.test(message);
+  const mentionsIdOrVisit = /身分證|身份證|證件|報到|櫃台|櫃檯|看診|能先看|可以先看|還能先看/.test(message);
+
+  return mentionsFirstVisit && mentionsMissingHealthCard && mentionsIdOrVisit;
+}
+
 function asksOnlineRegistrationLateArrival(message) {
   const mentionsExistingRegistration = /線上掛號|網路掛號|預約掛號|已經掛號|已掛號|掛號了|有掛號/.test(message);
   const mentionsLateArrival = /晚到|遲到|會晚|可能晚|來不及|晚.*分鐘|遲.*分鐘|延誤|塞車/.test(message);
@@ -510,6 +533,13 @@ function asksOnlineRegistrationCancellation(message) {
   const asksLineOrPhone = /LINE|line|這裡|跟你說|打電話|電話|怎麼取消|要取消|要打/.test(message);
 
   return mentionsExistingRegistration && asksCancelOrReschedule && asksLineOrPhone;
+}
+
+function asksSameNumberReschedule(message) {
+  const asksChange = /臨時.*改|改下午|改早上|改晚上|改午診|改早診|改晚診|改成|換下午|換早上|換晚上|換時段|改時間/.test(message);
+  const asksSameNumberOrRebook = /同一個號|同一號|原本.*號|重新掛|重掛|取消.*重掛|重新預約|要不要.*重/.test(message);
+
+  return asksChange && asksSameNumberOrRebook;
 }
 
 function asksOutsideHospitalReportForVisit(message) {
@@ -655,9 +685,9 @@ function asksWheelchairElevatorAccess(message) {
 }
 
 function asksRouteWithArrivalRegistration(message) {
-  return /第一次去|初診|第一次到|第一次看/.test(message)
+  return /第一次去|初診|第一次到|第一次看|外地|捷運|行天宮|MRT/.test(message)
     && /行天宮|捷運|MRT|怎麼走|怎麼到|路線|交通/.test(message)
-    && /報到|掛號|先/.test(message);
+    && /報到|掛號|抽號|號碼牌|先/.test(message);
 }
 
 function asksAnonymousScreeningPaymentOrId(message) {

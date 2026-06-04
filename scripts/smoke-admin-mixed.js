@@ -344,6 +344,31 @@ const cases = [
     forbidden: ["https://", "appointment", "線上掛號系統", "預約掛號", "立即預約", "固定門診", "陳偉傑醫師", "醫師專長", "地址", "捷運", "保證可以完全不留資料", "完全不用留下資料", "一定不用掛號", "尿路感染", "血尿", "頻尿"]
   },
   {
+    name: "natural online full frequency visit answers onsite waitlist",
+    message: "我明天早上想看頻尿，如果線上掛號已經滿了，可以直接到現場等嗎？我不要長文。",
+    routedOnly: true,
+    expected: ["頻尿/夜尿", "明天（週五）早診", "一般泌尿門診", "陳偉傑醫師", "09:30-12:30", "線上掛號若已額滿", "現場等候或候補不能先保證", "02-2511-9488", "3 樓櫃台", "現場名額"],
+    forbidden: ["直接保證", "一定掛得到", "一定看得到", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
+    name: "natural same-number afternoon change answers registration change",
+    message: "那如果我臨時改下午，是同一個號可以改，還是要重新掛？",
+    expected: ["同一個號", "不能在 LINE 先保證", "原本線上掛號系統", "電話 02-2511-9488", "現場 3 樓櫃台", "是否可改", "是否需取消重掛", "新時段還有沒有名額"],
+    forbidden: ["週五午診", "羅詩修醫師門診", "臨時異動請以 LINE VOOM", "https://", "appointment", "立即預約"]
+  },
+  {
+    name: "natural mrt route also answers checkin number-taking",
+    message: "我從外地搭捷運過去，行天宮站幾號出口？到了是先報到還是先抽號？",
+    expected: ["行天宮站 4 號出口", "步行約 40 秒", "搭電梯到 3 樓", "先到櫃台報到或詢問", "抽號/拿號碼牌", "現場掛號", "補初診資料", "櫃台人員指示"],
+    forbidden: ["只提供路線", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
+    name: "natural first visit missing health card avoids female urology routing",
+    message: "我剛發現健保卡忘在家，第一次去還能先看嗎？要帶身分證嗎？",
+    expected: ["第一次看診", "健保卡忘帶", "不能在 LINE 先保證", "身分證", "3 樓櫃台", "健保身分", "自費", "補件", "02-2511-9488"],
+    forbidden: ["女性泌尿", "漏尿", "美磁波", "磁波鍛肌椅", "療程", "公開明確數字", "留下姓名、電話", "https://", "appointment"]
+  },
+  {
     name: "friday surgery schedule keeps counter fee question",
     message: "我週五晚上下班才有空，看到好像是手術時段，那可以看一般泌尿或只去問費用嗎？不要貼連結。",
     routedOnly: true,

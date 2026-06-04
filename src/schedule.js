@@ -484,7 +484,7 @@ function asksForAlternativeClinicTime(message) {
 }
 
 function asksWalkInRegistration(message) {
-  return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診/.test(message);
+  return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診|線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|等候補/.test(message);
 }
 
 function buildFeePaymentCounterNote(message) {

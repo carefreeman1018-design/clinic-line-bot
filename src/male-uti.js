@@ -146,9 +146,17 @@ function isNonExclusiveDoctorChoiceQuestion(message) {
 function cleanScheduleReply(reply, message) {
   const hasAnalConcern = /肛門|痔瘡|廔管|瘻管|肛裂|便血|大便.*血|肛門.*痛|肛門.*腫/.test(message);
   const symptomPrefix = !hasAnalConcern && /頻尿|夜尿/.test(message) ? "頻尿/夜尿想看一般泌尿科的話，" : "";
-  return symptomPrefix + reply
+  const walkInWaitlistNote = asksWalkInOrWaitlist(message)
+    ? "線上掛號若已額滿，現場等候或候補不能先保證；可先電話 02-2511-9488，或到 3 樓櫃台確認現場名額。"
+    : "";
+  const cleanedReply = reply
     .replace(/臨時異動請以 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。")
     .replace(/可查看 LINE VOOM(?: \/ 官方 LINE)?、線上掛號或電話 02-2511-9488 確認。?/g, "到診前請電話 02-2511-9488 確認名額與時段。");
+  return [symptomPrefix + cleanedReply, walkInWaitlistNote].filter(Boolean).join("\n");
+}
+
+function asksWalkInOrWaitlist(message) {
+  return /線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|等候補|直接到現場等/.test(message);
 }
 
 function buildRequestedScheduleReply(message, now) {
