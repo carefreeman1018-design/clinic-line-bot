@@ -367,7 +367,11 @@ async function shouldCreateDoctorReviewCase(message) {
 }
 
 export function shouldBypassDoctorReviewForRoutedSafety(message) {
-  return Boolean(answerTesticularMassQuestion(message));
+  return Boolean(
+    answerTesticularMassQuestion(message) ||
+    answerMaleUtiUrgentQuestion(message) ||
+    answerWoundCareQuestion(message)
+  );
 }
 
 export function shouldBypassDoctorReviewForAnonymousScreeningLogistics(message) {
