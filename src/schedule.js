@@ -103,7 +103,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     buildPastAnnouncementNote(message, now),
   ].filter(Boolean);
   const routeNote = asksRouteInScheduleQuestion(message) ? buildMrtRouteNote() : null;
-  const walkInNote = asksWalkInRegistration(message) ? WALK_IN_CONFIRMATION : null;
+  const walkInNote = buildWalkInRegistrationNote(message);
   const feePaymentCounterNote = buildFeePaymentCounterNote(message);
   const wrongRegistrationNote = asksWrongRegistrationConcern(message)
     ? "到診前可電話 02-2511-9488、現場或線上掛號確認名額與臨時異動，避免掛錯。"
@@ -127,7 +127,7 @@ export function answerFixedScheduleQuestion(message, now = new Date(), conversat
     if (asksForUrologyCare(message) && asksForAlternativeClinicTime(message)) {
       return compactLines([
         ...contextNotes,
-        buildAvailableGeneralClinicTimesReply(day),
+        buildAvailableGeneralClinicTimesReply(day, dayLabel, message),
         walkInNote ?? temporaryChangeConfirmation,
         routeNote
       ]);
@@ -487,6 +487,14 @@ function asksWalkInRegistration(message) {
   return /現場掛號|現場|直接到|直接去|到現場|第一次去|初診|線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|等候補/.test(message);
 }
 
+function buildWalkInRegistrationNote(message) {
+  if (!asksWalkInRegistration(message)) return null;
+  if (/線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|等候補/.test(message)) {
+    return "線上掛號若已額滿，現場等候或候補不能先保證；可先電話 02-2511-9488，或到 3 樓櫃台確認現場名額。";
+  }
+  return WALK_IN_CONFIRMATION;
+}
+
 function buildFeePaymentCounterNote(message) {
   const asksFeeOrPayment = /費用|價格|價錢|多少錢|報價|收費|付款|付錢|付費|刷卡|信用卡|現金/.test(message);
   const wantsCounterOnly = /櫃台|櫃檯|電話|先問|詢問|只想.*問|只是.*問|只去.*問|問費用|問.*付款|問.*刷卡|問完再決定/.test(message);
@@ -533,7 +541,7 @@ function buildAvailableClinicTimesReply(day) {
   return `${day}其他時段：\n${lines.join("\n")}`;
 }
 
-function buildAvailableGeneralClinicTimesReply(day) {
+function buildAvailableGeneralClinicTimesReply(day, dayLabel = day, message = "") {
   const schedule = FIXED_SCHEDULE[day];
   const lines = ["早診", "午診", "晚診"]
     .map((period) => {
@@ -544,8 +552,11 @@ function buildAvailableGeneralClinicTimesReply(day) {
     })
     .filter(Boolean);
 
-  if (lines.length === 0) return `${day}沒有一般泌尿科門診時段。`;
-  return `${day}可改一般門診時段（一般泌尿）：\n${lines.join("\n")}`;
+  if (lines.length === 0) return `${dayLabel}沒有一般泌尿科門診時段。`;
+  const prefix = /第一次去|初診|線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|等候補/.test(message)
+    ? `${dayLabel}一般泌尿門診可參考：`
+    : `${dayLabel}可改一般門診時段（一般泌尿）：`;
+  return `${prefix}\n${lines.join("\n")}`;
 }
 
 function buildPastAnnouncementNote(message, now) {

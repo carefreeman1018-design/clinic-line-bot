@@ -11,6 +11,7 @@ export function answerVasectomyQuestion(message, now = new Date(), conversationH
   const hasDirectVasectomyQuestion = isVasectomyQuestion(message);
   const hasRecentVasectomyContext = hasRecentVasectomyConsultContext(conversationHistory);
   if (!hasDirectVasectomyQuestion && !hasRecentVasectomyContext) return null;
+  if (!hasDirectVasectomyQuestion && isClearlyNewNonVasectomyTopic(message)) return null;
 
   if (hasDirectVasectomyQuestion && isPostVasectomyUrgentQuestion(message)) {
     const procedureDay = resolveVasectomyProcedureDay(message);
@@ -187,6 +188,13 @@ function hasRecentVasectomyConsultContext(conversationHistory) {
     .some((historyMessage) =>
       /結紮|輸精管|男性結紮|避孕手術|想諮詢男性結紮|可先諮詢結紮/.test(historyMessage.content ?? "")
     );
+}
+
+function isClearlyNewNonVasectomyTopic(message) {
+  return (
+    /頻尿|夜尿|尿急|排尿|尿尿|小便|泌尿|一般泌尿|線上掛號.*滿|線上.*滿|掛號.*滿|額滿|現場等|候補|初診|第一次去|第一次到診|報到|健保卡|身分證/.test(message)
+    && !/結紮|輸精管|避孕手術/.test(message)
+  );
 }
 
 function isPostVasectomyUrgentQuestion(message) {

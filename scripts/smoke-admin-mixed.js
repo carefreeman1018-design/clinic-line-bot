@@ -408,6 +408,19 @@ const cases = [
     forbidden: ["直接保證", "一定掛得到", "一定看得到", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
   },
   {
+    name: "online full frequency visit resets older vasectomy context",
+    message: "我明天想第一次去看頻尿，如果線上掛號滿了，可以直接到現場等嗎？",
+    routedOnly: true,
+    conversationHistory: [
+      { role: "user", content: "我先生想問結紮，是不是一定要找院長？第一次去只是諮詢可以嗎？" },
+      { role: "assistant", content: "第一次可以先諮詢，不一定要直接處理。男性結紮通常要先由醫師評估；不一定只能找院長，實際由哪位醫師評估和能否安排，要看門診時段與櫃台安排。" },
+      { role: "user", content: "那明天如果他想先問一下，哪個時段比較適合？不要貼連結，短一點。" },
+      { role: "assistant", content: "明天（週五）可先諮詢結紮的固定門診：早診（09:30-12:30）：陳偉傑醫師；午診（13:30-17:00）：羅詩修醫師。" }
+    ],
+    expected: ["明天（週五）一般泌尿門診可參考", "早診", "09:30-12:30", "陳偉傑醫師", "午診", "13:30-17:00", "羅詩修醫師", "線上掛號若已額滿", "現場等候或候補不能先保證", "02-2511-9488", "3 樓櫃台", "現場名額"],
+    forbidden: ["結紮", "可先諮詢結紮", "輸精管", "手術", "一定掛得到", "一定看得到", "https://", "appointment", "線上掛號系統", "預約掛號", "立即預約"]
+  },
+  {
     name: "natural same-number afternoon change answers registration change",
     message: "那如果我臨時改下午，是同一個號可以改，還是要重新掛？",
     expected: ["同一個號", "櫃台確認", "原本線上掛號系統", "電話 02-2511-9488", "現場 3 樓櫃台", "是否可改", "是否需取消重掛", "新時段還有沒有名額"],
