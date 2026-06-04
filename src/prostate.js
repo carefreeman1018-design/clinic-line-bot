@@ -41,6 +41,38 @@ export function answerProstateQuestion(message, now = new Date()) {
 }
 
 function answerOfficialProstateFaq(message) {
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /原理|是什麼|怎麼|如何|作用/.test(message)) {
+    return "官網說明，攝護腺水蒸氣消融是針對攝護腺肥大的低侵入治療；透過器械經尿道將約 103°C 水蒸氣以細針注入攝護腺，釋放熱能破壞肥大組織，之後被破壞的細胞會在 1–3 個月內逐漸被人體吸收，以緩解症狀。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /不適合|不能做|禁忌/.test(message)) {
+    return "官網列出水蒸氣消融適用族群，但是否不適合仍需由醫師依攝護腺大小、症狀、用藥與身體狀況評估；若有相關疑慮，建議門診確認。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /適合|哪些人|對象|可以做/.test(message)) {
+    return "官網提到，水蒸氣消融適合想避免傳統雷射併發症、特別是 40–50 歲想保留射精的族群；也適合無法長時間停用抗凝血劑、全身或半身麻醉風險較高，以及攝護腺體積約 30–80 c.c. 的患者。實際是否適合仍需醫師評估。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /多久|時間|幾分鐘/.test(message)) {
+    return "官網說明，攝護腺水蒸氣消融手術本身過程約 10 分鐘，屬低侵入性治療；完整到院流程仍需依麻醉、檢查與個人狀況安排。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /傷口|低侵入|微創/.test(message)) {
+    return "官網說明，攝護腺水蒸氣消融是順著尿道進行，手術本身約 10 分鐘，術後完全無傷口，屬極低侵入性治療。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /局部|舒眠|麻醉|半身|全身/.test(message)) {
+    return "官網提到，攝護腺水蒸氣消融可在局部或舒眠麻醉下進行，對全身或半身麻醉風險較高的患者是可能的考量之一；實際麻醉方式仍需醫師評估。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /保留射精|射精/.test(message)) {
+    return "官網提到，水蒸氣消融特別適合中壯年、想保留射精的患者；但是否適合與預期效果仍需由醫師依個人狀況評估。";
+  }
+
+  if (/水蒸氣|Rezum|Rezūm/i.test(message) && /大小|體積|c\.?c|CC|幾.*c/i.test(message)) {
+    return "官網提到，攝護腺水蒸氣消融適用於攝護腺體積約 30–80 c.c. 的患者；實際仍需檢查攝護腺大小與症狀後由醫師評估。";
+  }
+
   if (/不治療|放著|不處理|會怎樣/.test(message)) {
     return "攝護腺肥大若持續嚴重阻塞，可能造成排尿不順、頻尿、夜尿；嚴重時可能反覆感染、反覆血尿、膀胱結石和腎水腫。";
   }
