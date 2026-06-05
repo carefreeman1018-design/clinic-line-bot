@@ -691,9 +691,16 @@ function buildAssistanceFollowUpReply(userId, message) {
     return null;
   }
 
+  const intakeReply = buildAppointmentIntakeReply(userId, message, pending);
+  if (intakeReply) return intakeReply;
+
   if (!isAffirmative(message)) return null;
 
-  pendingAssistanceByUser.delete(userId);
+  pendingAssistanceByUser.set(userId, {
+    ...pending,
+    awaitingAppointmentInfo: true,
+    lastUpdatedAt: Date.now()
+  });
   return "可以，請留下姓名、電話、方便聯絡或預約的時段，還有簡短狀況。若有劇烈疼痛、發燒、尿不出來或大量出血，請不要等線上回覆，先立即就醫。";
 }
 
@@ -701,12 +708,74 @@ function rememberAssistanceIfNeeded(userId, message) {
   if (!userId || !shouldEscalate(message)) return;
 
   pendingAssistanceByUser.set(userId, {
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    topic: inferAppointmentTopic(message)
   });
 }
 
+function buildAppointmentIntakeReply(userId, message, pending) {
+  if (!pending.awaitingAppointmentInfo || !looksLikeAppointmentIntake(message)) return null;
+
+  const collected = {
+    name: Boolean(pending.collected?.name || hasLikelyName(message)),
+    phone: Boolean(pending.collected?.phone || hasTaiwanPhone(message)),
+    time: Boolean(pending.collected?.time || hasTimePreference(message)),
+    topic: pending.collected?.topic || inferAppointmentTopic(message) || pending.topic || null
+  };
+
+  const missing = [];
+  if (!collected.phone) missing.push("電話");
+  if (!collected.name) missing.push("姓名");
+  if (!collected.time) missing.push("方便聯絡或預約的時段");
+  if (!collected.topic) missing.push("想預約/詢問的項目或簡短狀況");
+
+  if (missing.length === 0) {
+    pendingAssistanceByUser.delete(userId);
+    return "收到，我先幫你記下資料。診所人員會再依現場時段與項目確認安排；如果症狀突然變嚴重、發燒、尿不出來或大量出血，請先立即就醫。";
+  }
+
+  pendingAssistanceByUser.set(userId, {
+    ...pending,
+    collected,
+    lastUpdatedAt: Date.now()
+  });
+  return `收到，我先幫你記下已提供的資料。還差：${missing.join("、")}。`;
+}
+
+function looksLikeAppointmentIntake(message) {
+  return hasTaiwanPhone(message) ||
+    hasLikelyName(message) ||
+    hasTimePreference(message) ||
+    Boolean(inferAppointmentTopic(message));
+}
+
+function hasTaiwanPhone(message) {
+  return /(?:09\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/.test(message);
+}
+
+function hasLikelyName(message) {
+  if (/^[\u4e00-\u9fff]{2,5}\s+(?=09\d{2}|0\d{1,2})/.test(message.trim())) return true;
+  const text = message.replace(/[0-9０-９+\-()\s]/g, "").trim();
+  if (/^(HPV|HIV|PEP|PrEP)$/i.test(text)) return false;
+  if (/今天|明天|後天|早上|上午|中午|下午|晚上|晚診|午診|早診|週|周|星期|禮拜|疫苗|篩檢|門診|回診|預約|掛號/.test(text)) return false;
+  return /^[\u4e00-\u9fff]{2,5}$/.test(text) || /(?:姓名|名字|我叫|我是)[：:\s]*[\u4e00-\u9fff]{2,5}/.test(message);
+}
+
+function hasTimePreference(message) {
+  return /方便|早上|上午|中午|下午|晚上|晚診|午診|早診|今天|明天|後天|週[一二三四五六日天]|周[一二三四五六日天]|星期[一二三四五六日天]|禮拜[一二三四五六日天]|\d{1,2}[：:點]\d{0,2}|\d{1,2}\/\d{1,2}/.test(message);
+}
+
+function inferAppointmentTopic(message) {
+  if (/HPV\s*疫苗|九價|子宮頸癌疫苗/i.test(message)) return "HPV 疫苗";
+  if (/皮蛇疫苗|帶狀皰疹疫苗/.test(message)) return "皮蛇疫苗";
+  if (/匿名.*篩檢|篩檢.*匿名|匿名性病/.test(message)) return "匿名篩檢";
+  if (/菜花|尖銳濕疣|HPV(?!\s*疫苗)/i.test(message)) return "菜花/HPV 評估";
+  if (/包皮|結紮|震波|猛健樂|攝護腺|結石|血尿|頻尿|漏尿|泌尿|肛門|痔瘡|廔管|肛裂/.test(message)) return "門診評估";
+  return null;
+}
+
 function isAffirmative(message) {
-  return /^(好|好的|可以|需要|要|麻煩|麻煩你|請幫我|幫我|ok|OK|yes|Yes|好啊|可以啊)[。！!.\s]*$/.test(message.trim());
+  return /^(好|好的|可以|需要|要|麻煩|麻煩你|請幫我|幫我|ok|OK|yes|Yes|好啊|可以啊)(?:[，,、\s]*(下一步|麻煩你|請幫我|幫我))?[。！!.\s]*$/.test(message.trim());
 }
 
 function isLowInformationMessage(message) {
