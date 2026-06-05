@@ -200,7 +200,7 @@ async function handleLineEvent(event) {
     }
 
     const { reply } = await buildReplyAndMatches(patientMessage, chunks, conversationHistory);
-    rememberAssistanceIfNeeded(userId, patientMessage);
+    rememberAssistanceIfNeeded(userId, patientMessage, reply);
 
     await safeReplyText(event.replyToken, reply);
     await rememberConversationExchange(userId, message, reply);
@@ -704,13 +704,22 @@ function buildAssistanceFollowUpReply(userId, message) {
   return "可以，請留下姓名、電話、方便聯絡或預約的時段，還有簡短狀況。若有劇烈疼痛、發燒、尿不出來或大量出血，請不要等線上回覆，先立即就醫。";
 }
 
-function rememberAssistanceIfNeeded(userId, message) {
-  if (!userId || !shouldEscalate(message)) return;
+function rememberAssistanceIfNeeded(userId, message, reply = "") {
+  const replyRequestsAppointmentIntake = asksForAppointmentIntake(reply);
+  if (!userId || (!shouldEscalate(message) && !replyRequestsAppointmentIntake)) return;
 
   pendingAssistanceByUser.set(userId, {
     createdAt: Date.now(),
-    topic: inferAppointmentTopic(message)
+    topic: inferAppointmentTopic(message),
+    awaitingAppointmentInfo: replyRequestsAppointmentIntake
   });
+}
+
+function asksForAppointmentIntake(reply) {
+  return /留下|提供|留/.test(reply) &&
+    /姓名/.test(reply) &&
+    /電話|手機/.test(reply) &&
+    /方便.*時段|方便聯絡|預約.*時段|方便.*預約/.test(reply);
 }
 
 function buildAppointmentIntakeReply(userId, message, pending) {
