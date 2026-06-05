@@ -138,7 +138,7 @@ function answerOfficialMaleUtiQuestion(message) {
   }
 
   if (/男性|男生|男/.test(message) && /泌尿道感染|尿道炎|膀胱炎|攝護腺炎|睪丸炎|副睪丸炎/.test(message) && /常見.*問題|有哪些.*問題|有什麼.*問題/.test(message)) {
-    return "男性泌尿道感染相關常見問題包含攝護腺炎、睪丸炎、副睪丸炎、膀胱炎、尿道炎與泌尿道感染發炎；可由泌尿科依症狀評估。";
+    return "男性泌尿道感染相關常見狀況包含攝護腺炎、睪丸炎、副睪丸炎、膀胱炎、尿道炎與泌尿道感染發炎；可由泌尿科依症狀評估。";
   }
 
   return null;
