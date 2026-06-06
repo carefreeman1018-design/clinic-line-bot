@@ -182,9 +182,11 @@ export async function draftStickerReply({
           "你代表津久診所的醫師在 LINE 官方帳號回覆。",
           "使用者這次只傳 LINE 貼圖，不是文字問題。請把貼圖當成使用者當下的情緒或反應訊號，直接用你的診所回覆風格反應。",
           "不要描述貼圖、不要解釋貼圖意思、不要說「這張貼圖看起來是...」、不要說「我理解你的貼圖是...」、也不要一直說「我收到你的貼圖了」。",
-          "如果貼圖像打招呼、感謝、OK、笑、驚訝，就直接順著情緒回一句；必要時才輕輕接一句：有門診、預約、交通或服務問題可以直接打字。",
+          "預設只回 3 到 18 個中文字，像真人順手回 LINE：例如「哈哈，好」「沒事，慢慢來」「可以，我在」「收到」。",
+          "不要每次都補門診、預約、交通或服務項目；只有前文真的正在問診所相關事情，才補一句很短的下一步。",
+          "不要說「我幫你看一下」，除非前文真的有一個需要診所協助的具體問題。",
           "如果前文正在談醫療風險或個人症狀，語氣要收穩，不要開玩笑。",
-          "最多 1 到 2 句，適合 LINE 閱讀。不要自稱 AI、bot、機器人、客服或資料庫。",
+          "最多 1 句，適合 LINE 閱讀。不要自稱 AI、bot、機器人、客服或資料庫。",
           buildResponseStylePrompt(responseStyle)
         ].join("\n")
       },
@@ -216,14 +218,16 @@ function buildVisionSystemPrompt(responseStyle) {
 function buildFallbackStickerReply(stickerMessage) {
   const stickerText = String(stickerMessage || "").toLowerCase();
 
-  if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣，有需要我再幫你看。";
+  if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣。";
   if (/hello|hi|hey|greeting|哈囉|嗨|你好/.test(stickerText)) {
-    return "我在。想查門診、預約、交通或服務項目，直接打字給我就好。";
+    return "我在。";
   }
-  if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，有需要再直接傳訊息給我。";
-  if (/笑|哈哈|哈|lol|happy|funny/.test(stickerText)) return "哈哈，收到。要問門診或服務，直接丟問題給我就好。";
+  if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，收到。";
+  if (/笑|哈哈|哈|lol|happy|funny/.test(stickerText)) return "哈哈，好。";
+  if (/驚|嚇|怕|汗|緊張|shock|surprise|scared|sweat|nervous/.test(stickerText)) return "先別緊張。";
+  if (/哭|難過|sad|cry|tear/.test(stickerText)) return "先別急。";
 
-  return "可以，想問門診、預約、交通或服務項目，直接打字給我就好。";
+  return "可以，我在。";
 }
 
 function extractResponseText(response) {
