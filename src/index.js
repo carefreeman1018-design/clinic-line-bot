@@ -4,7 +4,7 @@ import { syncLineVoomAnnouncements } from "../scripts/sync-line-voom.js";
 import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
 import { answerAdminMixedQuestion } from "./admin-mixed.js";
 import { answerAnalColorectalQuestion } from "./anal-colorectal.js";
-import { draftReply } from "./ai.js";
+import { draftReply, draftVisionReply } from "./ai.js";
 import {
   isConversationMemoryConfigured,
   loadConversationHistory,
@@ -26,7 +26,7 @@ import {
 import { answerBasicInfoQuestion } from "./basic-info.js";
 import { answerDoctorInfoQuestion } from "./doctors.js";
 import { loadKnowledge, shouldEscalate } from "./knowledge.js";
-import { pushText, replyText, verifyLineSignature } from "./line.js";
+import { getMessageContent, pushText, replyText, verifyLineSignature } from "./line.js";
 import { applyResponseStyle, getResponseStyle } from "./response-style.js";
 import { answerFixedScheduleQuestion, answerPepVisitScheduleFollowUp } from "./schedule.js";
 import { getBotEnabled, getStringListSetting, isSettingsStoreConfigured, setBotEnabled } from "./settings.js";
@@ -65,6 +65,7 @@ const ADMIN_USER_IDS_SETTING_KEY = "line_admin_user_ids";
 const REVIEW_TARGET_IDS_SETTING_KEY = "line_review_target_ids";
 const pendingAssistanceByUser = new Map();
 const PENDING_ASSISTANCE_TTL_MS = 30 * 60 * 1000;
+const LINE_IMAGE_MAX_BYTES = Number(process.env.LINE_IMAGE_MAX_BYTES || 8 * 1024 * 1024);
 const voomSyncEnabled = process.env.LINE_VOOM_SYNC_ENABLED !== "false";
 const voomSyncTime = process.env.LINE_VOOM_SYNC_TIME || "03:00";
 
@@ -141,7 +142,19 @@ app.post("/webhook", async (req, res) => {
 });
 
 async function handleLineEvent(event) {
-  if (event.type !== "message" || event.message?.type !== "text") return;
+  if (event.type !== "message") return;
+
+  if (event.message?.type === "image") {
+    await handleImageMessageEvent(event);
+    return;
+  }
+
+  if (event.message?.type === "sticker") {
+    await handleStickerMessageEvent(event);
+    return;
+  }
+
+  if (event.message?.type !== "text") return;
 
   try {
     const message = event.message.text.trim();
@@ -210,16 +223,135 @@ async function handleLineEvent(event) {
   }
 }
 
+async function handleImageMessageEvent(event) {
+  try {
+    const userId = event.source?.userId;
+    const botEnabled = await getBotEnabled();
+    if (!botEnabled) return;
+
+    if (event.message.contentProvider?.type === "external") {
+      const reply = await styleReply({
+        reply: "這張圖目前不能直接讀取。請重新上傳圖片，或直接用文字描述想問的狀況；如果是傷口、私密處病灶或報告，建議預約門診現場看比較準。",
+        message: "使用者傳了一張外部圖片。"
+      });
+      await safeReplyText(event.replyToken, reply);
+      await rememberConversationExchange(userId, "使用者傳了一張外部圖片，系統無法讀取。", reply);
+      return;
+    }
+
+    const content = await getMessageContent(event.message.id, channelAccessToken);
+    if (!isSupportedImageContentType(content.contentType)) {
+      const reply = await styleReply({
+        reply: "這個圖片格式目前不能讀取。請改傳 JPG 或 PNG，或直接用文字描述想問的狀況。",
+        message: "使用者傳了一張不支援格式的圖片。"
+      });
+      await safeReplyText(event.replyToken, reply);
+      await rememberConversationExchange(userId, "使用者傳了一張不支援格式的圖片。", reply);
+      return;
+    }
+
+    if (content.buffer.length > LINE_IMAGE_MAX_BYTES) {
+      const reply = await styleReply({
+        reply: "這張圖片太大，目前不能讀取。請改傳較小張的圖片，或直接用文字描述想問的狀況。",
+        message: "使用者傳了一張過大的圖片。"
+      });
+      await safeReplyText(event.replyToken, reply);
+      await rememberConversationExchange(userId, "使用者傳了一張過大的圖片。", reply);
+      return;
+    }
+
+    const mediaMessage = buildImageUserMessage();
+    const conversationHistory = await loadConversationHistory(userId);
+    const chunks = await loadKnowledge();
+    const relevantChunks = await retrieveHybridRelevantChunks(chunks, buildContextualQuery(mediaMessage, conversationHistory));
+    const imageDataUrl = toDataUrl(content);
+    const reply = await draftVisionReply({
+      message: mediaMessage,
+      imageDataUrl,
+      chunks: relevantChunks,
+      conversationHistory,
+      responseStyle: await getResponseStyle()
+    });
+
+    if (await shouldCreateDoctorReviewCaseForImage({ userId, message: mediaMessage, reply, conversationHistory, relevantChunks })) {
+      await handleDoctorReviewRequestWithDraft({
+        replyToken: event.replyToken,
+        userId,
+        message: mediaMessage,
+        conversationHistory,
+        botDraft: reply,
+        relevantChunks,
+        metadata: {
+          media: {
+            type: "image",
+            content_type: content.contentType,
+            size_bytes: content.buffer.length
+          }
+        }
+      });
+      return;
+    }
+
+    await safeReplyText(event.replyToken, reply);
+    await rememberConversationExchange(userId, "使用者傳了一張圖片，系統已讀取圖片內容。", reply);
+  } catch (error) {
+    console.error(error);
+    await safeReplyText(event.replyToken, "這張圖片我現在暫時不能讀取。你可以改用文字描述，或稍後再傳一次。");
+  }
+}
+
+async function handleStickerMessageEvent(event) {
+  try {
+    const userId = event.source?.userId;
+    const botEnabled = await getBotEnabled();
+    if (!botEnabled) return;
+
+    const stickerMessage = buildStickerUserMessage(event.message);
+    const reply = await styleReply({
+      reply: buildStickerReply(event.message),
+      message: stickerMessage
+    });
+
+    await safeReplyText(event.replyToken, reply);
+    await rememberConversationExchange(userId, stickerMessage, reply);
+  } catch (error) {
+    console.error(error);
+    await safeReplyText(event.replyToken, "我收到貼圖了。若有門診、預約、交通或服務問題，可以直接打字給我。");
+  }
+}
+
 async function handleDoctorReviewRequest({ replyToken, userId, message, conversationHistory, chunks }) {
   if (!userId || !(await isDoctorReviewReady())) return false;
 
   const { reply: botDraft, relevantChunks } = await buildReplyAndMatches(message, chunks, conversationHistory);
+  return handleDoctorReviewRequestWithDraft({
+    replyToken,
+    userId,
+    message,
+    conversationHistory,
+    botDraft,
+    relevantChunks
+  });
+}
+
+async function handleDoctorReviewRequestWithDraft({
+  replyToken,
+  userId,
+  message,
+  conversationHistory,
+  botDraft,
+  relevantChunks = [],
+  metadata = {}
+}) {
+  if (!userId || !(await isDoctorReviewReady())) return false;
+
   const reviewCase = await createDoctorReviewCase({
     lineUserId: userId,
     userMessage: message,
     conversationHistory,
     botDraft,
     metadata: {
+      ...metadata,
       relevant_chunks: relevantChunks.map((chunk) => ({
         source: chunk.source,
         title: chunk.title,
@@ -240,6 +372,55 @@ async function handleDoctorReviewRequest({ replyToken, userId, message, conversa
   await safeReplyText(replyToken, waitingReply);
   await rememberConversationExchange(userId, message, waitingReply);
   return true;
+}
+
+async function shouldCreateDoctorReviewCaseForImage({ userId, reply }) {
+  if (!userId || !(await isDoctorReviewReady())) return false;
+
+  if (hasHighRiskImageCue(reply)) return true;
+
+  return shouldEscalate(reply) && !shouldBypassDoctorReviewForRoutedSafety(reply);
+}
+
+function hasHighRiskImageCue(text) {
+  return /報告|檢查結果|檢驗|數值|藥袋|處方|傷口|流膿|化膿|感染|紅腫|出血|流血|潰瘍|水泡|病灶|菜花|疣|腫塊|陰莖|陰囊|龜頭|包皮|肛門|私密處|尿液|血尿|精液|血精|發燒|劇烈疼痛|尿不出來|排不出尿/.test(text);
+}
+
+function isSupportedImageContentType(contentType) {
+  return /^image\/(?:jpeg|jpg|png|webp)$/i.test(contentType.split(";")[0].trim());
+}
+
+function toDataUrl({ contentType, buffer }) {
+  return `data:${contentType.split(";")[0].trim()};base64,${buffer.toString("base64")}`;
+}
+
+function buildImageUserMessage() {
+  return "使用者傳了一張圖片，想請診所依圖片內容回答。";
+}
+
+function buildStickerUserMessage(message) {
+  const details = [
+    `packageId=${message.packageId ?? "unknown"}`,
+    `stickerId=${message.stickerId ?? "unknown"}`,
+    `resourceType=${message.stickerResourceType ?? "unknown"}`
+  ];
+
+  if (message.text) details.push(`text=${message.text}`);
+  if (message.keywords?.length > 0) details.push(`keywords=${message.keywords.join(", ")}`);
+
+  return `使用者傳了一張 LINE 貼圖。${details.join("；")}`;
+}
+
+function buildStickerReply(message) {
+  const stickerText = `${message.text ?? ""} ${(message.keywords ?? []).join(" ")}`.toLowerCase();
+
+  if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣，有需要我再幫你查。";
+  if (/hello|hi|hey|greeting|哈囉|嗨|你好/.test(stickerText)) {
+    return "我在。你想查門診、預約、交通，還是想問診所有沒有提供某項服務？";
+  }
+  if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，有需要再直接傳訊息給我。";
+
+  return "我收到你的貼圖了。若有門診、預約、交通或服務問題，可以直接打字給我。";
 }
 
 async function handleDoctorReviewCommand(event, command) {
