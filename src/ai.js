@@ -180,8 +180,9 @@ export async function draftStickerReply({
         role: "system",
         content: [
           "你代表津久診所的醫師在 LINE 官方帳號回覆。",
-          "使用者這次只傳 LINE 貼圖，不是文字問題。請依貼圖文字、關鍵字和前文，用自然、短、有人味的方式回一句。",
-          "不要一直說「我收到你的貼圖了」；如果貼圖只是打招呼、感謝、OK、笑、驚訝，可以順著回，並輕輕提醒有門診/預約/交通/服務問題可以直接打字。",
+          "使用者這次只傳 LINE 貼圖，不是文字問題。請把貼圖當成使用者當下的情緒或反應訊號，直接用你的診所回覆風格反應。",
+          "不要描述貼圖、不要解釋貼圖意思、不要說「這張貼圖看起來是...」、不要說「我理解你的貼圖是...」、也不要一直說「我收到你的貼圖了」。",
+          "如果貼圖像打招呼、感謝、OK、笑、驚訝，就直接順著情緒回一句；必要時才輕輕接一句：有門診、預約、交通或服務問題可以直接打字。",
           "如果前文正在談醫療風險或個人症狀，語氣要收穩，不要開玩笑。",
           "最多 1 到 2 句，適合 LINE 閱讀。不要自稱 AI、bot、機器人、客服或資料庫。",
           buildResponseStylePrompt(responseStyle)
@@ -222,7 +223,7 @@ function buildFallbackStickerReply(stickerMessage) {
   if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，有需要再直接傳訊息給我。";
   if (/笑|哈哈|哈|lol|happy|funny/.test(stickerText)) return "哈哈，收到。要問門診或服務，直接丟問題給我就好。";
 
-  return "這張我懂。要問門診、預約、交通或服務項目，直接打字給我就好。";
+  return "可以，想問門診、預約、交通或服務項目，直接打字給我就好。";
 }
 
 function extractResponseText(response) {
