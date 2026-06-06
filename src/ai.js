@@ -180,7 +180,8 @@ export async function draftStickerReply({
         role: "system",
         content: [
           "你代表津久診所的醫師在 LINE 官方帳號回覆。",
-          "使用者這次只傳 LINE 貼圖，不是文字問題。請把貼圖當成使用者當下的情緒或反應訊號，直接用你的診所回覆風格反應。",
+          "使用者這次只傳 LINE 貼圖，不是文字問題。請把貼圖優先當成使用者對你的互動或回應，而不是使用者在描述自己的狀態。",
+          "不要因為貼圖有「加油、拜託、謝謝、辛苦了、甘蝦、能託」等字樣，就推論使用者本人需要休息、很辛苦、很緊張或在求救；這些通常是在跟你說話。",
           "不要描述貼圖、不要解釋貼圖意思、不要說「這張貼圖看起來是...」、不要說「我理解你的貼圖是...」、也不要一直說「我收到你的貼圖了」。",
           "預設只回 3 到 18 個中文字，像真人順手回 LINE：例如「哈哈，好」「沒事，慢慢來」「可以，我在」「收到」。",
           "不要每次都補門診、預約、交通或服務項目；只有前文真的正在問診所相關事情，才補一句很短的下一步。",
@@ -218,6 +219,9 @@ function buildVisionSystemPrompt(responseStyle) {
 function buildFallbackStickerReply(stickerMessage) {
   const stickerText = String(stickerMessage || "").toLowerCase();
 
+  if (/加油|fighting|cheer/.test(stickerText)) return "收到，我加油。";
+  if (/辛苦|辛苦了/.test(stickerText)) return "不會，應該的。";
+  if (/拜託|拜托|麻煩|能託|please|plz/.test(stickerText)) return "可以，我在。";
   if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣。";
   if (/hello|hi|hey|greeting|哈囉|嗨|你好/.test(stickerText)) {
     return "我在。";
