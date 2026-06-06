@@ -4,7 +4,7 @@ import { syncLineVoomAnnouncements } from "../scripts/sync-line-voom.js";
 import { answerLineVoomAnnouncementQuestion } from "./announcements.js";
 import { answerAdminMixedQuestion } from "./admin-mixed.js";
 import { answerAnalColorectalQuestion } from "./anal-colorectal.js";
-import { draftReply, draftVisionReply } from "./ai.js";
+import { draftReply, draftStickerReply, draftVisionReply } from "./ai.js";
 import {
   isConversationMemoryConfigured,
   loadConversationHistory,
@@ -307,8 +307,14 @@ async function handleStickerMessageEvent(event) {
     if (!botEnabled) return;
 
     const stickerMessage = buildStickerUserMessage(event.message);
+    const conversationHistory = await loadConversationHistory(userId);
+    const rawReply = await draftStickerReply({
+      stickerMessage,
+      conversationHistory,
+      responseStyle: await getResponseStyle()
+    });
     const reply = await styleReply({
-      reply: buildStickerReply(event.message),
+      reply: rawReply,
       message: stickerMessage
     });
 
@@ -409,18 +415,6 @@ function buildStickerUserMessage(message) {
   if (message.keywords?.length > 0) details.push(`keywords=${message.keywords.join(", ")}`);
 
   return `使用者傳了一張 LINE 貼圖。${details.join("；")}`;
-}
-
-function buildStickerReply(message) {
-  const stickerText = `${message.text ?? ""} ${(message.keywords ?? []).join(" ")}`.toLowerCase();
-
-  if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣，有需要我再幫你查。";
-  if (/hello|hi|hey|greeting|哈囉|嗨|你好/.test(stickerText)) {
-    return "我在。你想查門診、預約、交通，還是想問診所有沒有提供某項服務？";
-  }
-  if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，有需要再直接傳訊息給我。";
-
-  return "我收到你的貼圖了。若有門診、預約、交通或服務問題，可以直接打字給我。";
 }
 
 async function handleDoctorReviewCommand(event, command) {

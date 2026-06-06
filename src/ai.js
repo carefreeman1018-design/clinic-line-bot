@@ -157,6 +157,47 @@ export async function draftVisionReply({
   return appendOfficialLinks(extractResponseText(response), chunks, message);
 }
 
+export async function draftStickerReply({
+  stickerMessage,
+  conversationHistory = [],
+  responseStyle = null
+}) {
+  if (!client) return buildFallbackStickerReply(stickerMessage);
+
+  const historyMessages = conversationHistory
+    .filter((historyMessage) => ["user", "assistant"].includes(historyMessage.role))
+    .slice(-8)
+    .map((historyMessage) => ({
+      role: historyMessage.role,
+      content: historyMessage.content
+    }));
+
+  const response = await client.chat.completions.create({
+    model: OPENAI_MODEL,
+    temperature: 0.4,
+    messages: [
+      {
+        role: "system",
+        content: [
+          "你代表津久診所的醫師在 LINE 官方帳號回覆。",
+          "使用者這次只傳 LINE 貼圖，不是文字問題。請依貼圖文字、關鍵字和前文，用自然、短、有人味的方式回一句。",
+          "不要一直說「我收到你的貼圖了」；如果貼圖只是打招呼、感謝、OK、笑、驚訝，可以順著回，並輕輕提醒有門診/預約/交通/服務問題可以直接打字。",
+          "如果前文正在談醫療風險或個人症狀，語氣要收穩，不要開玩笑。",
+          "最多 1 到 2 句，適合 LINE 閱讀。不要自稱 AI、bot、機器人、客服或資料庫。",
+          buildResponseStylePrompt(responseStyle)
+        ].join("\n")
+      },
+      ...historyMessages,
+      {
+        role: "user",
+        content: `貼圖資訊：${stickerMessage}`
+      }
+    ]
+  });
+
+  return response.choices[0]?.message?.content?.trim() || buildFallbackStickerReply(stickerMessage);
+}
+
 function buildVisionSystemPrompt(responseStyle) {
   return [
     "你代表津久診所的醫師在 LINE 官方帳號回覆。你不是程式人員、客服機器人、FAQ，也不是資料庫查詢結果。",
@@ -169,6 +210,19 @@ function buildVisionSystemPrompt(responseStyle) {
     "回答使用繁體中文，適合 LINE 閱讀。",
     buildResponseStylePrompt(responseStyle)
   ].join("\n");
+}
+
+function buildFallbackStickerReply(stickerMessage) {
+  const stickerText = String(stickerMessage || "").toLowerCase();
+
+  if (/thank|thanks|謝|感謝/.test(stickerText)) return "不客氣，有需要我再幫你看。";
+  if (/hello|hi|hey|greeting|哈囉|嗨|你好/.test(stickerText)) {
+    return "我在。想查門診、預約、交通或服務項目，直接打字給我就好。";
+  }
+  if (/ok|yes|了解|收到|好/.test(stickerText)) return "好，有需要再直接傳訊息給我。";
+  if (/笑|哈哈|哈|lol|happy|funny/.test(stickerText)) return "哈哈，收到。要問門診或服務，直接丟問題給我就好。";
+
+  return "這張我懂。要問門診、預約、交通或服務項目，直接打字給我就好。";
 }
 
 function extractResponseText(response) {
