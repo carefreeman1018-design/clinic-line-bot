@@ -162,6 +162,9 @@ export async function draftStickerReply({
   conversationHistory = [],
   responseStyle = null
 }) {
+  const deterministicReply = buildDeterministicStickerReply(stickerMessage);
+  if (deterministicReply) return deterministicReply;
+
   if (!client) return buildFallbackStickerReply(stickerMessage);
 
   const historyMessages = conversationHistory
@@ -217,6 +220,10 @@ function buildVisionSystemPrompt(responseStyle) {
 }
 
 function buildFallbackStickerReply(stickerMessage) {
+  return buildDeterministicStickerReply(stickerMessage) || "可以，我在。";
+}
+
+function buildDeterministicStickerReply(stickerMessage) {
   const stickerText = String(stickerMessage || "").toLowerCase();
 
   if (/加油|fighting|cheer/.test(stickerText)) return "收到，我加油。";
@@ -231,7 +238,7 @@ function buildFallbackStickerReply(stickerMessage) {
   if (/驚|嚇|怕|汗|緊張|shock|surprise|scared|sweat|nervous/.test(stickerText)) return "先別緊張。";
   if (/哭|難過|sad|cry|tear/.test(stickerText)) return "先別急。";
 
-  return "可以，我在。";
+  return null;
 }
 
 function extractResponseText(response) {
