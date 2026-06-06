@@ -3,6 +3,7 @@ import { buildResponseStylePrompt } from "./response-style.js";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5.4-mini";
+const OPENAI_VISION_MODEL = process.env.OPENAI_VISION_MODEL || OPENAI_MODEL;
 const MAX_REPLY_CHARS = Number(process.env.MAX_REPLY_CHARS || 360);
 const APPOINTMENT_URL = "https://appointment.uromeeme.inncom.cloud/";
 const PHONE = "02-2511-9488";
@@ -104,6 +105,83 @@ export async function draftReply({ message, chunks, shouldEscalate, conversation
 
   const reply = response.choices[0]?.message?.content?.trim() || "這題我目前不能直接確認，建議先電話確認或預約門診。";
   return appendOfficialLinks(reply, chunks, message);
+}
+
+export async function draftVisionReply({
+  message,
+  imageDataUrl,
+  chunks = [],
+  conversationHistory = [],
+  responseStyle = null
+}) {
+  if (!client) {
+    return "我目前不能讀取圖片內容。你可以直接用文字描述想問的狀況；如果是傷口、私密處病灶或檢查報告，建議預約門診現場看比較準。";
+  }
+
+  const context = chunks
+    .map((chunk) => `【${chunk.title}】\n${chunk.content}`)
+    .join("\n\n---\n\n");
+
+  const historyText = conversationHistory
+    .filter((historyMessage) => ["user", "assistant"].includes(historyMessage.role))
+    .slice(-8)
+    .map((historyMessage) => `${historyMessage.role === "assistant" ? "bot" : "使用者"}：${historyMessage.content}`)
+    .join("\n");
+
+  const response = await client.responses.create({
+    model: OPENAI_VISION_MODEL,
+    input: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text: [
+              buildVisionSystemPrompt(responseStyle),
+              historyText ? `先前對話：\n${historyText}` : "",
+              context ? `診所資料：\n${context}` : "",
+              `使用者訊息：${message}`,
+              "請先看圖片，再用繁體中文回答。"
+            ].filter(Boolean).join("\n\n")
+          },
+          {
+            type: "input_image",
+            image_url: imageDataUrl,
+            detail: "low"
+          }
+        ]
+      }
+    ]
+  });
+
+  return appendOfficialLinks(extractResponseText(response), chunks, message);
+}
+
+function buildVisionSystemPrompt(responseStyle) {
+  return [
+    "你代表津久診所的醫師在 LINE 官方帳號回覆。你不是程式人員、客服機器人、FAQ，也不是資料庫查詢結果。",
+    "你可以依圖片做可見內容描述、一般方向與下一步建議，但不能把照片當成確診、不能保證、不能隔空決定用藥或處置。",
+    "如果圖片像傷口、私密處病灶、尿液/精液異常、檢查報告、影像報告或藥袋，只能說明可見重點與風險，並提醒需要門診或醫師覆核。",
+    "如果看不清楚，直接說看不清楚，不要猜。",
+    "若看到或使用者提到劇烈疼痛、發燒、尿不出來、大量出血、明顯流膿、傷口裂開或快速惡化，請提醒不要等線上回覆，先立即就醫。",
+    "短答優先：一般問題最多 2 到 4 句；除非使用者要求詳細說明，盡量控制在短 LINE 訊息長度。",
+    "不要自稱 AI、bot、機器人、資料庫、知識庫。",
+    "回答使用繁體中文，適合 LINE 閱讀。",
+    buildResponseStylePrompt(responseStyle)
+  ].join("\n");
+}
+
+function extractResponseText(response) {
+  if (response.output_text) return response.output_text.trim();
+
+  const outputText = response.output
+    ?.flatMap((item) => item.content ?? [])
+    ?.filter((content) => content.type === "output_text" && content.text)
+    ?.map((content) => content.text)
+    ?.join("")
+    ?.trim();
+
+  return outputText || "這張圖片我目前不能清楚判斷。若是個人症狀、傷口或報告，建議預約門診現場看比較準。";
 }
 
 function summarizeChunk(content, message = "") {

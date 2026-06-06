@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 
 const LINE_REPLY_URL = "https://api.line.me/v2/bot/message/reply";
 const LINE_PUSH_URL = "https://api.line.me/v2/bot/message/push";
+const LINE_CONTENT_URL = "https://api-data.line.me/v2/bot/message";
 
 export function verifyLineSignature(rawBody, signature, channelSecret) {
   if (!channelSecret || !signature) return false;
@@ -64,6 +65,28 @@ export async function pushText(to, text, channelAccessToken) {
     const body = await response.text();
     throw new Error(`LINE push failed: ${response.status} ${body}`);
   }
+}
+
+export async function getMessageContent(messageId, channelAccessToken) {
+  if (!channelAccessToken) {
+    throw new Error("LINE channel access token is required to get message content.");
+  }
+
+  const response = await fetch(`${LINE_CONTENT_URL}/${encodeURIComponent(messageId)}/content`, {
+    headers: {
+      Authorization: `Bearer ${channelAccessToken}`
+    }
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`LINE content download failed: ${response.status} ${body}`);
+  }
+
+  return {
+    contentType: response.headers.get("content-type") || "application/octet-stream",
+    buffer: Buffer.from(await response.arrayBuffer())
+  };
 }
 
 function truncateLineText(text) {
